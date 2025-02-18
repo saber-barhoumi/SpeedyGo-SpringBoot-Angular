@@ -1,8 +1,11 @@
 package com.ski.speedygobackend.Service.LoyaltyManagement;
 
 import com.ski.speedygobackend.Entity.LoyaltyManagement.LoyaltyCard;
+
 import com.ski.speedygobackend.Repository.ILoyaltyCardRepository;
+import com.ski.speedygobackend.Service.LoyaltyManagement.ILoyaltyCardServices;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,7 @@ public class LoyaltyCardServicesImpl implements ILoyaltyCardServices {
 
     private final ILoyaltyCardRepository loyaltyCardRepository;
 
+    @Autowired
     public LoyaltyCardServicesImpl(ILoyaltyCardRepository loyaltyCardRepository) {
         this.loyaltyCardRepository = loyaltyCardRepository;
     }
@@ -34,9 +38,8 @@ public class LoyaltyCardServicesImpl implements ILoyaltyCardServices {
 
     @Override
     public void deleteLoyaltyCard(Long id) {
-        if (!loyaltyCardRepository.existsById(id)) {
-            throw new RuntimeException("LoyaltyCard not found with ID: " + id);
+        if (loyaltyCardRepository.existsById(id)) {
+            loyaltyCardRepository.deleteById(id);
         }
-        loyaltyCardRepository.deleteById(id);
     }
 }

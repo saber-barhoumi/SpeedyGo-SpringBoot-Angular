@@ -14,10 +14,11 @@ import java.io.Serializable;
 public class Vehicle implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long idVehicle;
+    Long id;
     String type;
     String licensePlate;
     @ManyToOne
+    @JoinColumn(name = "trip_id")
     private Trip trip;
 
 }

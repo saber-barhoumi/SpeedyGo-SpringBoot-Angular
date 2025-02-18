@@ -19,13 +19,13 @@ public class LoyaltyCardRestController {
         this.loyaltyCardServices = loyaltyCardServices;
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<LoyaltyCard> addLoyaltyCard(@RequestBody LoyaltyCard loyaltyCard) {
         LoyaltyCard savedLoyaltyCard = loyaltyCardServices.addLoyaltyCard(loyaltyCard);
         return new ResponseEntity<>(savedLoyaltyCard, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/update")
     public ResponseEntity<List<LoyaltyCard>> getAllLoyaltyCards() {
         List<LoyaltyCard> loyaltyCards = loyaltyCardServices.getAllLoyaltyCards();
         return new ResponseEntity<>(loyaltyCards, HttpStatus.OK);
@@ -38,7 +38,7 @@ public class LoyaltyCardRestController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteLoyaltyCard(@PathVariable Long id) {
         loyaltyCardServices.deleteLoyaltyCard(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

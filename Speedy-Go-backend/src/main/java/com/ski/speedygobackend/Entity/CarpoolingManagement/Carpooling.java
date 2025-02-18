@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import com.ski.speedygobackend.Entity.TripManagement.Trip;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,22 +23,19 @@ public class Carpooling implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long CarpoolingId;
+    Long carpoolingId;
+    @NotNull
 
     String departureLocation;
     String destination;
-
-    @Column(nullable = false)
-    LocalDateTime departureTime;
+    @Column(nullable = true)
     LocalDateTime arrivalTime;
 
-    @Column(nullable = false)
     int availableSeats;
 
-    @Column(nullable = false)
     double pricePerSeat;
 
-    private  String descrition;
+    private  String description;
 
     @ManyToOne
     private Trip trip;

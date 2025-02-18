@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServicesImpl {
+public class UserServicesImpl implements IUserServices {
     private final IUserRepository userRepository;
 
     public UserServicesImpl(IUserRepository userRepository) {

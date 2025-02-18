@@ -26,7 +26,8 @@ public class LoyaltyCard implements Serializable {
     String description;
     @Enumerated(EnumType.STRING)
     LoyaltyStatus loyaltyStatus ; ;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+
     private User user;
 
 }

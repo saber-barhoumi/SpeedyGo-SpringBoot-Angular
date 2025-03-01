@@ -1,1 +1,0 @@
-# SpeedyGo-SpringBoot-Angular

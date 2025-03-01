@@ -17,6 +17,7 @@ public class UserRestController {
 
     @GetMapping
     public List<User> getAllUsers() {
+
         return userService.getAllUsers();
     }
 

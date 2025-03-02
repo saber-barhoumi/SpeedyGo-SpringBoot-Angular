@@ -1,0 +1,12 @@
+<!-- src/app/carpooling/carpooling.component.html -->
+<form (ngSubmit)="addCarpooling()">
+    <input [(ngModel)]="newCarpooling.driverName" name="driverName" placeholder="Nom du conducteur" required />
+    <input [(ngModel)]="newCarpooling.departureLocation" name="departureLocation" placeholder="Lieu de départ" required />
+    <input [(ngModel)]="newCarpooling.destination" name="destination" placeholder="Destination" required />
+    <input [(ngModel)]="newCarpooling.arrivalTime" name="arrivalTime" placeholder="Heure d'arrivée" required />
+    <input [(ngModel)]="newCarpooling.availableSeats" name="availableSeats" placeholder="Nombre de places disponibles" required type="number" />
+    <input [(ngModel)]="newCarpooling.pricePerSeat" name="pricePerSeat" placeholder="Prix par place" required type="number" />
+    <textarea [(ngModel)]="newCarpooling.description" name="description" placeholder="Description" required></textarea>
+    <button type="submit">Ajouter</button>
+  </form>
+  

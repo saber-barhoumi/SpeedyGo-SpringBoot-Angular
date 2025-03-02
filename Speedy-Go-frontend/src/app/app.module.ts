@@ -14,14 +14,18 @@ import { SidebarBackComponent } from './BackOffices/sidebar-back/sidebar-back.co
 import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
 import { LoginComponent } from './BackOffices/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { RegisterComponent } from './FrontOffices/register/register.component';
 import { RegisterAdminComponent } from './BackOffices/register-admin/register-admin.component';
 import { GestionUserComponent } from './BackOffices/gestion-user/gestion-user.component';
 import { UpdateUserComponent } from './BackOffices/update-user/update-user.component';
 import { AddUserComponent } from './BackOffices/add-user/add-user.component';
-import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
+import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
+import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
+import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
+import { CarpoolingService } from './FrontOffices/services/carpooling.service';
 
 
 @NgModule({
@@ -42,7 +46,12 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     RegisterAdminComponent,
     GestionUserComponent,
     UpdateUserComponent,
-    AddUserComponent
+    AddUserComponent,
+    DeliveryComponent,
+    PartnerComponent,
+    CustomerComponent,
+    CarpoolingComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -51,9 +60,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },  
-  ],
+  providers: [CarpoolingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

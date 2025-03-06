@@ -30,10 +30,7 @@ export class AuthService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<any>(`${this.baseUrl}/validate`, { headers });
   }
-  saveUserData(token: string, user: any) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user)); // Store user details
-  }
+
 
   // Store token
   saveToken(token: string): void {
@@ -53,6 +50,48 @@ export class AuthService {
 
   getUser() {
     return JSON.parse(localStorage.getItem('user') || '{}');
+  }
+  saveUserData(token: string, user: any): void {
+    localStorage.setItem('token', token);
+    
+    // Ensure user object has all required fields
+    const userData = {
+      userId: user.id || user.userId || user.user_id,
+      email: user.email,
+      firstName: user.firstName || user.firstname || '',
+      lastName: user.lastName || user.lastname || '',
+      role: user.role || 'CUSTOMER', // Default to CUSTOMER if no role provided
+      // Add other user fields as needed
+    };
+    
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Log the save
+    console.log(`User data saved at: ${new Date('2025-03-03 18:44:09').toISOString()}`);
+    console.log(`User role: ${userData.role}`);
+  }
+  
+  /**
+   * Get the current user's role
+   */
+  getUserRole(): string {
+    const user = this.getUser();
+    return user ? user.role : null;
+  }
+  
+  /**
+   * Check if user has a specific role
+   */
+  hasRole(role: string | string[]): boolean {
+    const userRole = this.getUserRole();
+    
+    if (!userRole) return false;
+    
+    if (Array.isArray(role)) {
+      return role.includes(userRole);
+    }
+    
+    return userRole === role;
   }
    // Check if user is authenticated
    isAuthenticated(): boolean {

@@ -14,18 +14,24 @@ import { SidebarBackComponent } from './BackOffices/sidebar-back/sidebar-back.co
 import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
 import { LoginComponent } from './BackOffices/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { RegisterComponent } from './FrontOffices/register/register.component';
 import { RegisterAdminComponent } from './BackOffices/register-admin/register-admin.component';
 import { GestionUserComponent } from './BackOffices/gestion-user/gestion-user.component';
 import { UpdateUserComponent } from './BackOffices/update-user/update-user.component';
 import { AddUserComponent } from './BackOffices/add-user/add-user.component';
-import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
-import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
-import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
-import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
-import { CarpoolingService } from './FrontOffices/services/carpooling.service';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { RecruitmentFormComponent } from './FrontOffices/pages/recruitement/recruitment-form/recruitment-form.component';
+import { MyApplicationsComponent } from './my-applications/my-applications.component';
+import { RecruitmentDetailComponent } from './FrontOffices/pages/recruitement/recruitment-detail/recruitment-detail.component';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/vehicle-form.component';
+import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/vehicle-list.component';
+import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
+import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
+
 
 
 @NgModule({
@@ -47,20 +53,30 @@ import { CarpoolingService } from './FrontOffices/services/carpooling.service';
     GestionUserComponent,
     UpdateUserComponent,
     AddUserComponent,
-    DeliveryComponent,
-    PartnerComponent,
-    CustomerComponent,
-    CarpoolingComponent,
-    
+    RecruitmentFormComponent,
+    MyApplicationsComponent,
+    RecruitmentDetailComponent,
+    VehicleFormComponent,
+    VehicleListComponent,
+    VehicleDetailComponent,
+    RecruitmentManagementComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule, 
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }), // ToastrModule added
   ],
-  providers: [CarpoolingService],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

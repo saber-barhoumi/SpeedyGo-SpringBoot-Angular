@@ -13,42 +13,31 @@ export class RegisterComponent implements OnInit {
   errorMessage: string = '';
   isLoading: boolean = false;
  
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) { }
-
-  ngOnInit(): void {
-    // Si l'utilisateur est déjà connecté, rediriger selon son rôle
+ 
+  constructor(private authService: AuthService, private router: Router,private fb: FormBuilder) {
+    
+   }
+  ngOnInit() {
     if (this.authService.isLoggedIn()) {
-      const user = this.authService.getUser();
-      const userRole = (user.role || '').toUpperCase();
-      if (userRole === 'DELEVERY') {
-        this.router.navigate(['/delivery']);
-      } else if (userRole === 'PARTNER') {
-        this.router.navigate(['/partner']);
-      } else if (userRole === 'CUSTOMER') {
-        this.router.navigate(['/customer']);
-      } else {
-        this.router.navigate(['/home']);
-      }
+      this.router.navigate(['/home']); // Redirect if already logged in
     }
-
     this.registerForm = this.fb.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      birth_date: ['', [Validators.required, this.ageValidator]],
+      birth_date: ['', [Validators.required, this.ageValidator]], // Use ageValidator
       phone_number: ['', [Validators.pattern('^\\d{8}$')]],
       address: ['', Validators.required],
       profile_picture: [''],
       sexe: ['MALE'],
-      role: ['CUSTOMER'] // Valeur par défaut, modifiez si nécessaire
+      role: ['CUSTOMER']
     }, {
       validators: this.passwordMatchValidator
     });
   }
 
-  // Validateur pour l'âge (doit être au moins 18 ans)
   ageValidator(control: any) {
     if (!control.value) {
       return { required: true };
@@ -57,67 +46,52 @@ export class RegisterComponent implements OnInit {
     const birthDate = new Date(control.value);
     const today = new Date();
   
-    // La date de naissance ne doit pas être dans le futur
+    // Ensure the date is not in the future
     if (birthDate >= today) {
       return { invalidDate: true };
     }
   
-    // L'utilisateur doit avoir au moins 18 ans
+    // Check if the user is at least 18 years old
     const minAgeDate = new Date();
-    minAgeDate.setFullYear(today.getFullYear() - 18);
+    minAgeDate.setFullYear(today.getFullYear() - 18); // 18 years ago
   
     if (birthDate > minAgeDate) {
       return { underage: true };
     }
   
-    return null; // Date valide
+    return null; // Valid date
   }
-
-  // Validateur pour confirmer le mot de passe
   passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
 
-  onSubmit(): void {
+  onSubmit() {
     if (this.registerForm.invalid) {
-      this.markFormGroupTouched(this.registerForm);
       return;
     }
 
-    // Copier les données du formulaire et retirer le champ confirmPassword
     const userData = { ...this.registerForm.value };
-    delete userData.confirmPassword;
+    delete userData.confirmPassword; // Remove confirmPassword before sending
 
     this.authService.register(userData).subscribe({
       next: (response) => {
         alert('Registration successful!');
-        // Récupérer et comparer le rôle en majuscules
-        const role = (this.registerForm.get('role')?.value || '').toUpperCase();
-        if (role === 'DELEVERY') {
-          this.router.navigate(['/delivery']);
-        } else if (role === 'PARTNER') {
-          this.router.navigate(['/partner']);
-        } else if (role === 'CUSTOMER') {
-          this.router.navigate(['/customer']);
-        } else {
-          this.router.navigate(['/home']);
-        }
+        this.router.navigate(['/login']); // Redirect to login
       },
       error: (err) => {
         this.errorMessage = err.error?.error || 'Registration failed';
       }
     });
   }
-
-  // Méthode d'aide pour marquer tous les contrôles comme touchés (pour afficher les messages d'erreur)
-  private markFormGroupTouched(formGroup: FormGroup): void {
+   // Helper method to mark all form controls as touched
+   private markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
+
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
     });
-  }
-}
+}}

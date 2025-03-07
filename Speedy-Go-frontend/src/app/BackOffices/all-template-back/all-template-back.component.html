@@ -1,7 +1,7 @@
-<app-navbar-back></app-navbar-back>
-<app-sidebar-back></app-sidebar-back>
-<router-outlet></router-outlet>
-<app-body-back></app-body-back>
+<app-navbar-back *ngIf="isAdmin" ></app-navbar-back>
+<app-sidebar-back *ngIf="isAdmin"></app-sidebar-back>
+<router-outlet *ngIf="isAdmin"></router-outlet>
+
 
 
 

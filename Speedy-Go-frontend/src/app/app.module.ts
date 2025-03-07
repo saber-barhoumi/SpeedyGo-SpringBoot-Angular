@@ -12,6 +12,30 @@ import { FooterBackComponent } from './BackOffices/footer-back/footer-back.compo
 import { NavbarBackComponent } from './BackOffices/navbar-back/navbar-back.component';
 import { SidebarBackComponent } from './BackOffices/sidebar-back/sidebar-back.component';
 import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
+import { LoginComponent } from './BackOffices/login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { LoginclientComponent } from './FrontOffices/login/login.component';
+import { RegisterComponent } from './FrontOffices/register/register.component';
+import { RegisterAdminComponent } from './BackOffices/register-admin/register-admin.component';
+import { GestionUserComponent } from './BackOffices/gestion-user/gestion-user.component';
+import { UpdateUserComponent } from './BackOffices/update-user/update-user.component';
+import { AddUserComponent } from './BackOffices/add-user/add-user.component';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { RecruitmentFormComponent } from './FrontOffices/pages/recruitement/recruitment-form/recruitment-form.component';
+import { MyApplicationsComponent } from './my-applications/my-applications.component';
+import { RecruitmentDetailComponent } from './FrontOffices/pages/recruitement/recruitment-detail/recruitment-detail.component';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/vehicle-form.component';
+import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/vehicle-list.component';
+import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
+import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
+
+// Import CustomerComponent (and other missing components)
+import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
+import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
+import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 
 @NgModule({
   declarations: [
@@ -24,13 +48,43 @@ import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
     FooterBackComponent,
     NavbarBackComponent,
     SidebarBackComponent,
-    BodyBackComponent
+    BodyBackComponent,
+    LoginComponent,
+    LoginclientComponent,
+    RegisterComponent,
+    RegisterAdminComponent,
+    GestionUserComponent,
+    UpdateUserComponent,
+    AddUserComponent,
+    RecruitmentFormComponent,
+    MyApplicationsComponent,
+    RecruitmentDetailComponent,
+    VehicleFormComponent,
+    VehicleListComponent,
+    VehicleDetailComponent,
+    RecruitmentManagementComponent,
+
+    // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
+    CustomerComponent,
+    DeliveryComponent,
+    PartnerComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }), // ToastrModule added
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -92,7 +92,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'my-applications',
+        redirectTo: 'home',
         pathMatch: 'full'
       }
     ]

@@ -1,3 +1,6 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
 import { LoginComponent } from './BackOffices/login/login.component';
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { authGuard } from './FrontOffices/guards/auth.guard';
@@ -17,43 +20,46 @@ import { BodyComponent } from './FrontOffices/body/body.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
 import { RoleGuard } from './FrontOffices/guards/role.guard';
 import { AllTemplateBackComponent } from './BackOffices/all-template-back/all-template-back.component';
-import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';  
+import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';
 import { RecruitmentFormComponent } from './FrontOffices/pages/recruitement/recruitment-form/recruitment-form.component';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router'; 
+
+// Import Delivery, Partner, Customer Components
+import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
+import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
+import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
+
 const routes: Routes = [
   {
     path: '',
     component: AllTemplateFrontComponent,
-    canActivate: [authGuard]
+    //canActivate: [authGuard] // Remove authGuard from default route
   },
   {
     path: 'home',
     component: AllTemplateFrontComponent,
   },
-  
+
   {
     path: 'admin',
     component: AllTemplateBackComponent, children: [
       { path: 'users', component: GestionUserComponent, canActivate: [BackofficeAuthGuard] },
-      { path: 'home',component:BodyBackComponent,canActivate: [BackofficeAuthGuard]} ,
-      { path: 'update-user/:id', component: UpdateUserComponent,canActivate: [BackofficeAuthGuard] },
-      { path: 'add-user', component: AddUserComponent ,canActivate: [BackofficeAuthGuard]},
-      { path: 'recruitment', component: RecruitmentManagementComponent },  
-
-
-  ] },
-  {path: 'loginAdmin', component:LoginComponent,},
-  {path: 'login', component:LoginclientComponent},
-  {path: 'register', component:RegisterComponent},
-  {path: 'registerAdmin', component:RegisterAdminComponent},
-    // New vehicle routes
-    { path: 'vehicles', component: VehicleListComponent },
-    { path: 'vehicles/add', component: VehicleFormComponent },
-    { path: 'vehicles/edit/:id', component: VehicleFormComponent },
-    { path: 'vehicles/:id', component: VehicleDetailComponent },
+      { path: 'home', component: BodyBackComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'recruitment', component: RecruitmentManagementComponent },
+    ]
+  },
+  { path: 'loginAdmin', component: LoginComponent, },
+  { path: 'login', component: LoginclientComponent }, // Use the new LoginclientComponent
+  { path: 'register', component: RegisterComponent }, // Use the new RegisterComponent
+  { path: 'registerAdmin', component: RegisterAdminComponent },
+  // New vehicle routes
+  { path: 'vehicles', component: VehicleListComponent },
+  { path: 'vehicles/add', component: VehicleFormComponent },
+  { path: 'vehicles/edit/:id', component: VehicleFormComponent },
+  { path: 'vehicles/:id', component: VehicleDetailComponent },
   {
-    path: 'recruitment',component: AllTemplateFrontComponent, canActivate: [authGuard, RoleGuard],
+    path: 'recruitment', component: AllTemplateFrontComponent, canActivate: [authGuard, RoleGuard],
     data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] },
     children: [
       {
@@ -61,10 +67,10 @@ const routes: Routes = [
         component: BodyComponent,
       },
       {
-        
+
         path: 'apply',
         component: RecruitmentFormComponent,
-       
+
         data: { title: 'Apply for Delivery Driver Position' }
       },
       {
@@ -75,13 +81,13 @@ const routes: Routes = [
       {
         path: 'my-applications',
         component: MyApplicationsComponent,
-      
+
         data: { title: 'My Applications' }
       },
       {
         path: 'view/:id',
         component: RecruitmentDetailComponent,
-  
+
         data: { title: 'Application Details' }
       },
       {
@@ -90,7 +96,23 @@ const routes: Routes = [
         pathMatch: 'full'
       }
     ]
-  }
+  },
+    // New routes for delivery, partner and customer
+    {
+      path: 'delivery',
+      component: DeliveryComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'partner',
+      component: PartnerComponent,
+      canActivate: [authGuard]
+    },
+    {
+      path: 'customer',
+      component: CustomerComponent,
+      canActivate: [authGuard]
+    },
 ];
 
 @NgModule({

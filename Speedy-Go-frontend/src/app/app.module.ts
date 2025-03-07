@@ -32,7 +32,10 @@ import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/
 import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
 
-
+// Import CustomerComponent (and other missing components)
+import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
+import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
+import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 
 @NgModule({
   declarations: [
@@ -59,12 +62,17 @@ import { RecruitmentManagementComponent } from './BackOffices/recruitment-manage
     VehicleFormComponent,
     VehicleListComponent,
     VehicleDetailComponent,
-    RecruitmentManagementComponent
+    RecruitmentManagementComponent,
+
+    // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
+    CustomerComponent,
+    DeliveryComponent,
+    PartnerComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule, 
+    FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule, // required animations module
@@ -75,7 +83,7 @@ import { RecruitmentManagementComponent } from './BackOffices/recruitment-manage
     }), // ToastrModule added
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },  
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

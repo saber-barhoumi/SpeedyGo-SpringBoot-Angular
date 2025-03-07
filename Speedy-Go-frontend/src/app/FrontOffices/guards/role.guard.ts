@@ -25,11 +25,9 @@ export class RoleGuard implements CanActivate {
     // Check if user has one of the allowed roles
     const userRole = this.authService.getUserRole();
     
-    console.log(`Role check at ${new Date('2025-03-03 19:08:39').toISOString()}`);
-    console.log(`User role: ${userRole}, Required roles: ${allowedRoles.join(', ')}`);
-    
-    if (!userRole || !allowedRoles.includes(userRole)) {
-      this.toastr.error(`You need to be a ${allowedRoles.join(' or ')} to access this page`);
+    if (!userRole || !allowedRoles.some(role => role === userRole)) {
+      const rolesString = allowedRoles.map(role => role.toLowerCase()).join(' or ');
+      this.toastr.error(`You need to be a ${rolesString} to access this page`);
       
       if (!this.authService.isAuthenticated()) {
         this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });

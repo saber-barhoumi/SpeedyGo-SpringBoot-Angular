@@ -45,11 +45,17 @@ export class AuthService {
 
   // Check if user is logged in
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    console.log('Checking if user is logged in');
+    const token = localStorage.getItem('token');
+    console.log('Token:', token);
+    return !!token;
   }
 
   getUser() {
-    return JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('Getting user from localStorage');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('User:', user);
+    return user;
   }
   saveUserData(token: string, user: any): void {
     localStorage.setItem('token', token);
@@ -74,11 +80,10 @@ export class AuthService {
   /**
    * Get the current user's role
    */
-  getUserRole(): string {
+  getUserRole(): string | null {
     const user = this.getUser();
     return user ? user.role : null;
   }
-  
   /**
    * Check if user has a specific role
    */
@@ -103,5 +108,6 @@ export class AuthService {
   // Logout method
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); // Add this line to remove user data
   }
 }

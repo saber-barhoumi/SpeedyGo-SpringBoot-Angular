@@ -9,3 +9,15 @@
     background-color: green !important;
     border-color: green !important;
 }
+.profile-dropdown {
+    position: absolute;
+    top: 100%; /* Position below the user icon */
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    padding: 12px 16px;
+    z-index: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+  }

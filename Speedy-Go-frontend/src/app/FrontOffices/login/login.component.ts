@@ -29,7 +29,7 @@ export class LoginclientComponent implements OnInit {
           console.log('User role :', userRole);
           
           switch (userRole) {
-            case 'DELIVERY':
+            case 'DELEVERY':
               this.router.navigate(['/delivery']);
               break;
             case 'PARTNER':

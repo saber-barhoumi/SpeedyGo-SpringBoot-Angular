@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/user/auth.service';
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-delivery',
@@ -9,14 +10,27 @@ import { AuthService } from '../../services/user/auth.service';
 })
 export class DeliveryComponent implements OnInit {
 
-  constructor(private authService: AuthService) { } // Declare and initialize the authService property
+  constructor(
+    private authService: AuthService,
+    private router: Router // Inject Router and define as private property
+  ) { }
 
   ngOnInit(): void {
     console.log("Delivery Component is working!");
+
+    // Check if the user has the "delivery" role
+    if (!this.hasDeliveryRole()) {
+      // If not, redirect to another page (e.g., home or login)
+      this.router.navigate(['/home']); // Or '/login'
+    }
   }
 
-  isCustomerRole(): boolean {
-    // Replace this logic with your actual role-checking logic
-    return this.authService.getUserRole() === 'customer';
+  hasDeliveryRole(): boolean {
+    // Check if the user has the "delivery" role
+    return this.authService.getUserRole() === 'DELEVERY';
+  }
+
+  goToCarpooling() {
+    this.router.navigate(['/carpooling']); // Navigate to /carpooling
   }
 }

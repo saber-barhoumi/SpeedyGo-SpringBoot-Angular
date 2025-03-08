@@ -2,6 +2,8 @@ package com.ski.speedygobackend.Controller.UserManagement;
 
 import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Service.UserManagement.UserServicesImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +41,22 @@ public class UserRestController {
     @DeleteMapping("/deleteUser/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    @GetMapping("/{id}/delivery-recruitment-completed")
+    public ResponseEntity<Boolean> isDeliveryRecruitmentCompleted(@PathVariable Long id) {
+        // Get the user by ID
+        User user = userService.getUserById(id);
+
+        // Check if the user exists
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // User not found
+        }
+
+        // Check if the delivery recruitment is completed for the user
+        boolean isCompleted = userService.isDeliveryRecruitmentCompleted(user);
+
+        // Return the result
+        return new ResponseEntity<>(isCompleted, HttpStatus.OK);
     }
 }

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { DeliveryVehicle } from '../../../../models/vehicle.model';
-import { RecruitmentService } from '../../../../services/recrutement/recruitment.service';
-import { VehicleService } from '../../../../services/recrutement/vehicle.service';
-import { AuthService } from '../../../services/user/auth.service';
+import { DeliveryVehicle } from '../../../../../models/vehicle.model';
+import { RecruitmentService } from '../../../../../services/recrutement/recruitment.service';
+import { VehicleService } from '../../../../../services/recrutement/vehicle.service';
+import { AuthService } from '../../../../services/user/auth.service';
 
 
 @Component({

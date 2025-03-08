@@ -8,41 +8,64 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/carpoolings")
+@RequestMapping("/api/carpoolings") // Updated base URL to include /api
 public class CarpoolingRestController {
 
     private final ICarpoolingServices carpoolingServices;
 
-    // Injection du service via le constructeur
+    @Autowired
     public CarpoolingRestController(ICarpoolingServices carpoolingServices) {
         this.carpoolingServices = carpoolingServices;
     }
 
+    // Get all carpoolings
     @GetMapping
-    public List<Carpooling> getAllCarpoolings() {
-        return carpoolingServices.getAllCarpoolings();
+    public ResponseEntity<List<Carpooling>> getAllCarpoolings() {
+        List<Carpooling> carpoolings = carpoolingServices.getAllCarpoolings();
+        return new ResponseEntity<>(carpoolings, HttpStatus.OK);
     }
 
+    // Get a carpooling by ID
     @GetMapping("/{id}")
-    public Carpooling getCarpooling(@PathVariable Long id) {
-        return carpoolingServices.getCarpoolingById(id);
+    public ResponseEntity<Carpooling> getCarpooling(@PathVariable Long id) {
+        Carpooling carpooling = carpoolingServices.getCarpoolingById(id);
+        if (carpooling != null) {
+            return new ResponseEntity<>(carpooling, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PostMapping("/add")
-    public Carpooling createCarpooling(@RequestBody Carpooling carpooling) {
-        return carpoolingServices.saveCarpooling(carpooling);
+    // Add a new carpooling
+    @PostMapping("/add") // Endpoint for adding a carpooling
+    public ResponseEntity<Carpooling> createCarpooling(@RequestBody Carpooling carpooling) {
+        Carpooling savedCarpooling = carpoolingServices.saveCarpooling(carpooling);
+        return new ResponseEntity<>(savedCarpooling, HttpStatus.CREATED);
     }
 
+    // Update an existing carpooling
     @PutMapping("/update/{id}")
-    public Carpooling updateCarpooling(@PathVariable Long id, @RequestBody Carpooling carpooling) {
-        return carpoolingServices.saveCarpooling(carpooling);
+    public ResponseEntity<Carpooling> updateCarpooling(@PathVariable Long id, @RequestBody Carpooling carpooling) {
+        Carpooling existingCarpooling = carpoolingServices.getCarpoolingById(id);
+        if (existingCarpooling != null) {
+            carpooling.setCarpoolingId(id); // Ensure the ID is set
+            Carpooling updatedCarpooling = carpoolingServices.saveCarpooling(carpooling);
+            return new ResponseEntity<>(updatedCarpooling, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    // Delete a carpooling by ID
     @DeleteMapping("/delete/{id}")
-    public void deleteCarpooling(@PathVariable Long id) {
-        carpoolingServices.deleteCarpooling(id);
-    }
-}
+    public ResponseEntity<Void> deleteCarpooling(@PathVariable Long id) {
+        Carpooling carpooling = carpoolingServices.getCarpoolingById(id);
+        if (carpooling != null) {
+            carpoolingServices.deleteCarpooling(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }}

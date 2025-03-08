@@ -1,63 +1,125 @@
-<div class="container mt-5">
-  <h1 class="display-5 mb-5">{{ isEditing ? 'Modifier le trajet' : 'Nouveau trajet' }}</h1>
+   <!-- Start Hero Section -->
+   <div class="hero">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>Modern Interior <span clsas="d-block">Design Studio</span></h1>
+                    <p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+                    <p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="hero-img-wrap">
+                    <img src="/assets/FrontOffice/images2/couch.png" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End Hero Section -->
+
+<div class="why-choose-section">
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="col-lg-6">
+          <div class="container mt-5">
+            <h1 class="display-5 mb-5">{{ isEditing ? 'Edit Trip' : 'New Trip' }}</h1>
   
-  <!-- Form for adding/editing carpooling -->
-  <div class="container mt-5">
-      <h1 class="display-5 mb-5">{{ isEditing ? 'Modifier le trajet' : 'Nouveau trajet' }}</h1>
+            <!-- Form for adding/editing carpooling -->
+            <div class="row justify-content-center">
+              <div class="col-md-8 col-lg-8 pb-4">
+                <form (ngSubmit)="isEditing ? updateCarpooling() : addCarpooling()">
+                  <div class="row mb-5">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="driverName" class="text-black">Driver Name:</label>
+                        <input type="text" id="driverName" [(ngModel)]="newCarpooling.driverName" name="driverName" class="form-control" required />
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="departureLocation" class="text-black">Departure Location:</label>
+                        <input type="text" id="departureLocation" [(ngModel)]="newCarpooling.departureLocation" name="departureLocation" class="form-control" required />
+                      </div>
+                    </div>
+                  </div>
   
-      <!-- Form for adding/editing carpooling -->
-      <form (ngSubmit)="isEditing ? updateCarpooling() : addCarpooling()">
-          <div class="form-group">
-              <label for="driverName">Nom du conducteur:</label>
-              <input type="text" id="driverName" [(ngModel)]="newCarpooling.driverName" name="driverName" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="departureLocation">Lieu de départ:</label>
-              <input type="text" id="departureLocation" [(ngModel)]="newCarpooling.departureLocation" name="departureLocation" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="destination">Destination:</label>
-              <input type="text" id="destination" [(ngModel)]="newCarpooling.destination" name="destination" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="arrivalTime">Heure d'arrivée:</label>
-              <input type="datetime-local" id="arrivalTime" [(ngModel)]="newCarpooling.arrivalTime" name="arrivalTime" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="availableSeats">Nombre de places disponibles:</label>
-              <input type="number" id="availableSeats" [(ngModel)]="newCarpooling.availableSeats" name="availableSeats" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="pricePerSeat">Prix par place:</label>
-              <input type="number" id="pricePerSeat" [(ngModel)]="newCarpooling.pricePerSeat" name="pricePerSeat" class="form-control" required />
-          </div>
-          <div class="form-group">
-              <label for="description">Description:</label>
-              <textarea id="description" [(ngModel)]="newCarpooling.description" name="description" class="form-control" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill">
-              ➕ {{ isEditing ? 'Mettre à jour' : 'Ajouter le trajet' }}
-          </button>
-      </form>
+                  <div class="row mb-5">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="destination" class="text-black">Destination:</label>
+                        <input type="text" id="destination" [(ngModel)]="newCarpooling.destination" name="destination" class="form-control" required />
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="arrivalTime" class="text-black">Arrival Time:</label>
+                        <input type="datetime-local" id="arrivalTime" [(ngModel)]="newCarpooling.arrivalTime" name="arrivalTime" class="form-control" required />
+                      </div>
+                    </div>
+                  </div>
   
-      <!-- Display list of carpoolings -->
-      <div class="list-group mt-5">
-          <div *ngFor="let carpooling of carpoolings" class="list-group-item">
-              <h5>{{ carpooling.driverName }}</h5>
-              <p>
-                  <strong>Départ:</strong> {{ carpooling.departureLocation }}
-                  <strong>Destination:</strong> {{ carpooling.destination }}
-              </p>
-              <button class="btn btn-primary rounded-pill" (click)="editCarpooling(carpooling)">
-                  <i class="fas fa-edit"></i> Modifier
-              </button>
-              <button 
-              class="btn btn-danger rounded-pill" 
-              *ngIf="carpooling.carpoolingId !== undefined" 
-              (click)="deleteCarpooling(carpooling.carpoolingId!)">
-              <i class="fas fa-trash"></i> Supprimer
-          </button>
-          
+                  <div class="row mb-5">
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="availableSeats" class="text-black">Available Seats:</label>
+                        <input type="number" id="availableSeats" [(ngModel)]="newCarpooling.availableSeats" name="availableSeats" class="form-control" required />
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="form-group">
+                        <label for="pricePerSeat" class="text-black">Price per Seat:</label>
+                        <input type="number" id="pricePerSeat" [(ngModel)]="newCarpooling.pricePerSeat" name="pricePerSeat" class="form-control" required />
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="form-group mb-5">
+                    <label for="description" class="text-black">Description:</label>
+                    <textarea id="description" [(ngModel)]="newCarpooling.description" name="description" class="form-control" rows="5" required></textarea>
+                  </div>
+  
+                  <button type="submit" class="btn btn-primary-hover-outline">
+                    {{ isEditing ? 'Update Trip' : 'Add Trip' }}
+                  </button>
+                </form>
+              </div>
+            </div>
+  
+            <!-- List of carpoolings -->
+            <div class="row justify-content-center">
+              <div class="col-md-8 col-lg-8">
+                <div class="list-group mt-5">
+                  <div *ngFor="let carpooling of carpoolings" class="list-group-item mb-3">
+                    <h5>{{ carpooling.driverName }}</h5>
+                    <p>
+                      <strong>Departure:</strong> {{ carpooling.departureLocation }}<br />
+                      <strong>Destination:</strong> {{ carpooling.destination }}<br />
+                      <strong>Arrival Time:</strong> {{ carpooling.arrivalTime | date: 'short' }}<br />
+                      <strong>Available Seats:</strong> {{ carpooling.availableSeats }}<br />
+                      <strong>Price per Seat:</strong> {{ carpooling.pricePerSeat }} €
+                    </p>
+                    <button class="btn btn-primary rounded-pill me-2" (click)="editCarpooling(carpooling)">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button class="btn btn-danger rounded-pill" *ngIf="carpooling.carpoolingId !== undefined" (click)="deleteCarpooling(carpooling.carpoolingId!)">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+  
+        <!-- Image Section -->
+        <div class="col-lg-5">
+          <div class="img-wrap">
+            <img src="images/why-choose-us-img.jpg" alt="Image" class="img-fluid">
+          </div>
+        </div>
       </div>
+    </div>
   </div>

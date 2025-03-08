@@ -1,69 +1,118 @@
-import { Component } from '@angular/core';
-
-interface Carpooling {
-  carpoolingId?: number;
-  driverName: string;
-  departureLocation: string;
-  destination: string;
-  arrivalTime: string;
-  availableSeats: number;
-  pricePerSeat: number;
-  description: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooling.service';
+import { Carpooling } from 'src/app/models/carpooling.model';
 
 @Component({
   selector: 'app-carpooling',
   templateUrl: './carpooling.component.html',
-  styleUrls: ['./carpooling.component.css']
+  styleUrls: ['./carpooling.component.css'],
 })
-export class CarpoolingComponent {
-  isEditing: boolean = false;
-  carpoolings: Carpooling[] = [];
+export class CarpoolingComponent implements OnInit {
+  isLoading: boolean = false; // Loading state
+  isEditing: boolean = false; // Editing state
+  carpoolings: Carpooling[] = []; // List of carpoolings
   newCarpooling: Carpooling = {
+    // Default new carpooling object
+    carpoolingId: undefined,
     driverName: '',
     departureLocation: '',
     destination: '',
     arrivalTime: '',
     availableSeats: 0,
     pricePerSeat: 0,
-    description: ''
+    description: '',
   };
-  editingIndex: number | null = null;
+  editingIndex: number | null = null; // Index of the carpooling being edited
 
-  addCarpooling() {
-    this.newCarpooling.carpoolingId = Date.now(); // Générer un ID unique
-    this.carpoolings.push({ ...this.newCarpooling });
-    this.resetForm();
+  constructor(private carpoolingService: CarpoolingService) {}
+
+  ngOnInit(): void {
+    this.loadCarpoolings(); // Load carpoolings on component initialization
   }
 
-  editCarpooling(carpooling: Carpooling) {
+  // Load all carpoolings from the backend
+  loadCarpoolings(): void {
+    this.isLoading = true;
+    this.carpoolingService.getAllCarpoolings().subscribe({
+      next: (data) => {
+        this.carpoolings = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading carpoolings:', error);
+        this.isLoading = false;
+      },
+    });
+  }
+
+  // Add a new carpooling
+  addCarpooling(): void {
+    this.isLoading = true;
+    const carpoolingToSend = {
+      ...this.newCarpooling,
+      arrivalTime: new Date(this.newCarpooling.arrivalTime).toISOString(), // Convert to ISO string
+    };
+
+    this.carpoolingService.addCarpooling(carpoolingToSend).subscribe({
+      next: (response) => {
+        console.log('Carpooling added:', response);
+        this.loadCarpoolings(); // Refresh the list
+        this.resetForm();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error adding carpooling:', error);
+        this.isLoading = false;
+      },
+    });
+  }
+
+  // Edit a carpooling
+  editCarpooling(carpooling: Carpooling): void {
     this.isEditing = true;
-    this.editingIndex = this.carpoolings.findIndex(c => c.carpoolingId === carpooling.carpoolingId);
     this.newCarpooling = { ...carpooling };
   }
 
-  updateCarpooling() {
-    if (this.editingIndex !== null) {
-      this.carpoolings[this.editingIndex] = { ...this.newCarpooling };
-      this.resetForm();
+  updateCarpooling(): void {
+    if (this.newCarpooling.carpoolingId) {
+      this.carpoolingService.updateCarpooling(this.newCarpooling).subscribe({
+        next: (response) => {
+          console.log('Carpooling updated:', response);
+          this.loadCarpoolings(); // Refresh the list
+          this.resetForm();
+        },
+        error: (error) => {
+          console.error('Error updating carpooling:', error);
+        },
+      });
     }
   }
 
-  deleteCarpooling(id: number) {
-    this.carpoolings = this.carpoolings.filter(c => c.carpoolingId !== id);
+  // Delete a carpooling
+  deleteCarpooling(id: number): void {
+    this.carpoolingService.deleteCarpooling(id).subscribe({
+      next: () => {
+        console.log('Carpooling deleted');
+        this.loadCarpoolings(); // Refresh the list
+      },
+      error: (error) => {
+        console.error('Error deleting carpooling:', error);
+      },
+    });
   }
 
-  resetForm() {
+
+  resetForm(): void {
     this.isEditing = false;
-    this.editingIndex = null;
     this.newCarpooling = {
+      carpoolingId: undefined,
       driverName: '',
       departureLocation: '',
       destination: '',
       arrivalTime: '',
       availableSeats: 0,
       pricePerSeat: 0,
-      description: ''
+      description: '',
     };
   }
 }

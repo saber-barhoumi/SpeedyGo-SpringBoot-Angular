@@ -110,4 +110,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user'); // Add this line to remove user data
   }
+  isRecruitmentCompleted(): boolean {
+    return localStorage.getItem('recruitmentCompleted') === 'true';
+  }
 }

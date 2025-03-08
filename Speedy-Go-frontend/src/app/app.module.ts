@@ -22,9 +22,9 @@ import { GestionUserComponent } from './BackOffices/gestion-user/gestion-user.co
 import { UpdateUserComponent } from './BackOffices/update-user/update-user.component';
 import { AddUserComponent } from './BackOffices/add-user/add-user.component';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
-import { RecruitmentFormComponent } from './FrontOffices/pages/recruitement/recruitment-form/recruitment-form.component';
+import { RecruitmentFormComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-form/recruitment-form.component';
 import { MyApplicationsComponent } from './my-applications/my-applications.component';
-import { RecruitmentDetailComponent } from './FrontOffices/pages/recruitement/recruitment-detail/recruitment-detail.component';
+import { RecruitmentDetailComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-detail/recruitment-detail.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/vehicle-form.component';
@@ -36,6 +36,7 @@ import { RecruitmentManagementComponent } from './BackOffices/recruitment-manage
 import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
 import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
 import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
+import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-page.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { PartnerComponent } from './FrontOffices/pages/partner/partner.component
     // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
     CustomerComponent,
     DeliveryComponent,
-    PartnerComponent
+    PartnerComponent,
+    RecruitmentPageComponent
   ],
   imports: [
     BrowserModule,

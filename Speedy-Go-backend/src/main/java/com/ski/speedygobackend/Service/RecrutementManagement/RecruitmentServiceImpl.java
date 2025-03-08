@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RecruitmentServiceImpl implements IRecruitmentService {
@@ -77,7 +78,7 @@ public class RecruitmentServiceImpl implements IRecruitmentService {
 
     @Override
     public List<Recruitment> getRecruitmentsByApplicant(User applicant) {
-        return recruitmentRepository.findByApplicant(applicant);
+        return recruitmentRepository.findAllByApplicant(applicant);
     }
 
     @Override
@@ -107,4 +108,15 @@ public class RecruitmentServiceImpl implements IRecruitmentService {
 
         return recruitmentRepository.save(recruitment);
     }
+    @Override
+    public boolean isDeliveryRecruitmentCompleted(User user) {
+        Optional<Recruitment> recruitment = recruitmentRepository.findByApplicant(user);
+        if (recruitment.isPresent()) {
+            // Check if the recruitment status is COMPLETED
+            return recruitment.get().getStatus() == RecruitmentStatus.ACCEPTED;
+        } else {
+            return false;
+        }
+    }
+
 }

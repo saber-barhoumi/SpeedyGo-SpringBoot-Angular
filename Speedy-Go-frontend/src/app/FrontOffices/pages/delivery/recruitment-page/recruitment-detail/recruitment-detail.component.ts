@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
-import { RecruitmentService } from '../../../../services/recrutement/recruitment.service';
-import { AuthService } from '../../../services/user/auth.service';
+import { RecruitmentService } from '../../../../../services/recrutement/recruitment.service';
+import { AuthService } from '../../../../services/user/auth.service';
 
 @Component({
   selector: 'app-recruitment-detail',

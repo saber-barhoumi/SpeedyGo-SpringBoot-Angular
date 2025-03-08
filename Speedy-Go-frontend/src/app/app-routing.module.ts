@@ -11,7 +11,7 @@ import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
 import { UpdateUserComponent } from './BackOffices/update-user/update-user.component';
 import { AddUserComponent } from './BackOffices/add-user/add-user.component';
 import { BackofficeAuthGuard } from './backoffice-auth.guard';
-import { RecruitmentDetailComponent } from './FrontOffices/pages/recruitement/recruitment-detail/recruitment-detail.component';
+import { RecruitmentDetailComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-detail/recruitment-detail.component';
 import { MyApplicationsComponent } from './my-applications/my-applications.component';
 import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
 import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/vehicle-form.component';
@@ -21,7 +21,7 @@ import { RecruitmentManagementComponent } from './BackOffices/recruitment-manage
 import { RoleGuard } from './FrontOffices/guards/role.guard';
 import { AllTemplateBackComponent } from './BackOffices/all-template-back/all-template-back.component';
 import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';
-import { RecruitmentFormComponent } from './FrontOffices/pages/recruitement/recruitment-form/recruitment-form.component';
+import { RecruitmentFormComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-form/recruitment-form.component';
 
 // Import Delivery, Partner, Customer Components
 import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
@@ -101,17 +101,17 @@ const routes: Routes = [
     {
       path: 'delivery',
       component: DeliveryComponent,
-      canActivate: [authGuard]
-    },
+      canActivate: [authGuard, RoleGuard],
+      data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] }},
     {
       path: 'partner',
       component: PartnerComponent,
-      canActivate: [authGuard]
+      canActivate: [authGuard, RoleGuard],
     },
     {
       path: 'customer',
       component: CustomerComponent,
-      canActivate: [authGuard]
+      canActivate: [authGuard, RoleGuard],
     },
 ];
 

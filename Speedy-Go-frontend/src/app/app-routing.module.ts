@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+// Import Components
 import { LoginComponent } from './BackOffices/login/login.component';
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { authGuard } from './FrontOffices/guards/auth.guard';
@@ -27,6 +28,9 @@ import { RecruitmentFormComponent } from './FrontOffices/pages/delivery/recruitm
 import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
 import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
+
+// Import Carpooling Component
+import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component'; // Import CarpoolingComponent
 
 const routes: Routes = [
   {
@@ -112,6 +116,12 @@ const routes: Routes = [
       path: 'customer',
       component: CustomerComponent,
       canActivate: [authGuard, RoleGuard],
+    },
+    {
+      path: 'carpooling',
+      component: CarpoolingComponent,
+      canActivate: [authGuard, RoleGuard],
+      data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] }
     },
 ];
 

@@ -37,7 +37,7 @@ import { CustomerComponent } from './FrontOffices/pages/customer/customer.compon
 import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
 import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-page.component';
-
+import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,6 +64,7 @@ import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitm
     VehicleListComponent,
     VehicleDetailComponent,
     RecruitmentManagementComponent,
+    CarpoolingComponent ,
 
     // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
     CustomerComponent,

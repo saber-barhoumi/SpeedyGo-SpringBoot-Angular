@@ -1,0 +1,125 @@
+/* Général */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.returns-section {
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+/* Titre */
+.returns-section .title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Table */
+.returns-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.returns-table th,
+.returns-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.returns-table th {
+    background-color: #f1f1f1;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+}
+
+.returns-table td {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Alignement texte à droite pour la priorité */
+.returns-table td.text-right {
+    text-align: right;
+}
+
+/* Image avatar */
+.img-radius {
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.returns-table td img {
+    vertical-align: middle;
+}
+
+/* Badge (priorité) */
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-light-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.badge-light-primary {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.badge-light-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Case à cocher */
+.returns-table td input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Effet au survol des lignes de la table */
+.returns-table tbody tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Mise en page responsive */
+@media (max-width: 768px) {
+    .returns-section {
+        padding: 15px;
+    }
+
+    .returns-table th, .returns-table td {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .returns-table td img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .returns-table td span {
+        font-size: 12px;
+    }
+
+    .badge {
+        font-size: 10px;
+    }
+}

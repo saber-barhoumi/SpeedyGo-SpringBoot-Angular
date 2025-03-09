@@ -1,0 +1,49 @@
+<div *ngIf="errorMessage" class="alert alert-danger">
+    <p>{{ errorMessage }}</p>
+  </div>
+  
+  <section class="reports-section">
+    <h1 class="title">Reports List</h1>
+  
+    <table class="reports-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Report Name</th>
+                <th>Report Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let report of reportItems; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ report.report_name }}</td>
+                <td>{{ report.report_description }}</td>
+                <td>
+                  <span [ngClass]="{
+                    'badge bg-success': report.status === 'ACTIVE',
+                    'badge bg-danger': report.status === 'INNACTIVE'
+                  }">
+                    {{ report.status }}
+                  </span>
+                </td>
+                
+                <td>
+               
+                    <button class="btn btn-danger" (click)="deleteReport(report.report_id)">
+                        Delete
+                      </button>
+            </tr>
+        </tbody>
+    </table>
+  
+    <!-- Détails du rapport sélectionné -->
+    <div *ngIf="selectedReport" class="report-details">
+        <h2>Report Details</h2>
+        <p><strong>Name:</strong> {{ selectedReport.report_name }}</p>
+        <p><strong>Description:</strong> {{ selectedReport.report_description }}</p>
+        <p><strong>Status:</strong> {{ selectedReport.status }}</p>
+    </div>
+  </section>
+  

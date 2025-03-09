@@ -1,0 +1,37 @@
+<div class="container mt-4">
+    <!-- Display the error message if any -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <strong>Error!</strong> {{ errorMessage }}
+    </div>
+  
+    <!-- Display the list of returns -->
+    <section *ngIf="returns.length > 0">
+      <h1>Returns List</h1>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Reason</th>
+            <th>Return Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let returnItem of returns; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ returnItem.reason_description }}</td>
+            <td>{{ returnItem.retourtype }}</td>
+            <td>
+              <!-- Button to delete a return -->
+              <button class="btn btn-danger" (click)="deleteReturn(returnItem.id)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  
+    <!-- Display message if no returns are found -->
+    <div *ngIf="returns.length === 0">
+      <p>No returns ava  

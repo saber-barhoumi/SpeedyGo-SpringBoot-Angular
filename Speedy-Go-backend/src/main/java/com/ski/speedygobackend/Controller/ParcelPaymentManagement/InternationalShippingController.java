@@ -40,6 +40,7 @@ public class InternationalShippingController {
         return internationalShippingService.updateInternationalShipping(id, internationalShipping);
     }
 
+
     @DeleteMapping("delete/{id}")
     public void deleteInternationalShipping(@PathVariable Long id) {
         internationalShippingService.deleteInternationalShipping(id);

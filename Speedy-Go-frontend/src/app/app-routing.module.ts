@@ -1,3 +1,4 @@
+// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -31,6 +32,9 @@ import { CustomerComponent } from './FrontOffices/pages/customer/customer.compon
 
 // Import Carpooling Component
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component'; // Import CarpoolingComponent
+
+// Import InternationalShippingComponent
+import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
 
 const routes: Routes = [
   {
@@ -122,6 +126,12 @@ const routes: Routes = [
       component: CarpoolingComponent,
       canActivate: [authGuard, RoleGuard],
       data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] }
+    },
+    // Add InternationalShippingComponent route
+    {
+      path: 'international-shipping',
+      component: InternationalShippingComponent,
+      // You can add canActivate guards here if needed
     },
 ];
 

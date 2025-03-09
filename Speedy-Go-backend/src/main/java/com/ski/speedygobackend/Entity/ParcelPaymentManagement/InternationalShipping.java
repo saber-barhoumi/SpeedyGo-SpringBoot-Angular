@@ -27,7 +27,7 @@ public class InternationalShipping implements Serializable {
     private String destinationCountry;
     private Double shippingCost;
     private String trackingNumber;
-
+    private double weight;
 
 
     private LocalDate shippingDate;

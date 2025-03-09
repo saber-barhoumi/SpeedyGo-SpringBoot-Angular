@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
 import { Observable } from 'rxjs';
 import { Carpooling } from 'src/app/models/carpooling.model';
+import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model'; // Import ReservationCarpoo
 
 @Injectable({
   providedIn: 'root',
@@ -30,4 +31,18 @@ export class CarpoolingService {
   deleteCarpooling(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
+
+  reserveCarpooling(carpoolingId: number, userId: number): Observable<any> {
+    const url = `${this.apiUrl}/${carpoolingId}/reserve`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(url, userId, { headers: headers });
+  }
+  getMyReservations(): Observable<ReservationCarpoo[]> {
+    return this.http.get<ReservationCarpoo[]>(`${this.apiUrl}/reservations/me`); // Corrected URL
+  }
+  
+  deleteReservation(reservationId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/reservations/${reservationId}/delete`);
+  }
+
 }

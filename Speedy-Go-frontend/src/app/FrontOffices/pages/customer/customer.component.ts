@@ -9,7 +9,7 @@ import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model'; // 
   styleUrls: ['./customer.component.css']
 })
 export class CustomerComponent implements OnInit {
-
+  showCarpoolingList = false;
   carpoolings: any[] = [];
   errorMessage: string = '';
   userId: number | null = null; // Store the delivery user ID
@@ -58,6 +58,7 @@ export class CustomerComponent implements OnInit {
           (response: any[]) => {
             console.log('Carpooling reserved successfully:', response);
             this.getCarpoolings();
+            this.getMyReservations(); // Refresh reservations after reserving
           },
           (error) => {
             console.error('Error reserving carpooling:', error);
@@ -94,5 +95,8 @@ export class CustomerComponent implements OnInit {
           this.errorMessage = 'Failed to delete reservation. Please try again later.';
         }
       );
+  }
+  toggleCarpoolingList() {
+    this.showCarpoolingList = !this.showCarpoolingList;
   }
 }

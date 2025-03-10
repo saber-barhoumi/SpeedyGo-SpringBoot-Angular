@@ -25,8 +25,15 @@ export class CarpoolingService {
 
   // Update an existing carpooling
   updateCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.put<Carpooling>(`${this.apiUrl}/update/${carpooling.carpoolingId}`, carpooling, { headers: headers });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include the JWT token
+    });
+    return this.http.put<Carpooling>(
+      `${this.apiUrl}/update/${carpooling.carpoolingId}`,
+      carpooling,
+      { headers: headers }
+    );
   }
   // Delete a carpooling by ID
   deleteCarpooling(id: number): Observable<void> {

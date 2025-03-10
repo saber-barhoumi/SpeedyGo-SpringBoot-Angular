@@ -41,12 +41,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/carpoolings/reservations/me").authenticated() // Add this line
-                        .requestMatchers("/api/carpoolings/reservations/me").authenticated() // Add this line
-                        .requestMatchers("/api/carpoolings/add").authenticated() // Add this line
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll() // Allow public access to auth endpoints
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict admin endpoints to ADMIN role
+                        .requestMatchers("/api/carpoolings/reservations/me").authenticated() // Allow authenticated users
+                        .requestMatchers("/api/carpoolings/add").authenticated() // Allow authenticated users
+                        .requestMatchers("/api/carpoolings/update/**").authenticated() // Allow authenticated users to update carpoolings
+                        .anyRequest().authenticated() // Require authentication for all other endpoints
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

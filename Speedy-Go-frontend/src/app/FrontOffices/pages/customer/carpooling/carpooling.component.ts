@@ -45,14 +45,17 @@ export class CarpoolingComponent implements OnInit {
     });
   }
 
-  // Add a new carpooling
   addCarpooling(): void {
     this.isLoading = true;
+    let arrivalTimeToSend: string | null = null;
+    if (this.newCarpooling.arrivalTime) {
+      arrivalTimeToSend = new Date(this.newCarpooling.arrivalTime).toISOString();
+    }
     const carpoolingToSend = {
       ...this.newCarpooling,
-      arrivalTime: new Date(this.newCarpooling.arrivalTime).toISOString(), // Convert to ISO string
-    };
-
+      arrivalTime: arrivalTimeToSend,
+    } as Carpooling;
+  
     this.carpoolingService.addCarpooling(carpoolingToSend).subscribe({
       next: (response) => {
         console.log('Carpooling added:', response);
@@ -66,16 +69,18 @@ export class CarpoolingComponent implements OnInit {
       },
     });
   }
-
-  // Edit a carpooling
-  editCarpooling(carpooling: Carpooling): void {
-    this.isEditing = true;
-    this.newCarpooling = { ...carpooling };
-  }
-
+  
   updateCarpooling(): void {
     if (this.newCarpooling.carpoolingId) {
-      this.carpoolingService.updateCarpooling(this.newCarpooling).subscribe({
+      let arrivalTimeToSend: string | null = null;
+      if (this.newCarpooling.arrivalTime) {
+        arrivalTimeToSend = new Date(this.newCarpooling.arrivalTime).toISOString();
+      }
+      const carpoolingToSend = {
+        ...this.newCarpooling,
+        arrivalTime: arrivalTimeToSend,
+      } as Carpooling;
+      this.carpoolingService.updateCarpooling(carpoolingToSend).subscribe({
         next: (response) => {
           console.log('Carpooling updated:', response);
           this.loadCarpoolings(); // Refresh the list
@@ -86,19 +91,6 @@ export class CarpoolingComponent implements OnInit {
         },
       });
     }
-  }
-
-  // Delete a carpooling
-  deleteCarpooling(id: number): void {
-    this.carpoolingService.deleteCarpooling(id).subscribe({
-      next: () => {
-        console.log('Carpooling deleted');
-        this.loadCarpoolings(); // Refresh the list
-      },
-      error: (error) => {
-        console.error('Error deleting carpooling:', error);
-      },
-    });
   }
 
 

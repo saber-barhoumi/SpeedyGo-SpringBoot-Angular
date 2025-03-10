@@ -1,46 +1,147 @@
-<h2>List of Carpoolings</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Destination</th>
-      <th>Date</th>
-      <th>Time</th>
-      <th>Seats</th>
-      <th>Price</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let carpooling of carpoolings">
-      <td>{{ carpooling.destination }}</td>
-      <td>{{ carpooling.arrivalTime | date }}</td>
-      <td>{{ carpooling.arrivalTime | date:'shortTime' }}</td>
-      <td>{{ carpooling.availableSeats }}</td>
-      <td>{{ carpooling.pricePerSeat }}</td>
-      <td>
-        <button (click)="reserveCarpooling(carpooling.carpooling_id)">Reserve</button>
+<app-header-front></app-header-front>
+    <!-- Start Hero Section -->
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Modern Interior <span clsas="d-block">Design Studio</span></h1>
+								<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+								<p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="/assets/FrontOffice/images2/couch.png" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-</td>
 
-    </tr>
-    <h2>My Carpooling Reservations</h2>
 
-    <ul *ngIf="myReservations && myReservations.length > 0; else noReservations">
-      <li *ngFor="let reservation of myReservations">
-        Reservation ID: {{ reservation.reservation_id }} <br>
-        Carpooling ID: {{ reservation.carpooling.carpooling_id }} <br>
-        Departure Location: {{ reservation.carpooling.departure_location }} <br>
-        Destination: {{ reservation.carpooling.destination }} <br>
-        User ID: {{ reservation.user_id }}
-        <button (click)="deleteMyReservation(reservation.reservation_id)">Delete</button>
 
-      </li>
-    </ul>
-    
-    <ng-template #noReservations>
-      <p>You have no carpooling reservations yet.</p>
-    </ng-template>
-  </tbody>
 
+
+
+
+
+
+
+<div class="container">
+  <h1>Customer Dashboard</h1>
   
-</table>
+  <button (click)="toggleCarpoolingList()" class="btn btn-primary">
+    {{ showCarpoolingList ? 'Hide Carpoolings' : 'Show Carpoolings' }}
+  </button>
+
+  <div *ngIf="showCarpoolingList">
+    <div class="blog-section">
+      <div class="container">
+        <h2 class="text-center mb-4">List of Carpoolings</h2>
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-4 mb-5" *ngFor="let carpooling of carpoolings">
+            <div class="post-entry">
+              <div class="post-content-entry">
+                <h3>Destination: {{ carpooling.destination }}</h3>
+                <div class="meta">
+                  <span>Date: {{ carpooling.arrivalTime | date }}</span> <br>
+                  <span>Time: {{ carpooling.arrivalTime | date:'shortTime' }}</span> <br>
+                  <span>Seats: {{ carpooling.availableSeats }}</span> <br>
+                  <span>Price: {{ carpooling.pricePerSeat }} TND</span>
+                </div>
+                <button class="btn btn-primary mt-2" (click)="reserveCarpooling(carpooling.carpoolingId)">Reserve</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="text-center mt-5">My Carpooling Reservations</h2>
+        <div class="row" *ngIf="myReservations && myReservations.length > 0; else noReservations">
+          <div class="col-12 col-sm-6 col-md-4 mb-5" *ngFor="let reservation of myReservations">
+            <div class="post-entry">
+              <div class="post-content-entry">
+                <h3>Reservation ID: {{ reservation.reservation_id }}</h3>
+                <div class="meta">
+                  <span>Carpooling ID: {{ reservation.carpooling.carpooling_id }}</span> <br>
+                  <span>Departure: {{ reservation.carpooling.departure_location }}</span> <br>
+                  <span>Destination: {{ reservation.carpooling.destination }}</span> <br>
+                  <span>User ID: {{ reservation.user_id }}</span>
+                </div>
+                <button class="btn btn-danger mt-2" (click)="deleteMyReservation(reservation.reservation_id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noReservations>
+          <p class="text-center">You have no carpooling reservations yet.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="errorMessage">
+    <p class="error-message">{{ errorMessage }}</p>
+  </div>
+</div>
+
+
+
+
+
+
+
+<app-footer-front></app-footer-front>
+
+
+       
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playball&display=swap" rel="stylesheet">
+
+<!-- Icon Font Stylesheet -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Libraries Stylesheet -->
+<link href="/assets/FrontOffice/lib/animate/animate.min.css" rel="stylesheet">
+<link href="/assets/FrontOffice/lib/animate/animate.css" rel="stylesheet">
+<link href="/assets/FrontOffice/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+<link href="/assets/FrontOffice/lib/owlcarousel/owl.carousel.min.css" rel="stylesheet">
+
+<!-- Customized Bootstrap Stylesheet -->
+<link href="/assets/FrontOffice/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Template Stylesheet -->
+<link href="/assets/FrontOffice/css/styles.css" rel="stylesheet">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/FrontOffice/lib/wow/wow.min.js"></script>
+<script src="assets/FrontOffice/lib/easing/easing.min.js"></script>
+<script src="assets/FrontOffice/lib/easing/easing.js"></script>
+<script src="assets/FrontOffice/lib/waypoints/waypoints.min.js"></script>
+<script src="assets/FrontOffice/lib/counterup/counterup.min.js"></script>
+<script src="assets/FrontOffice/lib/lightbox/js/lightbox.min.js"></script>
+<script src="assets/FrontOffice/lib/lightbox/js/lightbox.min.js"></script>
+<script src="assets/FrontOffice/lib/owlcarousel/owl.carousel.min.js"></script>
+<!-- Template Javascript -->
+<script src="assets/FrontOffice/js/main.js"></script>
+
+
+
+<!-- 2éme template  --><!-- 2éme template   -->
+
+
+<!-- Template Javascript -->
+
+<script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
+<script src="/assets/FrontOffice/js2js/tiny-slider.js"></script>
+<script src="/assets/FrontOffice/js2/custom.js"></script>
+<link rel="shortcut icon" href="favicon.png">
+<!-- Bootstrap CSS -->
+<link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
+<link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">

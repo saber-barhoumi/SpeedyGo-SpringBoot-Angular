@@ -1,6 +1,7 @@
 package com.ski.speedygobackend.Entity.TripManagement;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ski.speedygobackend.Entity.CarpoolingManagement.Carpooling;
 import com.ski.speedygobackend.Entity.EnvironmentalImpactManagement.CarbonFootPrint;
 import com.ski.speedygobackend.Entity.FeedbackManagement.FeedbackAnalysis;
@@ -39,7 +40,7 @@ public class Trip implements Serializable {
     private List<Parcel> parcels;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
 
     private List<Carpooling> carpoolings;
 

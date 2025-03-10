@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/carpoolings/reservations/me").authenticated() // Add this line
+                        .requestMatchers("/api/carpoolings/reservations/me").authenticated() // Add this line
+                        .requestMatchers("/api/carpoolings/add").authenticated() // Add this line
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

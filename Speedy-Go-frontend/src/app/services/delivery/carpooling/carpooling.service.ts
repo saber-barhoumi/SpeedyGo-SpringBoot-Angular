@@ -16,17 +16,18 @@ export class CarpoolingService {
   getAllCarpoolings(): Observable<Carpooling[]> {
     return this.http.get<Carpooling[]>(this.apiUrl);
   }
-
+  
   // Add a new carpooling
   addCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    return this.http.post<Carpooling>(`${this.apiUrl}/add`, carpooling);
-  }
+  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  return this.http.post<Carpooling>(`${this.apiUrl}/add`, carpooling, { headers: headers });
+}
 
   // Update an existing carpooling
   updateCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    return this.http.put<Carpooling>(`${this.apiUrl}/update/${carpooling.carpoolingId}`, carpooling);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<Carpooling>(`${this.apiUrl}/update/${carpooling.carpoolingId}`, carpooling, { headers: headers });
   }
-
   // Delete a carpooling by ID
   deleteCarpooling(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);

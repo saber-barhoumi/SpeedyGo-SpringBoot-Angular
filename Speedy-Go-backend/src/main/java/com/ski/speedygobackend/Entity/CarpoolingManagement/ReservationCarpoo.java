@@ -1,5 +1,6 @@
 package com.ski.speedygobackend.Entity.CarpoolingManagement;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,8 @@ public class ReservationCarpoo {
 
     @ManyToOne
     @JoinColumn(name = "carpooling_id")
+    @JsonBackReference
+
     private Carpooling carpooling;
 
     @Column(name = "user_id")

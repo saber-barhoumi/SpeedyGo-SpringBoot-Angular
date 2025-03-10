@@ -73,11 +73,25 @@ export class CarpoolingComponent implements OnInit {
     this.newCarpooling = { ...carpooling };
   }
 
+  deleteCarpooling(id: number): void {
+    console.log('Deleting carpooling with ID:', id);
+    this.carpoolingService.deleteCarpooling(id).subscribe({
+      next: () => {
+        console.log('Carpooling deleted successfully');
+        this.loadCarpoolings(); // Refresh the list
+      },
+      error: (error) => {
+        console.error('Error deleting carpooling:', error);
+      },
+    });
+  }
+
   updateCarpooling(): void {
     if (this.newCarpooling.carpoolingId) {
+      console.log('Updating carpooling:', this.newCarpooling);
       this.carpoolingService.updateCarpooling(this.newCarpooling).subscribe({
         next: (response) => {
-          console.log('Carpooling updated:', response);
+          console.log('Carpooling updated successfully:', response);
           this.loadCarpoolings(); // Refresh the list
           this.resetForm();
         },
@@ -85,20 +99,9 @@ export class CarpoolingComponent implements OnInit {
           console.error('Error updating carpooling:', error);
         },
       });
+    } else {
+      console.error('Carpooling ID is undefined');
     }
-  }
-
-  // Delete a carpooling
-  deleteCarpooling(id: number): void {
-    this.carpoolingService.deleteCarpooling(id).subscribe({
-      next: () => {
-        console.log('Carpooling deleted');
-        this.loadCarpoolings(); // Refresh the list
-      },
-      error: (error) => {
-        console.error('Error deleting carpooling:', error);
-      },
-    });
   }
 
 

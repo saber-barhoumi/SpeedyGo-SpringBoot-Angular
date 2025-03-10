@@ -43,12 +43,11 @@ public class Carpooling implements Serializable {
     double pricePerSeat;
     @Column(nullable = true)
     private  String description;
-
     @ManyToOne
-    @JsonManagedReference
-
+    @JsonBackReference // Changed to JsonBackReference
     private Trip trip;
+
     @OneToMany(mappedBy = "carpooling", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference
+    @JsonManagedReference // Changed to JsonManagedReference
     private List<ReservationCarpoo> reservationCarpoos;
 }

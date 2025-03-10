@@ -32,6 +32,34 @@ public class CarpoolingRestController {
         this.userRepository = userRepository;
     }
 
+    @PostMapping(value = "/add", consumes = "application/json")
+    public ResponseEntity<?> addCarpooling(@RequestBody Carpooling carpooling, Principal principal) {
+        // Get the username of the logged-in user
+        String username = principal.getName();
+
+        // Get the user ID from the username (you might need to fetch the user from the database)
+        Optional<User> userOptional = userRepository.findByEmail(username);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Long userId = user.getUserId();
+
+            // Set the user ID for the carpooling
+            carpooling.setUserId(userId);
+
+            // Save the carpooling
+            carpoolingServices.saveCarpooling(carpooling);
+
+            // Return a success message
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Carpooling added successfully");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else {
+            // Handle the case where the user is not found
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     // Get all carpoolings
     @GetMapping
     public ResponseEntity<List<Carpooling>> getAllCarpoolings() {

@@ -1,9 +1,7 @@
-
-
 import { Component, OnInit } from '@angular/core';
 import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooling.service';
 import { Carpooling } from 'src/app/models/carpooling.model';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker'; // Import BsDatepickerConfig
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-carpooling',
@@ -13,23 +11,20 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker'; // Import BsDatep
 export class CarpoolingComponent implements OnInit {
   isLoading: boolean = false;
   isEditing: boolean = false;
+  showForm: boolean = false;
+  showList: boolean = false;
+
+  showAddCarpooling: boolean = false;
+  showAllCarpoolings: boolean = false;
+
   carpoolings: Carpooling[] = [];
-  newCarpooling: Carpooling = {
-    carpoolingId: undefined,
-    driverName: '',
-    departureLocation: '',
-    destination: '',
-    arrivalTime: '',
-    availableSeats: 0,
-    pricePerSeat: 0,
-    description: '',
-  };
+  newCarpooling: Carpooling = this.initializeCarpooling();
   editingIndex: number | null = null;
-  bsConfig: Partial<BsDatepickerConfig>; // BsDatepicker configuration
+  bsConfig: Partial<BsDatepickerConfig>;
 
   constructor(private carpoolingService: CarpoolingService) {
     this.bsConfig = Object.assign({}, {
-      containerClass: 'theme-dark-blue', // Optional: Customize the appearance
+      containerClass: 'theme-dark-blue',
       dateInputFormat: 'YYYY-MM-DD HH:mm',
       showWeekNumbers: false,
     });
@@ -37,6 +32,25 @@ export class CarpoolingComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCarpoolings();
+  }
+
+  toggleAddCarpooling(): void {
+    this.showAddCarpooling = !this.showAddCarpooling;
+    this.showAllCarpoolings = false;
+  }
+
+  toggleList() {
+    this.showList = !this.showList;
+    this.showForm = false; // Cache le formulaire si on ouvre la liste
+  }
+  
+  toggleForm() {
+    this.showForm = !this.showForm;
+    this.showList = false; // Cache la liste si on ouvre le formulaire
+  }
+  toggleShowAllCarpoolings(): void {
+    this.showAllCarpoolings = !this.showAllCarpoolings;
+    this.showAddCarpooling = false;
   }
 
   loadCarpoolings(): void {
@@ -55,22 +69,13 @@ export class CarpoolingComponent implements OnInit {
 
   addCarpooling(): void {
     this.isLoading = true;
-    // Convert arrivalTime to ISO string only if it's a valid Date object
-    const arrivalTimeToSend = this.newCarpooling.arrivalTime
-      ? new Date(this.newCarpooling.arrivalTime).toISOString()
-      : null; // Or handle the null case as needed
-
-    const carpoolingToSend = {
-      ...this.newCarpooling,
-      arrivalTime: arrivalTimeToSend,
-    };
-
+    const carpoolingToSend = this.prepareCarpooling(this.newCarpooling);
+    
     this.carpoolingService.addCarpooling(carpoolingToSend).subscribe({
-      next: (response) => {
-        console.log('Carpooling added:', response);
+      next: () => {
         this.loadCarpoolings();
         this.resetForm();
-        this.isLoading = false;
+        this.showAddCarpooling = false;
       },
       error: (error) => {
         console.error('Error adding carpooling:', error);
@@ -79,12 +84,9 @@ export class CarpoolingComponent implements OnInit {
     });
   }
 
-  
   deleteCarpooling(id: number): void {
-    console.log('Deleting carpooling with ID:', id);
     this.carpoolingService.deleteCarpooling(id).subscribe({
       next: () => {
-        console.log('Carpooling deleted successfully');
         this.loadCarpoolings();
       },
       error: (error) => {
@@ -93,44 +95,43 @@ export class CarpoolingComponent implements OnInit {
     });
   }
 
-  editCarpooling(carpooling: Carpooling) {
+  editCarpooling(carpooling: Carpooling): void {
     this.isEditing = true;
     this.editingIndex = this.carpoolings.findIndex(c => c.carpoolingId === carpooling.carpoolingId);
     this.newCarpooling = { ...carpooling };
+    this.showAddCarpooling = true;
+    this.showAllCarpoolings = false;
   }
 
   updateCarpooling(): void {
-    console.log("newCarpooling object:", this.newCarpooling); // Add this line
-    if (this.newCarpooling.carpoolingId) {
-    } else {
+    if (!this.newCarpooling.carpoolingId) {
       console.error('Carpooling ID is undefined. Cannot update carpooling.');
+      return;
     }
-  
-    const arrivalTimeToSend = this.newCarpooling.arrivalTime
-      ? new Date(this.newCarpooling.arrivalTime).toISOString()
-      : null;
-  
-    const carpoolingToSend = {
-      ...this.newCarpooling,
-      arrivalTime: arrivalTimeToSend,
-    };
-  
+
+    this.isLoading = true;
+    const carpoolingToSend = this.prepareCarpooling(this.newCarpooling);
+    
     this.carpoolingService.updateCarpooling(carpoolingToSend).subscribe({
-      next: (response) => {
-        console.log('Carpooling updated successfully:', response);
+      next: () => {
         this.loadCarpoolings();
         this.resetForm();
+        this.showAddCarpooling = false;
       },
       error: (error) => {
         console.error('Error updating carpooling:', error);
+        this.isLoading = false;
       },
     });
   }
 
-
   resetForm(): void {
     this.isEditing = false;
-    this.newCarpooling = {
+    this.newCarpooling = this.initializeCarpooling();
+  }
+
+  private initializeCarpooling(): Carpooling {
+    return {
       carpoolingId: undefined,
       driverName: '',
       departureLocation: '',
@@ -139,6 +140,13 @@ export class CarpoolingComponent implements OnInit {
       availableSeats: 0,
       pricePerSeat: 0,
       description: '',
+    };
+  }
+
+  private prepareCarpooling(carpooling: Carpooling): Carpooling {
+    return {
+      ...carpooling,
+      arrivalTime: carpooling.arrivalTime ? new Date(carpooling.arrivalTime).toISOString() : null,
     };
   }
 }

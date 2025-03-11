@@ -1,68 +1,54 @@
 <app-header-front></app-header-front>
-    <!-- Start Hero Section -->
-			<div class="hero">
-				<div class="container">
-					<div class="row justify-content-between">
-						<div class="col-lg-5">
-							<div class="intro-excerpt">
-								<h1>Modern Interior <span clsas="d-block">Design Studio</span></h1>
-								<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
-								<p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
-							</div>
-						</div>
-						<div class="col-lg-7">
-							<div class="hero-img-wrap">
-								<img src="/assets/FrontOffice/images2/couch.png" class="img-fluid">
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-            <button (click)="goToCarpooling()">Go to Carpooling</button>
 
-		<!-- End Hero Section -->
-         <!-- Start Product Section -->
-		<div class="product-section">
-			<div class="container">
-				<div class="row">
-
-					<!-- Start Column 1 -->
-					<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
-						<h2 class="mb-4 section-title">Crafted with excellent material.</h2>
-						<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. </p>
-						<p><a href="shop.html" class="btn">Explore</a></p>
-					</div> 
-					<!-- End Column 1 -->
-<!-- Start Column 5 -->
-<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-    <a class="product-item" href="/Carpooling">
-      <img src="images/carpooling.png" class="img-fluid product-thumbnail">
-      <h3 class="product-title">Carpooling</h3>
-    </a>
-  </div>
-  <!-- End Column 5 -->
+        <!-- Start Product Section -->
+<div class="product-section">
+	<div class="container">
+	  <div class="row">
   
-  <!-- Start Column 6 -->
-  <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-    <a class="product-item" href="/recruitment">
-      <img src="images/recruitment.png" class="img-fluid product-thumbnail">
-      <h3 class="product-title">Recruitment</h3>
-    </a>
-  </div>
-  <!-- End Column 6 -->
-  
-  <!-- Start Column 7 -->
-  <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-    <a class="product-item" href="/recruitment">
-      <img src="images/service.png" class="img-fluid product-thumbnail">
-      <h3 class="product-title">Service</h3>
-    </a>
-  </div>
-  <!-- End Column 7 -->
-				</div>
-			</div>
+		<!-- Start Column 1 -->
+		<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+		  <h2 class="mb-4 section-title">Fast and Reliable Delivery</h2>
+		  <p class="mb-4">
+			Speedy Go ensures fast and reliable delivery services for all your needs. 
+			Whether it's packages, food, or groceries, we deliver with care and efficiency. 
+			Track your delivery in real-time and enjoy a seamless experience.
+		  </p>
+		  <p><a href="/delivery" class="btn">Explore Delivery</a></p>
 		</div>
-		<!-- End Product Section -->
+		<!-- End Column 1 -->
+  
+		<!-- Start Column 5 -->
+		<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+		  <!-- Carpooling Picture with Link -->
+		  <a class="product-item" (click)="goToCarpooling()" style="cursor: pointer;">
+			<img src="/assets/FrontOffice/img/carpooliing.png" class="img-fluid product-thumbnail">
+			<h3 class="product-title">Carpooling</h3>
+		  </a>
+		</div>
+		<!-- End Column 5 -->
+  
+		<!-- Start Column 6 -->
+		<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+		  <a class="product-item" href="/recruitment">
+			<img src="/assets/FrontOffice/img/recrutrement.png" class="img-fluid product-thumbnail">
+			<h3 class="product-title">Recruitment</h3>
+		  </a>
+		</div>
+		<!-- End Column 6 -->
+  
+		<!-- Start Column 7 -->
+		<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+		  <a class="product-item" href="/service">
+			<img src="/assets/FrontOffice/img/service.png" class="img-fluid product-thumbnail">
+			<h3 class="product-title">Service</h3>
+		  </a>
+		</div>
+		<!-- End Column 7 -->
+  
+	  </div>
+	</div>
+  </div>
+  <!-- End Product Section -->
 
 <app-footer-front></app-footer-front>
 

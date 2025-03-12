@@ -1,206 +1,85 @@
-<!DOCTYPE html>
-<html lang="fr">
+<section>
+    <div class="login-box">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <h2>Register</h2>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription - SPEEDYGO</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 600px;
-            /* Largeur maximale pour le formulaire */
-            padding: 20px;
-            border-radius: 10px;
-            overflow-y: auto;
-            /* Empêche les champs cachés */
-            max-height: 90vh;
-            /* S'assure que le formulaire tient dans la vue */
-        }
-
-        /* Style pour le champ de fichier */
-        input[type="file"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
-
-        input[type="file"]::file-selector-button {
-            padding: 8px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="file"]::file-selector-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-
-<body>
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="card shadow-lg border-0">
-            <!-- Logo -->
-            <div class="text-center mb-3">
-                <div class="d-inline-flex align-items-center">
-                    <svg class="text-primary me-2" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M12 2a3 3 0 0 0-3 3c0 1.7 1.3 3 3 3s3-1.3 3-3a3 3 0 0 0-3-3z" />
-                        <path d="M19 9a3 3 0 0 0-3-3h-2a3 3 0 0 0-2 .8a3 3 0 0 0-2-.8H8a3 3 0 0 0-3 3v11h14V9z" />
-                    </svg>
-                    <span class="h4 mb-0 text-primary">
-                        <span class="fw-bold">SPEEDY</span>GO
-                    </span>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" formControlName="firstName" required>
+                <label>First Name</label>
             </div>
 
-            <!-- Titre -->
-            <h1 class="h4 text-center mb-3">S'inscrire</h1>
-            <p class="text-muted text-center mb-4">Créez un nouveau compte !</p>
-
-            <!-- Formulaire d'inscription -->
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="firstName" class="form-label">Prénom</label>
-                    <input id="firstName" formControlName="firstName" class="form-control" />
-                    <div *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
-                        <small class="text-danger" *ngIf="registerForm.get('firstName')?.errors?.['required']">Prénom
-                            est requis.</small>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="lastName" class="form-label">Nom</label>
-                    <input id="lastName" formControlName="lastName" class="form-control" />
-                    <div *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
-                        <small class="text-danger" *ngIf="registerForm.get('lastName')?.errors?.['required']">Nom est
-                            requis.</small>
-                    </div>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" formControlName="lastName" required>
+                <label>Last Name</label>
             </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input id="email" formControlName="email" type="email" class="form-control" />
-                <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
-                    <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['required']">Email est
-                        requis.</small>
-                    <small class="text-danger" *ngIf="registerForm.get('email')?.errors?.['email']">Email
-                        invalide.</small>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                <input type="email" formControlName="email" required>
+                <label>Email</label>
             </div>
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Mot de passe</label>
-                <input id="password" formControlName="password" type="password" class="form-control" />
-                <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-                    <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['required']">Mot de passe
-                        est requis.</small>
-                    <small class="text-danger" *ngIf="registerForm.get('password')?.errors?.['minlength']">Le mot de
-                        passe doit comporter au moins 6 caractères.</small>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" formControlName="password" required>
+                <label>Password</label>
             </div>
 
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
-                <input id="confirmPassword" formControlName="confirmPassword" type="password" class="form-control" />
-                <div *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid">
-                    <small class="text-danger"
-                        *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">La confirmation du mot de passe
-                        est requise.</small>
-                    <small class="text-danger" *ngIf="registerForm.hasError('mismatch')">Les mots de passe ne
-                        correspondent pas.</small>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" formControlName="confirmPassword" required>
+                <label>Confirm Password</label>
             </div>
 
-            <div class="row">
-                <div class="mb-3">
-                    <label for="birthDate" class="form-label">Date de naissance</label>
-                    <input id="birthDate" formControlName="birthDate" type="date" class="form-control" />
-                    <div *ngIf="registerForm.get('birthDate')?.touched && registerForm.get('birthDate')?.invalid">
-                        <small class="text-danger" *ngIf="registerForm.get('birthDate')?.errors?.['required']">La date
-                            de naissance est requise.</small>
-                        <small class="text-danger"
-                            *ngIf="registerForm.get('birthDate')?.errors?.['invalidDate']">La date de naissance ne peut
-                            pas être dans le futur.</small>
-                        <small class="text-danger" *ngIf="registerForm.get('birthDate')?.errors?.['underage']">Vous
-                            devez avoir au moins 18 ans.</small>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="phoneNumber" class="form-label">Numéro de téléphone</label>
-                    <input id="phoneNumber" formControlName="phoneNumber" type="text" class="form-control" />
-                    <div *ngIf="registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.invalid">
-                        <small class="text-danger"
-                            *ngIf="registerForm.get('phoneNumber')?.errors?.['pattern']">Le numéro de téléphone est
-                            invalide.</small>
-                    </div>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="calendar"></ion-icon></span>
+                <input type="date" formControlName="birthDate" required>
+                <label></label>
             </div>
 
-            <div class="mb-3">
-                <label for="address" class="form-label">Adresse</label>
-                <textarea id="address" formControlName="address" class="form-control"></textarea>
-                <div *ngIf="registerForm.get('address')?.touched && registerForm.get('address')?.invalid">
-                    <small class="text-danger" *ngIf="registerForm.get('address')?.errors?.['required']">Adresse est
-                        requise.</small>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="call"></ion-icon></span>
+                <input type="text" formControlName="phoneNumber">
+                <label>Phone Number</label>
             </div>
 
-            <div class="mb-3">
-                <label for="profile_picture" class="form-label">Photo de profil</label>
-                <input id="profile_picture" type="file" formControlName="profile_picture" class="form-control"
-                    (change)="onFileSelected($event)" accept="image/*" />
-                <div *ngIf="registerForm.get('profile_picture')?.touched && registerForm.get('profile_picture')?.invalid">
-                    <small class="text-danger"
-                        *ngIf="registerForm.get('profile_picture')?.errors?.['required']">La photo de profil est
-                        requise.</small>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="home"></ion-icon></span>
+                <input type="text" formControlName="address" required>
+                <label>Address</label>
             </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="sexe" class="form-label">Sexe</label>
-                    <select id="sexe" formControlName="sexe" class="form-select">
-                        <option value="MEN">MEN</option>
-                        <option value="WOMEN">WOMEN</option>
-                    </select>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="role" class="form-label">Rôle</label>
-                    <select id="role" formControlName="role" class="form-select">
-                        <option value="PARTNER">PARTNER</option>
-                        <option value="CUSTOMER">CUSTOMER</option>
-                        <option value="DELEVERY">DELIVERY</option>
-                    </select>
-                </div>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="image"></ion-icon></span>
+                <input type="file" formControlName="profile_picture" (change)="onFileSelected($event)" accept="image/*">
+                <label></label>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">S'inscrire</button>
-        </div>
-        <div class="text-center mt-3">
-            <span class="text-muted">Vous avez déjà un compte ? </span>
-            <a routerLink="/login" class="btn btn-outline-primary">Se connecter</a>
-        </div>
-    </form>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="male-female"></ion-icon></span>
+                <select formControlName="sexe">
+                    <option value="MEN">MEN</option>
+                    <option value="WOMEN">WOMEN</option>
+                </select>
+                <label></label>
+            </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+            <div class="input-box">
+                <span class="icon"><ion-icon name="briefcase"></ion-icon></span>
+                <select formControlName="role">
+                    <option value="PARTNER">PARTNER</option>
+                    <option value="CUSTOMER">CUSTOMER</option>
+                    <option value="DELEVERY">DELIVERY</option>
+                </select>
+                <label></label>
+            </div>
 
-</html>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</section>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

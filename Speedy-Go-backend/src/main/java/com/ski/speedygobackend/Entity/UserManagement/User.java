@@ -63,6 +63,8 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     Role role;
+    @Column(name = "password_reset_token")
+    private String passwordResetToken;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SpeedyChat> speedyChats;

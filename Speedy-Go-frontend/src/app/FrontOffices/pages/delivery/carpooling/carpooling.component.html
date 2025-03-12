@@ -80,6 +80,15 @@
             </div>
           </div>
 
+          <div class="row mb-5">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label for="description" class="text-black">Description:</label>
+                <textarea id="description" [(ngModel)]="newCarpooling.description" name="description" class="form-control" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
           <button type="submit" class="btn btn-primary-hover-outline">
             {{ isEditing ? 'Update Trip' : 'Add Trip' }}
           </button>
@@ -99,7 +108,8 @@
             <strong>Destination:</strong> {{ carpooling.destination }}<br />
             <strong>Arrival Time:</strong> {{ carpooling.arrivalTime | date: 'short' }}<br />
             <strong>Available Seats:</strong> {{ carpooling.availableSeats }}<br />
-            <strong>Price per Seat:</strong> {{ carpooling.pricePerSeat }} €
+            <strong>Price per Seat:</strong> {{ carpooling.pricePerSeat }} €<br />
+            <strong>Description:</strong> {{ carpooling.description }}
           </p>
           <button class="btn btn-primary rounded-pill me-2" (click)="editCarpooling(carpooling)">
             <i class="fas fa-edit"></i> Edit
@@ -215,6 +225,9 @@
         </div>
     </div>
 </div>
+
+
+
 
 <app-footer-front></app-footer-front>
 

@@ -18,17 +18,17 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      firstName: ['', Validators.required], // Corrected name
-      lastName: ['', Validators.required],  // Corrected name
-      email: ['', [Validators.required, Validators.email]],
+      firstName: [localStorage.getItem('firstName') || '', Validators.required],
+      lastName: [localStorage.getItem('lastName') || '', Validators.required],
+      email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      birthDate: ['', [Validators.required, this.ageValidator]], // Corrected name
-      phoneNumber: ['', [Validators.pattern('^\\d{8}$')]], // Corrected name
-      address: ['', Validators.required],
+      birthDate: [localStorage.getItem('birthDate') || '', [Validators.required, this.ageValidator]],
+      phoneNumber: [localStorage.getItem('phoneNumber') || '', [Validators.pattern('^\\d{8}$')]],
+      address: [localStorage.getItem('address') || '', Validators.required],
       profile_picture: [null, Validators.required],
-      sexe: ['MEN', Validators.required],
-      role: ['CUSTOMER', Validators.required]  // Corrected name , Added required validator
+      sexe: [localStorage.getItem('sexe') || 'MEN', Validators.required],
+      role: [localStorage.getItem('role') || 'CUSTOMER', Validators.required]
     }, {
       validators: this.passwordMatchValidator
     });

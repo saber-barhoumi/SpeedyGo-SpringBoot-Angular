@@ -65,15 +65,14 @@
                 <label for="destination" class="text-black">Destination:</label>
                 <input type="text" id="destination" [(ngModel)]="newCarpooling.destination" name="destination" class="form-control" required />
               </div>
-            </div>
-            <div class="col-lg-6">
+            </div><div class="col-lg-6">
               <div class="form-group">
                 <label for="arrivalTime" class="text-black">Arrival Time:</label>
-                <input type="text" id="arrivalTime" 
-       [(ngModel)]="newCarpooling.arrivalTime" 
-       name="arrivalTime" 
-       class="form-control"
-       required />
+                <input type="date" id="arrivalTime" 
+                       [(ngModel)]="newCarpooling.arrivalTime" 
+                       name="arrivalTime" 
+                       class="form-control"
+                       required />
               </div>
             </div>
           </div>

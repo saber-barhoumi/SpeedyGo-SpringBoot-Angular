@@ -67,18 +67,13 @@ const routes: Routes = [
   { path: 'vehicles/edit/:id', component: VehicleFormComponent },
   { path: 'vehicles/:id', component: VehicleDetailComponent },
   {
-    path: 'recruitment', component: AllTemplateFrontComponent, canActivate: [authGuard, RoleGuard],
+    path: 'recruitment',
+    canActivate: [authGuard, RoleGuard],
     data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] },
     children: [
       {
-        path: 'home',
-        component: BodyComponent,
-      },
-      {
-
         path: 'apply',
         component: RecruitmentFormComponent,
-
         data: { title: 'Apply for Delivery Driver Position' }
       },
       {
@@ -89,18 +84,16 @@ const routes: Routes = [
       {
         path: 'my-applications',
         component: MyApplicationsComponent,
-
         data: { title: 'My Applications' }
       },
       {
         path: 'view/:id',
         component: RecruitmentDetailComponent,
-
         data: { title: 'Application Details' }
       },
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'apply',
         pathMatch: 'full'
       }
     ]

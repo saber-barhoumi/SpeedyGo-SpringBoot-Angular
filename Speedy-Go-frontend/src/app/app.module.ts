@@ -38,6 +38,9 @@ import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.compon
 import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-page.component';
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
+import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
+import {  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +73,9 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
     CustomerComponent,
     DeliveryComponent,
     PartnerComponent,
-    RecruitmentPageComponent
+    RecruitmentPageComponent,
+    InternationalShippingComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -85,6 +90,7 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
       preventDuplicates: true,
     }), // ToastrModule added
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA] ,// Ajouter ici
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],

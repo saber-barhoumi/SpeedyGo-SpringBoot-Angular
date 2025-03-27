@@ -1,88 +1,56 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { Carpooling } from 'src/app/models/carpooling.model'; // Update the import pathimport { Router } from '@angular/router';
-import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
+import { Observable } from 'rxjs';
+import { Carpooling } from 'src/app/models/carpooling.model';
+import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model'; // Import ReservationCarpoo
+
 @Injectable({
   providedIn: 'root',
 })
 export class CarpoolingService {
   private apiUrl = 'http://localhost:8084/api/carpoolings';
-  private isAuthenticated = new BehaviorSubject<boolean>(false); // Gère l'état de connexion
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  /**
-   * Vérifie si un token est disponible et retourne les headers pour l'authentification
-   */
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      console.error('No token found, redirecting to login...');
-      this.isAuthenticated.next(false);
-      this.router.navigate(['/login']); // Redirection automatique
-      return new HttpHeaders(); // Retourne des headers vides pour éviter une erreur
-    }
-
-    this.isAuthenticated.next(true);
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
-  }
-
-  /**
-   * Récupère tous les trajets
-   */
+  // Fetch all carpoolings
   getAllCarpoolings(): Observable<Carpooling[]> {
-    return this.http
-      .get<Carpooling[]>(this.apiUrl, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
+    return this.http.get<Carpooling[]>(this.apiUrl);
   }
-
-  /**
-   * Récupère un trajet spécifique par ID
-   */
-  getCarpooling(id: number): Observable<Carpooling> {
-    return this.http
-      .get<Carpooling>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
-  }
-
-  /**
-   * Ajoute un nouveau trajet
-   */
+  
+  // Add a new carpooling
   addCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    return this.http
-      .post<Carpooling>(`${this.apiUrl}/add`, carpooling, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
-  }
+  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  return this.http.post<Carpooling>(`${this.apiUrl}/add`, carpooling, { headers: headers });
+}
 
-  /**
-   * Met à jour un trajet existant
-   */
+  // Update an existing carpooling
   updateCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    return this.http
-      .put<Carpooling>(`${this.apiUrl}/update/${carpooling.carpoolingId}`, carpooling, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include the JWT token
+    });
+    return this.http.put<Carpooling>(
+      `${this.apiUrl}/update/${carpooling.carpoolingId}`,
+      carpooling,
+      { headers: headers }
+    );
+  }
+  // Delete a carpooling by ID
+  deleteCarpooling(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 
-  /**
-   * Supprime un trajet par ID
-   */
-  deleteCarpooling(carpoolingId: number): Observable<any> {
-    return this.http
-      .delete(`${this.apiUrl}/delete/${carpoolingId}`, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError));
+  reserveCarpooling(carpoolingId: number, userId: number): Observable<any> {
+    const url = `${this.apiUrl}/${carpoolingId}/reserve`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(url, userId, { headers: headers });
+  }
+  getMyReservations(): Observable<ReservationCarpoo[]> {
+    return this.http.get<ReservationCarpoo[]>(`${this.apiUrl}/reservations/me`); // Corrected URL
+  }
+  
+  deleteReservation(reservationId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/reservations/${reservationId}/delete`);
   }
 
-  /**
-   * Gère les erreurs HTTP et les affiche dans la console
-   */
-  private handleError(error: any) {
-    console.error('HTTP Error:', error);
-    return throwError(() => new Error(error.message || 'Server Error'));
-  }
 }

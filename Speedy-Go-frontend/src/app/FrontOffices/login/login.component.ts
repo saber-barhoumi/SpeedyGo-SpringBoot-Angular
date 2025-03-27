@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -51,7 +52,7 @@ export class LoginclientComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  onSubmit(form: NgForm): void {
     console.log('onSubmit déclenché avec :', this.email, this.password);
 
     this.authService.login(this.email, this.password).pipe(

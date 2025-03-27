@@ -12,13 +12,20 @@ export class HeaderFrontComponent implements OnInit {
   isLoggedIn: boolean = false;
   user: any; // To store user data
   showProfile: boolean = false; // Flag to show/hide profile
+  defaultProfilePicture: string = 'assets/default-profile.png'; // Default profile picture
 
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
     if (this.isLoggedIn) {
-      this.user = this.authService.getUser(); // Retrieve user data
+      this.user = this.authService.getUser();
+      console.log('Retrieved User Data:', this.user); // Debugging
+
+      // Convert profile picture from Base64 to data URL
+      if (this.user?.profilePicture && this.user?.profilePictureType) {
+        this.user.profilePicture = `data:${this.user.profilePictureType};base64,${this.user.profilePicture}`;
+      }
     }
   }
 

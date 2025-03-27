@@ -2,7 +2,10 @@ package com.ski.speedygobackend.Entity.CarpoolingManagement;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ski.speedygobackend.Entity.TripManagement.Trip;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -25,18 +28,26 @@ public class Carpooling implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long carpoolingId;
     @NotNull
-
+    @Column(nullable = false) // Make sure it's not nullable
+    Long userId;
+    @NotNull
+    @Column(nullable = true)
     String departureLocation;
+    @Column(nullable = true)
     String destination;
     @Column(nullable = true)
     LocalDateTime arrivalTime;
-
+    @Column(nullable = true)
     int availableSeats;
-
+    @Column(nullable = true)
     double pricePerSeat;
-
+    @Column(nullable = true)
     private  String description;
-
     @ManyToOne
+    @JsonBackReference // Changed to JsonBackReference
     private Trip trip;
+
+    @OneToMany(mappedBy = "carpooling", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Changed to JsonManagedReference
+    private List<ReservationCarpoo> reservationCarpoos;
 }

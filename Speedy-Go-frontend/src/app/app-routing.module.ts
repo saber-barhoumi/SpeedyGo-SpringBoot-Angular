@@ -1,3 +1,4 @@
+// src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -32,6 +33,9 @@ import { CustomerComponent } from './FrontOffices/pages/customer/customer.compon
 // Import Carpooling Component
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component'; // Import CarpoolingComponent
 
+// Import InternationalShippingComponent
+import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -63,18 +67,13 @@ const routes: Routes = [
   { path: 'vehicles/edit/:id', component: VehicleFormComponent },
   { path: 'vehicles/:id', component: VehicleDetailComponent },
   {
-    path: 'recruitment', component: AllTemplateFrontComponent, canActivate: [authGuard, RoleGuard],
+    path: 'recruitment',
+    canActivate: [authGuard, RoleGuard],
     data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] },
     children: [
       {
-        path: 'home',
-        component: BodyComponent,
-      },
-      {
-
         path: 'apply',
         component: RecruitmentFormComponent,
-
         data: { title: 'Apply for Delivery Driver Position' }
       },
       {
@@ -85,18 +84,16 @@ const routes: Routes = [
       {
         path: 'my-applications',
         component: MyApplicationsComponent,
-
         data: { title: 'My Applications' }
       },
       {
         path: 'view/:id',
         component: RecruitmentDetailComponent,
-
         data: { title: 'Application Details' }
       },
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'apply',
         pathMatch: 'full'
       }
     ]
@@ -122,6 +119,12 @@ const routes: Routes = [
       component: CarpoolingComponent,
       canActivate: [authGuard, RoleGuard],
       data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] }
+    },
+    // Add InternationalShippingComponent route
+    {
+      path: 'international-shipping',
+      component: InternationalShippingComponent,
+      // You can add canActivate guards here if needed
     },
 ];
 

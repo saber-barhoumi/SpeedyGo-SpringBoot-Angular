@@ -1,23 +1,43 @@
-/* Change hover color to green */
-.navbar-nav .nav-link:hover,
-.dropdown-menu .dropdown-item:hover {
-    color: green !important;
-}
-
-/* Change button hover effect */
-.btn-primary:hover {
-    background-color: green !important;
-    border-color: green !important;
-}
-.profile-dropdown {
+.profile-picture-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-picture {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    border-radius: 50%; /* Make it circular */
+  }
+  
+  .profile-card {
     position: absolute;
-    top: 100%; /* Position below the user icon */
+    top: 50px;
     right: 0;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    padding: 12px 16px;
-    z-index: 1;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
+    z-index: 1000;
+    min-width: 200px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-card .card-body {
+    padding: 15px;
+  }
+  
+  .profile-card .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .profile-card .card-text {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  
+  .profile-card .btn-danger {
+    width: 100%;
   }

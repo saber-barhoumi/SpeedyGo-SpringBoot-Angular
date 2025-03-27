@@ -1,66 +1,103 @@
-<div _ngcontent-ng-c77235806="" class="container-fluid nav-bar">
-    <div _ngcontent-ng-c77235806="" class="container">
-        <nav _ngcontent-ng-c77235806="" class="navbar navbar-light navbar-expand-lg py-4">
-            <a _ngcontent-ng-c77235806="" routerlink="/home" class="navbar-brand" ng-reflect-router-link="/home" href="/home">
-                <h1 _ngcontent-ng-c77235806="" class="mb-0">
-                    <img _ngcontent-ng-c77235806="" src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
-                </h1>
+<div class="container-fluid nav-bar">
+    <div class="container">
+      <nav class="navbar navbar-light navbar-expand-lg py-4">
+        <!-- Logo and Brand -->
+        <a routerLink="/home" class="navbar-brand" href="/home">
+          <h1 class="mb-0">
+            <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
+          </h1>
+        </a>
+        
+        <ng-container *ngIf="!isLoggedIn">
+            <a _ngcontent-ng-c77235806="" routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
+                <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
             </a>
-            <button _ngcontent-ng-c77235806="" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" class="navbar-toggler py-2 px-3">
-                <span _ngcontent-ng-c77235806="" class="fa fa-bars text-primary"></span>
+        </ng-container>
+
+        <!-- Display User Icon if logged in -->
+        <ng-container *ngIf="isLoggedIn">
+            <button _ngcontent-ng-c77235806="" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Profile" (click)="toggleProfile()">
+                <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
             </button>
-            <div _ngcontent-ng-c77235806="" id="navbarCollapse" class="collapse navbar-collapse">
-                <div _ngcontent-ng-c77235806="" class="navbar-nav mx-auto">
-                    <a _ngcontent-ng-c77235806="" routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
-                    <a _ngcontent-ng-c77235806="" href="about.html" class="nav-item nav-link">About</a>
-                    <a _ngcontent-ng-c77235806="" routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
-                    <a _ngcontent-ng-c77235806="" routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
-                    <a _ngcontent-ng-c77235806="" href="pricing.html" class="nav-item nav-link">Pricing</a>
-                    <div _ngcontent-ng-c77235806="" class="nav-item dropdown">
-                        <a _ngcontent-ng-c77235806="" href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle">Pages</a>
-                        <div _ngcontent-ng-c77235806="" class="dropdown-menu bg-light">
-                            <a _ngcontent-ng-c77235806="" href="order.html" class="dropdown-item">Place Order</a>
-                            <a _ngcontent-ng-c77235806="" href="blog.html" class="dropdown-item">Our Blog</a>
-                            <a _ngcontent-ng-c77235806="" href="team.html" class="dropdown-item">Our Team</a>
-                            <a _ngcontent-ng-c77235806="" href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            <a _ngcontent-ng-c77235806="" href="404.html" class="dropdown-item">404 Page</a>
-                        </div>
-                    </div>
-                    <a _ngcontent-ng-c77235806="" href="contact.html" class="nav-item nav-link">Contact</a>
-                </div>
+        </ng-container>
 
-                <!-- Display Login/Register buttons if not logged in -->
-                <ng-container *ngIf="!isLoggedIn">
-                    <a _ngcontent-ng-c77235806="" routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
-                        <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
-                    </a>
-                </ng-container>
+        <!-- Profile Info and Logout button (show/hide based on showProfile) -->
+        <div _ngcontent-ng-c77235806="" *ngIf="showProfile" class="profile-dropdown">
+            <span _ngcontent-ng-c77235806="" class="me-3">Welcome, {{ user?.first_name }}!</span> <!-- Display user name -->
+            <button _ngcontent-ng-c77235806="" class="btn btn-danger py-2 px-4 d-none d-xl-inline-block rounded-pill" (click)="logout()">Logout</button>
+        </div>
 
-                <!-- Display User Icon if logged in -->
-                <ng-container *ngIf="isLoggedIn">
-                    <button _ngcontent-ng-c77235806="" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Profile" (click)="toggleProfile()">
-                        <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
-                    </button>
-                </ng-container>
+        <!-- Panier Icon -->
+        <a href="" target="_blank" class="btn btn-md btn-primary">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        </a>
 
-                <!-- Profile Info and Logout button (show/hide based on showProfile) -->
-                <div _ngcontent-ng-c77235806="" *ngIf="showProfile" class="profile-dropdown">
-                    <span _ngcontent-ng-c77235806="" class="me-3">Welcome, {{ user?.first_name }}!</span> <!-- Display user name -->
-                    <button _ngcontent-ng-c77235806="" class="btn btn-danger py-2 px-4 d-none d-xl-inline-block rounded-pill" (click)="logout()">Logout</button>
-                </div>
 
-                <!-- Panier Icon -->
-                <a href="" target="_blank" class="btn btn-md btn-primary">
-                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                </a>
-
-                <!--bindings={
-  "ng-reflect-ng-if": "false"
-}-->
-                <!--bindings={
-  "ng-reflect-ng-if": "false"
-}-->
+        <!-- Navbar Toggle Button -->
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" class="navbar-toggler py-2 px-3">
+          <span class="fa fa-bars text-primary"></span>
+        </button>
+  
+        <!-- Navbar Links -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <div class="navbar-nav mx-auto">
+            <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About</a>
+            <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
+            <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
+            <a href="pricing.html" class="nav-item nav-link">Pricing</a>
+            <div class="nav-item dropdown">
+              <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle">Pages</a>
+              <div class="dropdown-menu bg-light">
+                <a href="order.html" class="dropdown-item">Place Order</a>
+                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                <a href="team.html" class="dropdown-item">Our Team</a>
+                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                <a href="404.html" class="dropdown-item">404 Page</a>
+              </div>
             </div>
-        </nav>
+            <a href="contact.html" class="nav-item nav-link">Contact</a>
+          </div>
+  
+          <!-- Display Login/Register buttons if not logged in -->
+          <ng-container *ngIf="!isLoggedIn">
+            <a routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
+              <i class="fas fa-user"></i>
+            </a>
+          </ng-container>
+  
+          <!-- Display User Profile Picture if logged in -->
+          <ng-container *ngIf="isLoggedIn">
+            <div class="profile-picture-container">
+              <!-- Profile Picture -->
+              <div (click)="toggleProfile()">
+                <img [src]="user?.profilePicture || 'assets/default-profile.png'" 
+                     alt="Profile Picture" 
+                     class="profile-picture rounded-circle">
+              </div>
+              
+              <!-- Profile Card -->
+              <div *ngIf="showProfile" class="profile-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ user?.firstName || 'N/A' }} {{ user?.lastName || 'N/A' }}</h5>
+                    <p class="card-text">
+                      <strong>Address:</strong> {{ user?.address || 'N/A' }}<br>
+                      <strong>Phone:</strong> {{ user?.phoneNumber || 'N/A' }}<br>
+                      <strong>Email:</strong> {{ user?.email || 'N/A' }}
+                    </p>
+                    <button class="btn btn-danger" (click)="logout()">Logout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+  
+          <!-- Cart Icon -->
+          <a href="" target="_blank" class="btn btn-md btn-primary">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          </a>
+        </div>
+      </nav>
     </div>
-</div>
+  </div>

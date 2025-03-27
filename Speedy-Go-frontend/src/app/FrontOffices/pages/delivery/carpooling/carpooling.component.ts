@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooling.service';
 import { Carpooling } from 'src/app/models/carpooling.model';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 @Component({
   selector: 'app-carpooling',
@@ -20,15 +19,8 @@ export class CarpoolingComponent implements OnInit {
   carpoolings: Carpooling[] = [];
   newCarpooling: Carpooling = this.initializeCarpooling();
   editingIndex: number | null = null;
-  bsConfig: Partial<BsDatepickerConfig>;
 
-  constructor(private carpoolingService: CarpoolingService) {
-    this.bsConfig = Object.assign({}, {
-      containerClass: 'theme-dark-blue',
-      dateInputFormat: 'YYYY-MM-DD HH:mm',
-      showWeekNumbers: false,
-    });
-  }
+  constructor(private carpoolingService: CarpoolingService) {}
 
   ngOnInit(): void {
     this.loadCarpoolings();
@@ -146,7 +138,7 @@ export class CarpoolingComponent implements OnInit {
   private prepareCarpooling(carpooling: Carpooling): Carpooling {
     return {
       ...carpooling,
-      arrivalTime: carpooling.arrivalTime ? new Date(carpooling.arrivalTime).toISOString() : null,
+      arrivalTime: carpooling.arrivalTime,
     };
   }
   

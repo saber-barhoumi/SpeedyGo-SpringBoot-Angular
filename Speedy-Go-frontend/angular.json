@@ -24,13 +24,9 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-              "node_modules/ionicons/dist/css/ionicons.min.css"
-              ,"node_modules/ngx-toastr/toastr.css"
-              ,"node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
-          
-              
-            ],
+           "styles": [
+  "node_modules/ngx-toastr/toastr.css"
+],
             "scripts": [
               "src/assets/FrontOffice/lib/wow/wow.min.js",
               "src/assets/FrontOffice/lib/easing/easing.min.js",
@@ -111,7 +107,9 @@
               "https://use.fontawesome.com/releases/v5.15.4/css/all.css",
               "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css",
               "/assets/FrontOffice/css/bootstrap.min.css",
-              "src/assets/BackOffice/css/style.css"
+              "src/assets/BackOffice/css/style.css",
+              "https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.css"
+
       
 ],
 

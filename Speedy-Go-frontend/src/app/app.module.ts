@@ -31,7 +31,6 @@ import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/
 import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/vehicle-list.component';
 import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker'; // Import DatepickerModule
 
 // Import CustomerComponent (and other missing components)
 import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
@@ -80,7 +79,6 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
   ],
   imports: [
     BrowserModule,
-    BsDatepickerModule.forRoot(), // Add DatepickerModule to imports
     AppRoutingModule,
     FormsModule,
     HttpClientModule,

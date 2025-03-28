@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';
@@ -14,7 +14,7 @@ import { SidebarBackComponent } from './BackOffices/sidebar-back/sidebar-back.co
 import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
 import { LoginComponent } from './BackOffices/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; // Update this line
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { RegisterComponent } from './FrontOffices/register/register.component';
 import { RegisterAdminComponent } from './BackOffices/register-admin/register-admin.component';
@@ -27,20 +27,17 @@ import { MyApplicationsComponent } from './my-applications/my-applications.compo
 import { RecruitmentDetailComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-detail/recruitment-detail.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/vehicle-form.component';
-import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/vehicle-list.component';
-import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
-
-// Import CustomerComponent (and other missing components)
 import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
 import { DeliveryComponent } from './FrontOffices/pages/delivery/delivery.component';
 import { PartnerComponent } from './FrontOffices/pages/partner/partner.component';
 import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-page.component';
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
-import {  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
+import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -63,13 +60,8 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
     RecruitmentFormComponent,
     MyApplicationsComponent,
     RecruitmentDetailComponent,
-    VehicleFormComponent,
-    VehicleListComponent,
-    VehicleDetailComponent,
     RecruitmentManagementComponent,
-    CarpoolingComponent ,
-
-    // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
+    CarpoolingComponent,
     CustomerComponent,
     DeliveryComponent,
     PartnerComponent,
@@ -79,20 +71,22 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
   ],
   imports: [
     BrowserModule,
+    RouterModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule, // required animations module
+    BrowserAnimationsModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
-    }), // ToastrModule added
+    }),
+    VehicleModule
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA] ,// Ajouter ici
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, // Now this will work
   ],
   bootstrap: [AppComponent]
 })

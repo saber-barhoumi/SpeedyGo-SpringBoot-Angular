@@ -124,7 +124,7 @@ export class CarpoolingComponent implements OnInit {
 
   private initializeCarpooling(): Carpooling {
     return {
-      carpoolingId: undefined,
+      carpoolingId: 0,
       driverName: '',
       departureLocation: '',
       destination: '',

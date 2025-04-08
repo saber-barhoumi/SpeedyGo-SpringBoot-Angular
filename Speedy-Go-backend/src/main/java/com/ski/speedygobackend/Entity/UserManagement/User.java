@@ -13,7 +13,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -21,66 +20,40 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level= AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users") // Added to prevent naming conflicts
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     Long UserId;
+    private String firstName;
+    private String lastName;
+    private String birthDate;
+    private String email;
+    private String password;
+    private String phoneNumber;
+    private String address;
+    private String profilePicture;
 
-    @Column(name = "first_name")
-    String firstName;
 
-    @Column(name = "last_name")
-    String lastName;
 
-    @Column(name = "birth_date")
-    LocalDate birthDate;
-
-    @Column(name = "email", unique = true)
-    String email;
-
-    @Column(name = "password")
-    String password;
-
-    @Column(name = "phone_number")
-    String phoneNumber;
-
-    @Column(name = "address")
-    String address;
-
-    @Lob
-    @Column(name = "profile_picture")
-    byte[] profilePicture;
-    @Column(name = "profile_picture_type")
-    private String profilePictureType;
     @Enumerated(EnumType.STRING)
-    @Column(name = "sexe")
     Sexe sexe;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     Role role;
-    @Column(name = "password_reset_token")
-    private String passwordResetToken;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<SpeedyChat> speedyChats;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Store> stores;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Report> reports;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private LoyaltyCard loyaltyCard;
-
     @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations;
 
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @ManyToMany (mappedBy = "users", cascade = CascadeType.ALL)
     private Set<ChatRoom> chatRooms;
 }

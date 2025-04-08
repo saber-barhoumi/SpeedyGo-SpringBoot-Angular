@@ -8,36 +8,38 @@ import { Router } from '@angular/router';
   styleUrls: ['./header-front.component.css']
 })
 export class HeaderFrontComponent implements OnInit {
-
-  isLoggedIn: boolean = false;
-  user: any; // To store user data
-  showProfile: boolean = false; // Flag to show/hide profile
-  defaultProfilePicture: string = 'assets/default-profile.png'; // Default profile picture
-
-  constructor(private authService: AuthService, private router: Router) { }
-
+  isLoggedIn = false;
+  first_name = '';
+  userRole = '';
+  
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+  
   ngOnInit(): void {
+    this.updateUserStatus();
+  }
+  
+  updateUserStatus(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
+    
     if (this.isLoggedIn) {
-      this.user = this.authService.getUser();
-      console.log('Retrieved User Data:', this.user); // Debugging
-
-      // Convert profile picture from Base64 to data URL
-      if (this.user?.profilePicture && this.user?.profilePictureType) {
-        this.user.profilePicture = `data:${this.user.profilePictureType};base64,${this.user.profilePicture}`;
+      const user = this.authService.getUser();
+      if (user) {
+        this.first_name = user.firstName || '';
+        this.userRole = user.role || '';
       }
     }
   }
-
+  
+  isDeliveryRole(): boolean {
+    // Check for both spelling variants
+    return this.userRole === 'DELEVERY' || this.userRole === 'DELIVERY';
+  }
+  
   logout(): void {
     this.authService.logout();
-    this.isLoggedIn = false; // Update isLoggedIn flag
-    this.showProfile = false; // Hide profile
-    this.user = null; // Clear user data
     this.router.navigate(['/home']);
-  }
-
-  toggleProfile(): void {
-    this.showProfile = !this.showProfile; // Toggle profile visibility
   }
 }

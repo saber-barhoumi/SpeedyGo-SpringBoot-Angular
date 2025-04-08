@@ -12,96 +12,86 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
-  selectedFile: File | null = null;
-
-  constructor(private authService: AuthService, private router: Router, private fb: FormBuilder) {}
-
-  ngOnInit(): void {
+ 
+ 
+  constructor(private authService: AuthService, private router: Router,private fb: FormBuilder) {
+    
+   }
+  ngOnInit() {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/home']); // Redirect if already logged in
+    }
     this.registerForm = this.fb.group({
-      firstName: [localStorage.getItem('firstName') || '', Validators.required],
-      lastName: [localStorage.getItem('lastName') || '', Validators.required],
-      email: [localStorage.getItem('email') || '', [Validators.required, Validators.email]],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
-      birthDate: [localStorage.getItem('birthDate') || '', [Validators.required, this.ageValidator]],
-      phoneNumber: [localStorage.getItem('phoneNumber') || '', [Validators.pattern('^\\d{8}$')]],
-      address: [localStorage.getItem('address') || '', Validators.required],
-      profile_picture: [null, Validators.required],
-      sexe: [localStorage.getItem('sexe') || 'MEN', Validators.required],
-      role: [localStorage.getItem('role') || 'CUSTOMER', Validators.required]
+      birth_date: ['', [Validators.required, this.ageValidator]], // Use ageValidator
+      phone_number: ['', [Validators.pattern('^\\d{8}$')]],
+      address: ['', Validators.required],
+      profile_picture: [''],
+      sexe: ['MALE'],
+      role: ['CUSTOMER']
     }, {
       validators: this.passwordMatchValidator
     });
   }
 
   ageValidator(control: any) {
-        if (!control.value) {
-            return { required: true };
-        }
-
-        const birthDate = new Date(control.value);
-        const today = new Date();
-
-        // La date de naissance ne doit pas être dans le futur
-        if (birthDate >= today) {
-            return { invalidDate: true };
-        }
-
-        // L'utilisateur doit avoir au moins 18 ans
-        const minAgeDate = new Date();
-        minAgeDate.setFullYear(today.getFullYear() - 18);
-
-        if (birthDate > minAgeDate) {
-            return { underage: true };
-        }
-
-        return null; // Date valide
+    if (!control.value) {
+      return { required: true };
     }
-
-
+  
+    const birthDate = new Date(control.value);
+    const today = new Date();
+  
+    // Ensure the date is not in the future
+    if (birthDate >= today) {
+      return { invalidDate: true };
+    }
+  
+    // Check if the user is at least 18 years old
+    const minAgeDate = new Date();
+    minAgeDate.setFullYear(today.getFullYear() - 18); // 18 years ago
+  
+    if (birthDate > minAgeDate) {
+      return { underage: true };
+    }
+  
+    return null; // Valid date
+  }
   passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { mismatch: true };
   }
 
-  onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
-  }
-
-  onSubmit(): void {
+  onSubmit() {
     if (this.registerForm.invalid) {
-      this.markFormGroupTouched(this.registerForm);
       return;
     }
 
-    const formData = new FormData();
-    Object.keys(this.registerForm.value).forEach(key => {
-      if (key === 'profile_picture') {
-        if (this.selectedFile) {
-          formData.append('profile_picture', this.selectedFile, this.selectedFile.name);
-        }
-      } else {
-        formData.append(key, this.registerForm.get(key)?.value);
-      }
-    });
-    this.authService.register(formData).subscribe({
+    const userData = { ...this.registerForm.value };
+    delete userData.confirmPassword; // Remove confirmPassword before sending
+
+    this.authService.register(userData).subscribe({
       next: (response) => {
         alert('Registration successful!');
-        this.router.navigate(['/login']); // Navigate to login after successful registration
+        this.router.navigate(['/login']); // Redirect to login
       },
       error: (err) => {
-        this.errorMessage = err.message || 'Registration failed'; // Display error message
+        this.errorMessage = err.error?.error || 'Registration failed';
       }
     });
   }
-  private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.values(formGroup.controls).forEach(control => {
-            control.markAsTouched();
+   // Helper method to mark all form controls as touched
+   private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
 
-            if (control instanceof FormGroup) {
-                this.markFormGroupTouched(control);
-            }
-        });
-    }
-}
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+}}

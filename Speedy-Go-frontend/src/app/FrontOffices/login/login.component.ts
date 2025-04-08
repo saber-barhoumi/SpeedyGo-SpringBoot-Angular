@@ -1,104 +1,92 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../services/user/auth.service';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { NgForm } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginclientComponent implements OnInit {
+export class LoginclientComponent {
   email: string = '';
   password: string = '';
+  isLoading: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
-    console.log('ngOnInit du login lancé');
-
+    // Check if already logged in and redirect based on role
     if (this.authService.isLoggedIn()) {
-      try {
-        const user = this.authService.getUser();
-        console.log('Utilisateur récupéré du localStorage :', user);
-
-        if (user && user.role) {
-          const userRole = user.role.toUpperCase();
-          console.log('User role :', userRole);
-          
-          switch (userRole) {
-            case 'DELEVERY':
-              this.router.navigate(['/delivery']);
-              break;
-            case 'PARTNER':
-              this.router.navigate(['/partner']);
-              break;
-            case 'CUSTOMER':
-              this.router.navigate(['/customer']);
-              break;
-            default:
-              this.router.navigate(['/home']);
-              break;
-          }
-        }
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données utilisateur :', error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-      }
+      this.redirectBasedOnRole(this.authService.getUser());
     }
   }
 
-  onSubmit(form: NgForm): void {
-    console.log('onSubmit déclenché avec :', this.email, this.password);
+  onSubmit() {
+    if (!this.email || !this.password) {
+      this.toastr.error('Please enter both email and password');
+      return;
+    }
 
-    this.authService.login(this.email, this.password).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.error('Login Error:', error);
-        if (error.status === 401) {
-          alert('Identifiants incorrects. Veuillez réessayer.');
-        } else if (error.status === 0) {
-          alert('Impossible de contacter le serveur.');
-        } else {
-          alert('Erreur : ' + (error.error?.message || 'Problème inconnu.'));
-        }
-        return throwError(() => new Error(error.message));
-      })
-    ).subscribe({
+    this.isLoading = true;
+    this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Login Response:', response);
-
-        if (response?.token) {
+        if (response.token) {
+          // Save user data
           this.authService.saveUserData(response.token, response.user);
-          alert('Connexion réussie !');
-
-          const userRole = response.user.role.toUpperCase();
-          console.log('User Role:', userRole);
-
-          switch (userRole) {
-            case 'DELEVERY':
-              this.router.navigate(['/delivery']);
-              break;
-            case 'PARTNER':
-              this.router.navigate(['/partner']);
-              break;
-            case 'CUSTOMER':
-              this.router.navigate(['/customer']);
-              break;
-            default:
-              this.router.navigate(['/home']);
-              break;
-          }
+          
+          // Log login time
+          console.log(`User logged in at: ${new Date('2025-03-03 18:44:09').toISOString()}`);
+          console.log(`Logged in as: ${response.user.email} with role: ${response.user.role}`);
+          
+          // Show success message
+          this.toastr.success('Login successful!');
+          
+          // Redirect based on role
+          this.redirectBasedOnRole(response.user);
         } else {
-          alert('Erreur : Token non reçu.');
+          this.toastr.error('Token not received.');
+          this.isLoading = false;
         }
       },
       error: (error) => {
-        console.error('Erreur lors du login:', error);
+        console.error('Login Error:', error);
+        this.toastr.error(error.error?.error || 'Login failed. Please check your credentials.');
+        this.isLoading = false;
       }
     });
+  }
+  
+  /**
+   * Redirects user to different pages based on their role
+   */
+  redirectBasedOnRole(user: any): void {
+    if (!user || !user.role) {
+      this.router.navigate(['/home']);
+      return;
+    }
+    
+    // Handle redirection based on role
+    switch (user.role) {
+      case 'ADMIN':
+        this.router.navigate(['/admin/home']);
+        break;
+      case 'DELEVERY':
+      case 'DELIVERY': // Handle both spellings just in case
+        this.router.navigate(['/recruitment/my-applications']);
+        break;
+      case 'PARTNER':
+        this.router.navigate(['/partner/dashboard']);
+        break;
+      case 'CUSTOMER':
+      default:
+        this.router.navigate(['/home']);
+        break;
+    }
   }
 }

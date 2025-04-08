@@ -1,32 +1,47 @@
-<section>
-  <div class="login-box">
-    <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
-      <h2>Login</h2>
-      <div class="input-box">
-        <span class="icon"><ion-icon name="mail"></ion-icon> </span>
-        <input type="email" name="email" [(ngModel)]="email" required>
-        <label> Email</label>
+<div class="container">
+    <div class="row min-vh-100 justify-content-center align-items-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+          <!-- Logo -->
+          <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center">
+              <svg class="text-purple me-2" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a3 3 0 0 0-3 3c0 1.7 1.3 3 3 3s3-1.3 3-3a3 3 0 0 0-3-3z"/>
+                <path d="M19 9a3 3 0 0 0-3-3h-2a3 3 0 0 0-2 .8a3 3 0 0 0-2-.8H8a3 3 0 0 0-3 3v11h14V9z"/>
+              </svg>
+              <span class="h4 mb-0">
+                <span class="text-purple">SPEEDY</span>GO
+              </span>
+            </div>
+          </div>
+  
+          <!-- Title -->
+          <h1 class="h3 text-center mb-4">Se connecter</h1>
+  
+          <!-- Login Form -->
+          <form (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="text" class="form-control" id="email" [(ngModel)]="email" name="email" required>
+            </div>
+  
+            <div class="mb-3">
+              <label for="password" class="form-label">Mot de passe</label>
+              <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" required>
+              <div class="mt-2">
+                <a href="#" class="text-decoration-none text-purple">Mot de passe oublié ?</a>
+              </div>
+            </div>
+  
+            <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Se connecter</button>
+  
+            <div class="text-center">
+              <span class="text-muted">Vous n'avez pas de compte ? </span>
+              <a routerLink="/register" class="text-decoration-none text-purple">Inscrivez-vous maintenant</a>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="input-box">
-        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
-        <input type="password" name="password" [(ngModel)]="password" required>
-        <label> Password</label>
-      </div>
-      <div class="remember-forget">
-        <label>
-          <input type="checkbox">Remember Me
-        </label>
-        <a href="#">Forget Password</a>
-      </div>
-      <button type="submit">Login</button>
-      <div class="register-link">
-        <p>Don't have an account?
-          <a routerLink="/register">Register</a>
-        </p>
-      </div>
-    </form>
+    </div>
   </div>
-</section>
-
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  

@@ -82,7 +82,8 @@ import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    VehicleModule
+    VehicleModule,
+    
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

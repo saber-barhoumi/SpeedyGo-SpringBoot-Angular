@@ -4,10 +4,14 @@ import com.ski.speedygobackend.Entity.CarpoolingManagement.Carpooling;
 
 import java.util.List;
 
-public interface ICarpoolingServices {
-    List<Carpooling> getAllCarpoolings(); // Récupérer tous les covoiturages
-    Carpooling getCarpoolingById(Long id); // Récupérer un covoiturage par son ID
-    Carpooling saveCarpooling(Carpooling carpooling); // Sauvegarder un covoiturage
-    void deleteCarpooling(Long id); // Supprimer un covoiturage par son ID
 
+
+public interface ICarpoolingServices {
+    List<Carpooling> getAllCarpoolings();
+    Carpooling getCarpoolingById(Long id);
+    Carpooling saveCarpooling(Carpooling carpooling);
+    void deleteCarpooling(Long id);
+
+    // New method to calculate price using AI service
+    double calculatePrice(Carpooling carpooling);
 }

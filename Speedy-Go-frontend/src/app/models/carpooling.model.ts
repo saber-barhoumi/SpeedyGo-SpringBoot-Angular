@@ -1,10 +1,18 @@
 export interface Carpooling {
   carpoolingId?: number;
-  driverName: string;
+  userId?: number;
   departureLocation: string;
   destination: string;
-  arrivalTime: string | null; // أو string | Date | null
+  arrivalTime?: Date;
   availableSeats: number;
   pricePerSeat: number;
-  description: string;
+  description?: string;
+  distanceKm: number;
+  durationMinutes: number;
+  vehicleType: string;
+  fuelType: string;
+  wifi?: number;
+  airConditioning?: number;
+  weatherType?: string;
+  status?: string;
 }

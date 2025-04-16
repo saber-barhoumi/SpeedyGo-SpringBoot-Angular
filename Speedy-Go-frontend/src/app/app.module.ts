@@ -39,8 +39,13 @@ import { PartnerComponent } from './FrontOffices/pages/partner/partner.component
 import { RecruitmentPageComponent } from './FrontOffices/pages/delivery/recruitment-page/recruitment-page.component';
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component';
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
-import {  CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
+import { ChatbotComponent } from './FrontOffices/pages/chatbot/chatbot.component';
+import { ChatButtonComponent } from './FrontOffices/pages/SpeedyChat/chat-button/chat-button.component';
+import { ChatDialogComponent } from './FrontOffices/pages/components/chat-dialog/chat-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -67,7 +72,7 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
     VehicleListComponent,
     VehicleDetailComponent,
     RecruitmentManagementComponent,
-    CarpoolingComponent ,
+    CarpoolingComponent,
 
     // Add CustomerComponent, DeliveryComponent, and PartnerComponent to declarations
     CustomerComponent,
@@ -75,7 +80,10 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
     PartnerComponent,
     RecruitmentPageComponent,
     InternationalShippingComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    ChatbotComponent,
+    ChatButtonComponent,
+    ChatDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -84,13 +92,15 @@ import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-pro
     HttpClientModule,
     ReactiveFormsModule,
     BrowserAnimationsModule, // required animations module
+    MatDialogModule, // Added MatDialogModule here
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }), // ToastrModule added
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA] ,// Ajouter ici
+  // Remove entryComponents as it's deprecated in newer Angular versions
+  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Fixed syntax
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],

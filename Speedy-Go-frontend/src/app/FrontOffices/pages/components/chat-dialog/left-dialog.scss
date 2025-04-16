@@ -1,0 +1,27 @@
+/* Position dialog on the left side */
+::ng-deep .chatbot-dialog-container {
+    .cdk-overlay-pane {
+      position: absolute !important;
+      left: 20px !important; /* Position from left edge */
+      right: auto !important; /* Override any right positioning */
+      margin-left: 0 !important;
+      transform: translateX(0) !important;
+    }
+    
+    .mat-mdc-dialog-surface.mdc-dialog__surface {
+      border-top-left-radius: 0 !important; /* Square corner on top left */
+      border-bottom-left-radius: 0 !important; /* Square corner on bottom left */
+    }
+    
+    /* Optional: Animation for left side appearance */
+    .mat-mdc-dialog-container .mdc-dialog__container {
+      transform-origin: left center !important;
+    }
+  
+    .mat-mdc-dialog-container {
+      padding: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 2px 0 24px rgba(0, 0, 0, 0.2); /* Shadow adjusted for left side */
+    }
+  }

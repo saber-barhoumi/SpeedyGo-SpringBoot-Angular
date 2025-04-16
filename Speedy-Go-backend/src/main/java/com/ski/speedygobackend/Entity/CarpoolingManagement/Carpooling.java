@@ -51,7 +51,15 @@ public class Carpooling implements Serializable {
     String vehicleType;
     @Column(nullable = false)
     String fuelType;
+    @Column(nullable = true)
+    Integer wifi;
 
+    @Column(nullable = true)
+    Integer airConditioning;
+    @Column(nullable = true)
+    private String status;
+    @Column(nullable = true)
+    String weatherType;
     @ManyToOne
     private Trip trip;
 

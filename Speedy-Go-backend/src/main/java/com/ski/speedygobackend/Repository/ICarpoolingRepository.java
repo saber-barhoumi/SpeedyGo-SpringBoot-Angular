@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-
 public interface ICarpoolingRepository extends JpaRepository<Carpooling, Long> {
-
-
+    List<Carpooling> findByUserId(Long userId);
 }

@@ -1,240 +1,148 @@
-<app-header-front></app-header-front>
+<div class="container">
+  <h2>Carpooling Management</h2>
 
-<!-- Start Hero Section -->
-<div class="hero">
-    <div class="container">
-      <div class="row justify-content-between">
-        <div class="col-lg-5">
-            <div class="intro-excerpt">
-                <h1>Speedy Go <span class="d-block">Carpooling</span></h1>
-                <p class="mb-4">
-                  Share rides, save costs, and reduce your carbon footprint with Speedy Go Carpooling. 
-                  Connect with fellow travelers, enjoy a comfortable journey, and make every trip eco-friendly.
-                </p>
-                <p>
-                  <a routerLink="/carpooling" class="btn btn-secondary me-2">Join Carpooling</a>
-                  <a routerLink="/carpooling" class="btn btn-white-outline">Learn More</a>
-                </p>
-              </div>
-        </div>
+  <!-- Toggle Form Button -->
+  <button class="btn btn-primary mb-3" (click)="showForm = !showForm">
+    {{ showForm ? 'Hide Form' : 'Add New Carpooling' }}
+  </button>
 
-        <!-- Image Section -->
-        <div class="col-lg-5">
-          <div class="img-wrap">
-            <img src="/assets/FrontOffice/images2/carpoo.png" alt="Image" class="img-fluid">
+  <!-- Carpooling Form -->
+  <div *ngIf="showForm" class="card mb-3">
+    <div class="card-body">
+      <h3>{{ isEditing ? 'Edit Carpooling' : 'Create Carpooling' }}</h3>
+      
+      <form [formGroup]="carpoolingForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Departure Location</label>
+            <select formControlName="departureLocation" class="form-control">
+              <option value="">Select Departure</option>
+              <option *ngFor="let gov of gouvernorats" [value]="gov">{{gov}}</option>
+            </select>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label>Destination</label>
+            <select formControlName="destination" class="form-control">
+              <option value="">Select Destination</option>
+              <option *ngFor="let gov of gouvernorats" [value]="gov">{{gov}}</option>
+            </select>
           </div>
         </div>
 
-      </div>
-    </div>
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Distance (km)</label>
+            <input type="number" formControlName="distanceKm" class="form-control" readonly>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label>Duration (minutes)</label>
+            <input type="number" formControlName="durationMinutes" class="form-control" readonly>
+          </div>
+        </div>
 
-<!-- Carpooling Section -->
-<div class="container mt-5">
-  <div class="d-flex justify-content-start mb-3">
-    <button class="btn btn-info me-3" (click)="toggleForm()">Add New Trip</button>
-    <button class="btn btn-info" (click)="toggleList()">View Carpooling List</button>
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Vehicle Type</label>
+            <select formControlName="vehicleType" class="form-control">
+              <option value="">Select Vehicle Type</option>
+              <option *ngFor="let type of vehicleTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label>Fuel Type</label>
+            <select formControlName="fuelType" class="form-control">
+              <option value="">Select Fuel Type</option>
+              <option *ngFor="let type of fuelTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+        </div>
 
-  <!-- Form for adding carpooling -->
-  <div *ngIf="showForm">
-    <h1 class="display-5 mb-5">{{ isEditing ? 'Edit Trip' : 'New Trip' }}</h1>
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-8 pb-4">
-        <form (ngSubmit)="isEditing ? updateCarpooling() : addCarpooling()">
-          <input type="hidden" name="carpoolingId" [(ngModel)]="newCarpooling.carpoolingId">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label>Available Seats</label>
+            <input type="number" formControlName="availableSeats" class="form-control">
+          </div>
+          
+          <div class="col-md-6 mb-3">
+            <label>Weather Type</label>
+            <select formControlName="weatherType" class="form-control">
+              <option *ngFor="let type of weatherTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+        </div>
 
-          <div class="row mb-5">
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label for="driverName" class="text-black">Driver Name:</label>
-                <input type="text" id="driverName" [(ngModel)]="newCarpooling.driverName" name="driverName" class="form-control" required />
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label for="departureLocation" class="text-black">Departure Location:</label>
-                <input type="text" id="departureLocation" [(ngModel)]="newCarpooling.departureLocation" name="departureLocation" class="form-control" required />
-              </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input type="checkbox" formControlName="wifi" class="form-check-input" id="wifiCheck" [value]="1">
+              <label class="form-check-label" for="wifiCheck">Wifi Available</label>
             </div>
           </div>
-
-          <div class="row mb-5">
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label for="destination" class="text-black">Destination:</label>
-                <input type="text" id="destination" [(ngModel)]="newCarpooling.destination" name="destination" class="form-control" required />
-              </div>
-            </div><div class="col-lg-6">
-              <div class="form-group">
-                <label for="arrivalTime" class="text-black">Arrival Time:</label>
-                <input type="date" id="arrivalTime" 
-                       [(ngModel)]="newCarpooling.arrivalTime" 
-                       name="arrivalTime" 
-                       class="form-control"
-                       required />
-              </div>
+          
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              <input type="checkbox" formControlName="airConditioning" class="form-check-input" id="acCheck" [value]="1">
+              <label class="form-check-label" for="acCheck">Air Conditioning</label>
             </div>
           </div>
+        </div>
 
-          <div class="row mb-5">
-            <div class="col-lg-12">
-              <div class="form-group">
-                <label for="description" class="text-black">Description:</label>
-                <textarea id="description" [(ngModel)]="newCarpooling.description" name="description" class="form-control" rows="3"></textarea>
-              </div>
-            </div>
-          </div>
+        <div class="mb-3">
+          <label>Description</label>
+          <textarea formControlName="description" class="form-control" rows="3"></textarea>
+        </div>
 
-          <button type="submit" class="btn btn-primary-hover-outline">
-            {{ isEditing ? 'Update Trip' : 'Add Trip' }}
+        <!-- Price Calculation -->
+        <div class="mb-3">
+          <button type="button" class="btn btn-secondary" (click)="calculatePrice()" 
+                  [disabled]="carpoolingForm.invalid">
+            Calculate Price
           </button>
-        </form>
-      </div>
-    </div>
-  </div>
+          
+          <div *ngIf="calculatedPrice" class="mt-2">
+            <strong>Calculated Price: {{ calculatedPrice | currency }}</strong>
+          </div>
+        </div>
 
-  <!-- List of carpoolings -->
-  <div *ngIf="showList" class="row justify-content-center">
-    <div class="col-md-8 col-lg-8">
-      <div class="list-group mt-5">
-        <div *ngFor="let carpooling of carpoolings" class="list-group-item mb-3">
-          <h5>{{ carpooling.driverName }}</h5>
-          <p>
-            <strong>Departure:</strong> {{ carpooling.departureLocation }}<br />
-            <strong>Destination:</strong> {{ carpooling.destination }}<br />
-            <strong>Arrival Time:</strong> {{ carpooling.arrivalTime | date: 'short' }}<br />
-            <strong>Available Seats:</strong> {{ carpooling.availableSeats }}<br />
-            <strong>Price per Seat:</strong> {{ carpooling.pricePerSeat }} €<br />
-            <strong>Description:</strong> {{ carpooling.description }}
-          </p>
-          <button class="btn btn-primary rounded-pill me-2" (click)="editCarpooling(carpooling)">
-            <i class="fas fa-edit"></i> Edit
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary" 
+                  [disabled]="carpoolingForm.invalid || !calculatedPrice">
+            {{ isEditing ? 'Update' : 'Create' }} Carpooling
           </button>
-          <button class="btn btn-danger delete-btn" (click)="deleteCarpooling(carpooling.carpoolingId!)">Delete</button>
-
+          
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">
+            Cancel
+          </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
-</div>
-<!-- Custom CSS to Ensure Delete Button is Clearly Visible -->
-<style>
-    .delete-btn {
-      background-color: red !important;
-      color: white !important;
-      border: none !important;
-      padding: 10px 15px;
-      font-weight: bold;
-    }
-    .delete-btn:hover {
-      background-color: darkred !important;
-    }
-  </style>
 
-
-
-
-<div class="why-choose-section">
-    <div class="container">
-        <div class="row my-5">
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/truck.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Fast &amp; Free Shipping</h3>
-                    <!-- Updated description for Speedy Go Delivery -->
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy a seamless shipping experience!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/bag.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Easy to Shop</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy a seamless shopping experience!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/support.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>24/7 Support</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy peace of mind with round-the-clock support!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/return.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Hassle Free Returns</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy easy returns with no hassle!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/truck.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Fast &amp; Free Shipping</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy a seamless shipping experience!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/bag.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Easy to Shop</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy a seamless shopping experience!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/support.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>24/7 Support</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy peace of mind with round-the-clock support!</p>
-                </div>
-            </div>
-
-            <div class="col-6 col-md-6 col-lg-3 mb-4">
-                <div class="feature">
-                    <div class="icon">
-                        <img src="/assets/FrontOffice/images2/return.svg" alt="Image" class="imf-fluid">
-                    </div>
-                    <h3>Hassle Free Returns</h3>
-                    <p>Speedy Go Delivery ensures your orders arrive quickly and for free. Enjoy easy returns with no hassle!</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-<app-footer-front></app-footer-front>
-
-<!-- Bootstrap CSS -->
-<link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
-<link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
-
-<!-- Bootstrap JS -->
-<script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
-<script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
-<script src="/assets/FrontOffice/js2/custom.js"></script>
+  <!-- Carpoolings List -->
+  <div class="card">
+    <div class="card-body">
+      <h3>Available Carpoolings</h3>
+      
+      <table class="table table-striped" *ngIf="carpoolings.length > 0">
+        <thead>
+          <tr>
+            <th>Departure</th>
+            <th>Destination</th>
+            <th>Distance (km)</th>
+            <th>Duration (min)</th>
+            <th>Vehicle</th>
+            <th>Seats</th>
+            <th>Price/Seat</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let carpooling of carpoolings">
+            <td>{{ carpooling.departureLocation }}</td>
+            <td>{{ carpooling.destination }}</td>
+            <td>{{ carpooling.distanceKm }}</td>

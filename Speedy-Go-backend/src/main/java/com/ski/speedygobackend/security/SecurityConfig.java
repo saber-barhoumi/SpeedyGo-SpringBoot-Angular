@@ -2,89 +2,95 @@ package com.ski.speedygobackend.security;
 
 import com.ski.speedygobackend.Service.UserManagement.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
-@Primary
 @EnableWebSecurity
+
 public class SecurityConfig {
 
-    private final JWTFilter jwtFilter;
-
-    public SecurityConfig(JWTFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-    }
+    @Autowired
+    private JWTFilter jwtFilter;
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Désactiver CSRF
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configurer CORS
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Session sans état
-                .authorizeHttpRequests(authorize -> authorize
-                        // Autoriser l'accès public aux endpoints d'authentification et de réinitialisation de mot de passe
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/email/forgot-password").permitAll()
-                        .requestMatchers("/api/email/reset-password").permitAll()
+    public JwtDecoder jwtDecoder() {
+        // Convert the secret key String to a SecretKey object
+        var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    }
 
-                        // Restreindre l'accès aux endpoints admin aux utilisateurs avec le rôle ADMIN
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .cors(Customizer.withDefaults()) // Enable CORS with default configuration
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless API
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/upload/store/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("api/auth/register").permitAll()
+                        .requestMatchers("/specific-trips/**").permitAll()
+                        .requestMatchers("/stores/**").permitAll()
+                        .requestMatchers("/stores/images/**").permitAll()
+                        .requestMatchers("/offres/**").permitAll()
+                        .requestMatchers("/statistiques/**").permitAll()
 
-                        // Restreindre l'accès aux endpoints spécifiques aux utilisateurs authentifiés
-                        .requestMatchers("/api/carpoolings/reservations/me").authenticated()
-                        .requestMatchers("/api/carpoolings/add").authenticated()
 
-                        // Restreindre l'accès aux endpoints spécifiques aux utilisateurs avec l'autorité CUSTOMER
-                        .requestMatchers("/api/carpoolings/{carpoolingId}/reserve").hasAuthority("CUSTOMER")
-
-                        // Toutes les autres requêtes doivent être authentifiées
-                        .anyRequest().authenticated()
+                        // Permit auth endpoints
+                        .anyRequest().authenticated() // Protect other requests
                 )
-                // Ajouter le filtre JWT avant le filtre d'authentification par nom d'utilisateur et mot de passe
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
+                //.oauth2ResourceServer(oauth2 -> oauth2
+                //        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configure JWT
+                //)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT Filter
+                .build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Utiliser BCrypt pour le hachage des mots de passe
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return customUserDetailsService; // Utiliser le service personnalisé pour charger les détails de l'utilisateur
+        return customUserDetailsService;
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Autoriser les requêtes depuis localhost:4200
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); // Autoriser les méthodes HTTP
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token")); // Autoriser les en-têtes
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token")); // Exposer les en-têtes personnalisés
-        configuration.setAllowCredentials(true); // Autoriser les cookies et les en-têtes d'authentification
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Appliquer la configuration CORS à tous les endpoints
-        return source;
+    // Custom JWT Authentication Converter to convert JWT claims to authorities
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+        authoritiesConverter.setAuthoritiesClaimName("roles"); // Use "roles" claim in the JWT for authorities
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return jwtAuthenticationConverter;
     }
+
 }

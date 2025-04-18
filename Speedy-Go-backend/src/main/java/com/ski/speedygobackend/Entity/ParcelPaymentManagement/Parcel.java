@@ -6,6 +6,7 @@ import com.ski.speedygobackend.Enum.ParcelStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -14,29 +15,22 @@ import java.util.Set;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level=AccessLevel.PRIVATE)
 @Entity
 public class Parcel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long parcelId;
-
     private String parcelName;
-    private String deliveryAddress;
+    private String deliveryAdress;
     private String currentLocation;
     private float weight;
 
     @Enumerated(EnumType.STRING)
-    ParcelStatus parcelStatus;
-
+    ParcelStatus parcelstatus;
     @ManyToOne
     private Trip trip;
-
     @ManyToOne
     private Offres offre;
-
-
-    @ManyToOne
-    private InternationalShipping internationalShipping;
 }

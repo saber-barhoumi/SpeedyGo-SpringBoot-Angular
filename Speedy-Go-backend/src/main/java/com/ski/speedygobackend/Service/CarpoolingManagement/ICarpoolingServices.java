@@ -9,5 +9,4 @@ public interface ICarpoolingServices {
     Carpooling getCarpoolingById(Long id); // Récupérer un covoiturage par son ID
     Carpooling saveCarpooling(Carpooling carpooling); // Sauvegarder un covoiturage
     void deleteCarpooling(Long id); // Supprimer un covoiturage par son ID
-
 }

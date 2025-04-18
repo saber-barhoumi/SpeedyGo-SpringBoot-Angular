@@ -35,5 +35,4 @@ public class CarpoolingServicesImpl implements ICarpoolingServices {
     public void deleteCarpooling(Long id) {
         carpoolingRepository.deleteById(id); // Supprimer un covoiturage par son ID
     }
-
 }

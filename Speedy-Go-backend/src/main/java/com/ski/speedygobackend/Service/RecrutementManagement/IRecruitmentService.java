@@ -16,6 +16,4 @@ public interface IRecruitmentService {
     List<Recruitment> getRecruitmentsByApplicant(User applicant);
     boolean hasActiveApplication(User applicant);
     Recruitment updateRecruitmentStatus(Long id, RecruitmentStatus newStatus, String feedback);
-    boolean isDeliveryRecruitmentCompleted(User user); // Add this line
-
 }

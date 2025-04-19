@@ -34,7 +34,23 @@ import { CustomerComponent } from './FrontOffices/pages/customer/customer.compon
 import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/carpooling.component'; // Import CarpoolingComponent
 
 // Import InternationalShippingComponent
-import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
+import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component'; 
+import { TripListComponent } from './FrontOffices/modules/trips/trip-list/trip-list.component';
+import { TripDetailComponent } from './FrontOffices/modules/trips/trip-detail/trip-detail.component';
+import { TripFormComponent } from './FrontOffices/modules/trips/trip-form/trip-form.component';
+import { SpecificTripDetailComponent } from './FrontOffices/modules/trips/specific-trip-detail/specific-trip-detail.component';
+import { SpecificTripFormComponent } from './FrontOffices/modules/trips/specific-trip-form/specific-trip-form.component';
+
+import { AddOfferComponent } from './FrontOffices/modules/store/Component/add-offer/add-offer.component';
+import { StoreListComponent } from './FrontOffices/modules/store/store/store.component';
+import { DiscountOfferComponent } from './FrontOffices/modules/store/Component/discount/discount.component';
+import { OffresComponent } from './FrontOffices/modules/store/offres/offres.component';
+import { addstoreComponent } from './FrontOffices/modules/store/Component/add-store/add-store.component'; 
+
+
+
+
+
 
 const routes: Routes = [
   {
@@ -45,7 +61,58 @@ const routes: Routes = [
   {
     path: 'home',
     component: AllTemplateFrontComponent,
-  },
+  }, 
+
+  {
+    path: 'trips',
+    component: TripListComponent,
+   },
+
+   {
+    path: 'tripdetail/:id',
+    component: TripDetailComponent,
+   },
+   {
+    path: 'ajout_trip',
+    component: TripFormComponent,
+   },  
+
+   {
+    path: 'specific-trip-detail/:id',
+    component: SpecificTripDetailComponent,
+   }, 
+
+
+   {
+    path: 'spesific_trip',
+    component: SpecificTripFormComponent,
+   },
+
+
+   {
+    path: 'storlist',
+    component: StoreListComponent,
+   },
+
+   {
+    path: 'offres/:id',
+    component: OffresComponent,
+   },
+
+ {
+    path: 'add-offer',
+    component: AddOfferComponent,
+   },
+   {
+    path: 'add-store',
+    component: addstoreComponent,
+   },
+   {
+    path: 'edit-store/:id',
+    component: addstoreComponent,
+   },
+
+
 
   {
     path: 'admin',
@@ -125,7 +192,29 @@ const routes: Routes = [
       path: 'international-shipping',
       component: InternationalShippingComponent,
       // You can add canActivate guards here if needed
-    },
+    },  
+
+
+
+
+
+
+
+
+
+    {
+      path: 'statistique',
+      loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule)
+     },
+
+    {
+      path: 'fidelite',
+      loadChildren: () => import('./FrontOffices/modules/cartes-fidelite/cartes-fidelite.module').then(m => m.CartesFideliteModule)
+     }, 
+
+    
+
+
 ];
 
 @NgModule({

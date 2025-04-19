@@ -1,0 +1,53 @@
+<div class="dashboard-container">
+    <div class="dashboard-header">
+      <div class="header-left">
+        <h1>Dashboard Statistics</h1>
+        <p class="subtitle">Overview of stores and offers</p>
+      </div>
+      <div class="header-right">
+        <button class="refresh-btn" (click)="refreshData()">
+          <span class="material-icons">refresh</span>
+          Refresh
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading statistics...</p>
+    </div>
+    
+    <div *ngIf="hasError" class="error-container">
+      <div class="error-icon">
+        <span class="material-icons">error_outline</span>
+      </div>
+      <p>Failed to load statistics data. Please try again.</p>
+      <button class="retry-btn" (click)="loadData()">Try Again</button>
+    </div>
+    
+    <div *ngIf="!isLoading && !hasError">
+      <div class="stats-cards">
+        <app-stat-card [title]="'Total Stores'" [value]="totalStores" [icon]="'store'" [trend]="'up'" [trendValue]="'12%'"></app-stat-card>
+        <app-stat-card [title]="'Total Offers'" [value]="totalOffers" [icon]="'local_offer'" [trend]="'up'" [trendValue]="'8%'"></app-stat-card>
+        <app-stat-card *ngIf="offersByStore.length > 0" [title]="'Top Store'" [value]="offersByStore[0].offers" [icon]="'storefront'" [trend]="'neutral'" [trendValue]="'0%'"></app-stat-card>
+      </div>
+      
+      <div class="chart-section" *ngIf="offersByStore.length > 0">
+        <div class="section-header">
+          <h2>Offers Distribution</h2>
+          <div class="chart-controls">
+            <button class="chart-type-btn" [class.active]="isActive('bar')" (click)="setChartType('bar')">Bar Chart</button>
+            <button class="chart-type-btn" [class.active]="isActive('pie')" (click)="setChartType('pie')">Pie Chart</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <app-offers-by-store-chart [data]="offersByStoreChartData" [chartType]="currentChartType"></app-offers-by-store-chart>
+        </div>
+      </div>
+      
+      <div class="no-data-message" *ngIf="offersByStore.length === 0">
+        <span class="material-icons">info</span>
+        <p>No store distribution data available.</p>
+      </div>
+    </div>
+  </div>

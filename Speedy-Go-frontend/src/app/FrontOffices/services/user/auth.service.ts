@@ -39,6 +39,7 @@ export class AuthService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<any>(`${this.baseUrl}/validate`, { headers });
   }
+  
 
   // Save token in localStorage
   saveToken(token: string): void {

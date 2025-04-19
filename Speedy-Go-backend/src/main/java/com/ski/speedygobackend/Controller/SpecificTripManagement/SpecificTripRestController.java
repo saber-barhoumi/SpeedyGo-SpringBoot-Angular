@@ -27,7 +27,7 @@ import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 
 @RestController
-@RequestMapping("/specific-trips")
+@RequestMapping("api/specific-trips")
 @RequiredArgsConstructor
 public class SpecificTripRestController {
 

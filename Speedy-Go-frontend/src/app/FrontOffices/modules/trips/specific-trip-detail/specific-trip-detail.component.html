@@ -1,0 +1,385 @@
+<div *ngIf="loading" class="d-flex justify-content-center align-items-center py-12">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div *ngIf="!loading && specificTrip" class="container py-8">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <h1 class="fw-800 text-gradient display-5 mb-0">{{ specificTrip.description }}</h1>
+    <div class="d-flex gap-3">
+      <button class="btn btn-outline-primary" type="button" (click)="showUpdateModal()">
+        <i class="bi bi-pencil me-2"></i>Edit
+      </button>
+      <button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+        <i class="bi bi-trash me-2"></i>Delete
+      </button>
+    </div>
+  </div>
+  
+  <div class="card trip-card mb-5">
+    <div class="card-header bg-gradient py-3">
+      <h3 class="card-title m-0 text-primary fw-bold">Trip Details</h3>
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Departure Location</div>
+              <div class="detail-value">{{ specificTrip.departureLocation }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add Pass Through Location if available -->
+        <div class="col-md-6" *ngIf="specificTrip.passThroughLocation">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-pin-map"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Passe par cette place</div>
+              <div class="detail-value">{{ specificTrip.passThroughLocation }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-signpost"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Arrival Location</div>
+              <div class="detail-value">{{ specificTrip.arrivalLocation }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-calendar2-event"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Departure Date</div>
+              <div class="detail-value">{{ specificTrip.departureDate }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Departure Time</div>
+              <div class="detail-value">{{ specificTrip.departureTime }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-calendar2-event"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Arrival Date</div>
+              <div class="detail-value">{{ specificTrip.arrivalDate }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Arrival Time</div>
+              <div class="detail-value">{{ specificTrip.arrivalTime }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Parcel Type</div>
+              <div class="detail-value">{{ specificTrip.parcelType }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-person"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Receiver Full Name</div>
+              <div class="detail-value">{{ specificTrip.receiverFullName }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Receiver Phone Number</div>
+              <div class="detail-value">{{ specificTrip.receiverPhoneNumber }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-card-text"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Parcel Description</div>
+              <div class="detail-value">{{ specificTrip.parcelDescription }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-arrows-fullscreen"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Parcel Dimensions (HxWxL)</div>
+              <div class="detail-value">{{ specificTrip.parcelHeight }} x {{ specificTrip.parcelWidth }} x {{ specificTrip.parcelLength }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-info-circle"></i>
+            </div>
+            <div class="detail-content">
+              <div class="detail-title">Details</div>
+              <div class="detail-value">{{ specificTrip.tripDetails }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-image"></i>
+            </div>
+            <div class="detail-content">
+              <h4 class="detail-title">Trip Photo</h4>
+              <img [src]="specificTrip.photo" alt="Trip Photo" class="img-fluid">
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Maps -->
+        <div class="col-12 mt-4">
+          <div class="detail-card">
+            <div class="detail-icon">
+              <i class="bi bi-map"></i>
+            </div>
+            <div class="detail-content">
+              <h4 class="detail-title">Trip Route</h4>
+              
+              <!-- Map loading indicator -->
+              <div *ngIf="mapLoading" class="map-loading-container">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading map...</span>
+                </div>
+                <p class="map-loading-text">Loading map and calculating route...</p>
+              </div>
+              
+              <div class="map-container">
+                <google-map 
+                  *ngIf="mapOptions" 
+                  height="400px" 
+                  width="100%" 
+                  [options]="mapOptions">
+                  <map-marker 
+                    *ngIf="startMarker"
+                    [position]="startMarker.position" 
+                    [options]="startMarker.options">
+                  </map-marker>
+                  <map-marker 
+                    *ngIf="waypointMarker"
+                    [position]="waypointMarker.position" 
+                    [options]="waypointMarker.options">
+                  </map-marker>
+                  <map-marker 
+                    *ngIf="endMarker" 
+                    [position]="endMarker.position" 
+                    [options]="endMarker.options">
+                  </map-marker>
+                  <map-polyline 
+                    *ngIf="routePath" 
+                    [path]="routePath" 
+                    [options]="routeOptions">
+                  </map-polyline>
+                </google-map>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!loading && error" class="text-center py-12">
+  <div class="alert alert-danger rounded-3 shadow-sm" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this trip to <strong>{{ specificTrip?.description }}</strong>?
+        This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="deleteTrip()">Delete Trip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update Trip Modal -->
+<div class="modal fade" id="updateTripModal" tabindex="-1" aria-labelledby="updateTripModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateTripModalLabel">Update Trip</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="updateTripForm" (ngSubmit)="updateTrip()">
+          <div class="mb-3">
+            <label for="description" class="form-label">description</label>
+            <input type="text" id="description" formControlName="description" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="departureLocation" class="form-label">Departure Location</label>
+            <input 
+              type="text" 
+              id="departureLocation" 
+              formControlName="departureLocation" 
+              #departureLocationInput
+              class="form-control location-input"
+              placeholder="Enter departure location">
+          </div>
+          
+          <!-- Pass Through Location Field -->
+          <div class="mb-3">
+            <label for="passThroughLocation" class="form-label">
+              Passe par cette place
+              <span class="small text-muted">(Optional)</span>
+            </label>
+            <input 
+              type="text" 
+              id="passThroughLocation" 
+              formControlName="passThroughLocation" 
+              #passThroughLocationInput
+              class="form-control location-input" 
+              placeholder="Enter an intermediate location (optional)">
+            <small class="form-text text-muted">
+              Add a location you want the trip to pass through on its route
+            </small>
+          </div>
+          
+          <div class="mb-3">
+            <label for="arrivalLocation" class="form-label">Arrival Location</label>
+            <input 
+              type="text" 
+              id="arrivalLocation" 
+              formControlName="arrivalLocation" 
+              #arrivalLocationInput
+              class="form-control location-input"
+              placeholder="Enter arrival location">
+          </div>
+          <div class="mb-3">
+            <label for="departureDate" class="form-label">Departure Date</label>
+            <input type="date" id="departureDate" formControlName="departureDate" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="arrivalDate" class="form-label">Arrival Date</label>
+            <input type="date" id="arrivalDate" formControlName="arrivalDate" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="departureTime" class="form-label">Departure Time</label>
+            <input type="time" id="departureTime" formControlName="departureTime" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="arrivalTime" class="form-label">Arrival Time</label>
+            <input type="time" id="arrivalTime" formControlName="arrivalTime" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="parcelType" class="form-label">Parcel Type</label>
+            <input type="text" id="parcelType" formControlName="parcelType" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="receiverFullName" class="form-label">Receiver Full Name</label>
+            <input type="text" id="receiverFullName" formControlName="receiverFullName" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="receiverPhoneNumber" class="form-label">Receiver Phone Number</label>
+            <input type="text" id="receiverPhoneNumber" formControlName="receiverPhoneNumber" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="parcelDescription" class="form-label">Parcel Description</label>
+            <input type="text" id="parcelDescription" formControlName="parcelDescription" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="parcelHeight" class="form-label">Parcel Height</label>
+            <input type="number" id="parcelHeight" formControlName="parcelHeight" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="parcelWidth" class="form-label">Parcel Width</label>
+            <input type="number" id="parcelWidth" formControlName="parcelWidth" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="parcelLength" class="form-label">Parcel Length</label>
+            <input type="number" id="parcelLength" formControlName="parcelLength" class="form-control">
+          </div>
+         
+          <div class="mb-3">
+            <label for="tripDetails" class="form-label">Trip Details</label>
+            <textarea id="tripDetails" formControlName="tripDetails" class="form-control"></textarea>
+          </div>
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!updateTripForm.valid">Update Trip</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

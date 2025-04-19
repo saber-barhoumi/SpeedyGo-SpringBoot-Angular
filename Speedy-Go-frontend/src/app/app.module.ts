@@ -1,4 +1,9 @@
 import { NgModule } from '@angular/core';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { GoogleMapsModule } from '@angular/google-maps';
+import { CommonModule } from '@angular/common';
+
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
@@ -37,6 +42,24 @@ import { InternationalShippingComponent } from './FrontOffices/pages/customer/in
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
 import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
+import { OffersByStoreChartComponent } from './FrontOffices/modules/statistique/statistique/components/offers-by-store-chart/offers-by-store-chart.component';
+import { StatCardComponent } from './FrontOffices/modules/statistique/statistique/components/stat-card/stat-card.component';
+import { StatDashboardComponent } from './FrontOffices/modules/statistique/statistique/components/stat-dashboard/stat-dashboard.component';
+import { AddOfferComponent } from './FrontOffices/modules/store/Component/add-offer/add-offer.component';
+import { TripFormComponent } from './FrontOffices/modules/trips/trip-form/trip-form.component';
+import { TripListComponent } from './FrontOffices/modules/trips/trip-list/trip-list.component';
+import { TripDetailComponent } from './FrontOffices/modules/trips/trip-detail/trip-detail.component';
+import { TripEditDialogComponent } from './FrontOffices/modules/trips/trip-edit-dialog/trip-edit-dialog.component';
+import { SpecificTripDetailComponent } from './FrontOffices/modules/trips/specific-trip-detail/specific-trip-detail.component';
+import { SpecificTripFormComponent } from './FrontOffices/modules/trips/specific-trip-form/specific-trip-form.component';
+
+import { addstoreComponent } from './FrontOffices/modules/store/Component/add-store/add-store.component';
+import {  DiscountOfferComponent } from './FrontOffices/modules/store/Component/discount/discount.component';
+import { OffresComponent } from './FrontOffices/modules/store/offres/offres.component';
+import { StoreListComponent } from "./FrontOffices/modules/store/store/store.component";
+import { StoreFilterComponent } from './FrontOffices/modules/store/Component/store-filter/store-filter.component';
+
+
 
 @NgModule({
   declarations: [
@@ -67,22 +90,39 @@ import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
     PartnerComponent,
     RecruitmentPageComponent,
     InternationalShippingComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    TripFormComponent,
+    TripListComponent,
+    TripDetailComponent,
+    TripEditDialogComponent,
+    SpecificTripFormComponent ,
+    SpecificTripDetailComponent,
+    StoreListComponent,
+    OffresComponent,
+    DiscountOfferComponent,
+    addstoreComponent,
+    AddOfferComponent,
+    AddOfferComponent
   ],
   imports: [
     BrowserModule,
     RouterModule,
     AppRoutingModule,
     FormsModule,
+    MatDialogModule,
     HttpClientModule,
+    CommonModule,
+    FormsModule, 
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
     VehicleModule,
+    GoogleMapsModule
     
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

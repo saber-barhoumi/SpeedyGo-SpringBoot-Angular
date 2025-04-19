@@ -1,0 +1,34 @@
+<h1>Edit Trip form</h1>
+<div class="dialog-content">
+  <form [formGroup]="editForm">
+    <div class="form-group">
+      <label for="destination">Destination</label>
+      <input id="destination" type="text" formControlName="destination" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="start_location">Start Location</label>
+      <input id="start_location" type="text" formControlName="start_location" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="end_location">End Location</label>
+      <input id="end_location" type="text" formControlName="end_location" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="trip_date">Trip Date</label>
+      <input id="trip_date" type="date" formControlName="trip_date" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="trip_status">Trip Status</label>
+      <select id="trip_status" formControlName="trip_status" class="form-control">
+        <option value="PLANNED">Planned</option>
+        <option value="IN_PROGRESS">In Progress</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+      </select>
+    </div>
+  </form>
+</div>
+<div class="dialog-actions">
+  <button (click)="onCancel()" class="btn btn-secondary">Cancel</button>
+  <button (click)="onSave()" [disabled]="editForm.invalid" class="btn btn-primary">Save</button>
+</div>

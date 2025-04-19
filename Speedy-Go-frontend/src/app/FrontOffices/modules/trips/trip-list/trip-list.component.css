@@ -1,0 +1,140 @@
+:host {
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%);
+  --card-radius: 1.5rem;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.container{
+    padding: 2rem 0;
+}
+.trip-card {
+  border: none;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  transition: var(--transition);
+  background: white;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+  }
+
+  &:hover {
+    transform: translateY(-0.5rem);
+    
+    &::before {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .card-header {
+      background-position: 100% 50%;
+    }
+  }
+  
+  .card-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+    background-size: 200% auto;
+    transition: background-position 0.5s ease;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.2) 0%, transparent 30%);
+    }
+  }
+  
+  .card-title {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+    background: linear-gradient(to bottom right, rgba(241, 245, 249, 0.2), white);
+  }
+  
+  .card-footer {
+    background: rgba(241, 245, 249, 0.3);
+    border-top: 1px solid rgba(203, 213, 225, 0.3);
+    padding: 1.25rem 1.5rem;
+    backdrop-filter: blur(4px);
+  }
+}
+
+.btn-primary {
+  background-image: var(--primary-gradient);
+  background-size: 200% auto;
+  border: none;
+  border-radius: 0.75rem;
+  transition: var(--transition);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 0.75rem 1.5rem;
+  
+  &:hover {
+    background-image: var(--hover-gradient);
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.dropdown-menu {
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.dropdown-item {
+  border-radius: 0.5rem;
+  transition: var(--transition);
+  font-weight: 500;
+  
+  &:hover {
+    background: #f8fafc;
+    transform: translateX(4px);
+  }
+  
+  &:active {
+    background: #e2e8f0;
+  }
+}
+
+.modal-content {
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(203, 213, 225, 0.3);
+  background: linear-gradient(to bottom right, white, rgba(248, 250, 252, 0.5));
+  backdrop-filter: blur(12px);
+}
+
+.loading-skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
+  background-size: 400% 100%;
+}
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}

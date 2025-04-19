@@ -1,0 +1,150 @@
+<div class="offers-container">
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner">🔄</div>
+    <p>Chargement des offres...</p>
+  </div>
+
+  <div *ngIf="!loading && offers.length === 0" class="no-results">
+    <i class="icon-search-off">🚫</i>
+    <p>Aucune offre trouvée.</p>
+  </div>
+
+  <div *ngIf="!loading && offers.length > 0" class="offers-grid">
+    <div *ngFor="let offer of offers" class="discount-card-container">
+      <div class="discount-card">
+        <div class="card-header" [ngStyle]="{'background-image': 'url(' + offer.image + ')'}">
+          <div class="discount-badge">
+            <span>{{offer.discount}}%</span>
+          </div>
+          <div class="category-label">{{offer.category}}</div>
+        </div>
+        
+        <div class="card-body">
+          <h2 class="offer-title">{{offer.title}}</h2>
+          <p class="offer-description">{{offer.description}}</p>
+          
+          <div class="price-section">
+            <div class="price-container">
+              <div class="original-price">${{offer.price.toFixed(2)}}</div>
+              <div class="final-price">${{calculateFinalPrice(offer).toFixed(2)}}</div>
+            </div>
+            <div class="availability" [ngClass]="{'available': offer.available}">
+              {{offer.available ? 'Disponible' : 'Indisponible'}}
+            </div>
+          </div>
+          
+          <div class="offer-details">
+            <div class="detail-item">
+              <span class="detail-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+              <span *ngIf="offer.date_start">Valable à partir du: <strong>{{formatDate(offer.date_start)}}</strong></span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+
+                </svg>
+              </span>
+              <span>Nom du magasin: <strong>{{offer.store_name}}</strong></span>
+
+            </div>
+          </div>
+          
+          <button class="claim-button" [disabled]="!offer.available" (click)="openPaymentModal(offer)">
+            Réclamer l'offre
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>Échec du chargement des offres. Veuillez réessayer plus tard.</p>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="payment-modal-overlay" *ngIf="showPaymentModal" (click)="closePaymentModal()">
+  <div class="payment-modal" (click)="$event.stopPropagation()">
+    <!-- Close button -->
+    <button class="close-modal" (click)="closePaymentModal()" *ngIf="!paymentProcessing && paymentStep !== 3">×</button>
+    
+    <!-- Modal Header -->
+    <div class="payment-modal-header">
+      <h2 *ngIf="paymentStep < 3">Paiement</h2>
+      <h2 *ngIf="paymentStep === 3">Paiement Réussi</h2>
+    </div>
+    
+    <!-- Step 1: Initial Payment Form -->
+    <div class="payment-modal-content" *ngIf="paymentStep === 1">
+      <div class="offer-summary" *ngIf="selectedOffer">
+        <h3>{{selectedOffer.title}}</h3>
+        <div class="price-summary">
+          <p>Prix original: <span class="original">${{selectedOffer.price.toFixed(2)}}</span></p>
+          <p>Remise: <span class="discount">{{selectedOffer.discount}}%</span></p>
+          <p>Prix final: <span class="final-price">${{calculateFinalPrice(selectedOffer).toFixed(2)}}</span></p>
+        </div>
+      </div>
+      
+      <button class="btn-acheter" (click)="fillDummyPaymentForm()">Payer</button>
+    </div>
+    
+    <!-- Step 2: Filled Payment Form -->
+    <div class="payment-modal-content" *ngIf="paymentStep === 2">
+      <div class="payment-form">
+        <div class="form-group">
+          <label>Numéro de carte</label>
+          <div class="dummy-input">**** **** **** 4242</div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group half">
+            <label>Date d'expiration</label>
+            <div class="dummy-input">12/25</div>
+          </div>
+          
+          <div class="form-group half">
+            <label>CVV</label>
+            <div class="dummy-input">***</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Nom sur la carte</label>
+          <div class="dummy-input">Ghada Ayedi</div>
+        </div>
+      </div>
+      
+      <button class="btn-paye" [disabled]="paymentProcessing" (click)="processPayment()">
+        <span *ngIf="!paymentProcessing">Payer</span>
+        <span *ngIf="paymentProcessing" class="spinner"></span>
+      </button>
+    </div>
+    
+    <!-- Step 3: Payment Success -->
+    <div class="payment-modal-content success-content" *ngIf="paymentStep === 3">
+      <div class="success-animation">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      
+      <div class="success-message">
+        <h3>Paiement Réussi!</h3>
+        <p>Votre transaction a été traitée avec succès.</p>
+        <p>Des points de fidélité ont été ajoutés à votre compte.</p>
+      </div>
+      
+      <button class="btn-close" (click)="closePaymentModal()">Fermer</button>
+    </div>
+  </div>
+</div>

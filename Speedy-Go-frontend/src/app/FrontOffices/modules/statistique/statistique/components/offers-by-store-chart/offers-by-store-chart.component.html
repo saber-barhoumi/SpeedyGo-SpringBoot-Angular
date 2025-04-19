@@ -1,0 +1,35 @@
+<div class="chart-wrapper">
+    <ng-container [ngSwitch]="chartType">
+      <!-- Bar Chart -->
+      <ngx-charts-bar-vertical
+        *ngSwitchCase="'bar'"
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="data"
+        [gradient]="true"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [animations]="true"
+        [roundDomains]="true"
+        xAxisLabel="Stores"
+        yAxisLabel="Offers">
+      </ngx-charts-bar-vertical>
+      
+      <!-- Pie Chart -->
+      <ngx-charts-pie-chart
+        *ngSwitchCase="'pie'"
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="data"
+        [gradient]="true"
+        [legend]="true"
+        [legendPosition]="LegendPosition.Right"
+        [labels]="true"
+        [doughnut]="false"
+        [animations]="true">
+      </ngx-charts-pie-chart>
+    </ng-container>
+  </div>

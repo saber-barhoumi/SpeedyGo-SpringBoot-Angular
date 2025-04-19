@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Enable CORS with default configuration
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/upload/store/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
@@ -60,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers("/stores/images/**").permitAll()
                         .requestMatchers("/offres/**").permitAll()
                         .requestMatchers("/statistiques/**").permitAll()
+                        .requestMatchers("/api/specific-trips/**").permitAll() // Ajouté pour inclure les URLs avec préfixe API
+                        .requestMatchers("/api/specific-trips/images/**").permitAll() // Ajouté spécifiquement pour les images
 
 
                         // Permit auth endpoints

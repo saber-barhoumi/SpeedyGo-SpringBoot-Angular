@@ -37,6 +37,13 @@ import { InternationalShippingComponent } from './FrontOffices/pages/customer/in
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
 import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
+import { FormReportComponent } from './FrontOffices/pages/customer/formreport/formreport.component';
+import { ListreportComponent } from './BackOffices/listreport/listreport.component';
+import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/returnform.component';
+import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.component';
+import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
+import { QrScannerComponent } from './qrscanner/qrscanner.component';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 @NgModule({
   declarations: [
@@ -67,7 +74,15 @@ import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
     PartnerComponent,
     RecruitmentPageComponent,
     InternationalShippingComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    FormReportComponent,
+    ListreportComponent,
+    ReturnFormComponent,
+    ListreturnsComponent,
+    MapPointsRelaisComponent,
+    QrScannerComponent
+   
+    
   ],
   imports: [
     BrowserModule,
@@ -76,13 +91,14 @@ import { VehicleModule } from './FrontOffices/pages/vehicle/vehicle.module';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    ZXingScannerModule,   
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    VehicleModule,
+    VehicleModule
     
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

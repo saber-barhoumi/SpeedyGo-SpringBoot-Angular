@@ -35,17 +35,36 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
 
 // Import InternationalShippingComponent
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
-
+import { FormReportComponent } from './FrontOffices/pages/customer/formreport/formreport.component';
+import { ListreportComponent } from './BackOffices/listreport/listreport.component';
+import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/returnform.component';
+import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.component';
+import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
+import { QrScannerComponent } from './qrscanner/qrscanner.component';
 const routes: Routes = [
   {
     path: '',
     component: AllTemplateFrontComponent,
+    
     //canActivate: [authGuard] // Remove authGuard from default route
   },
   {
     path: 'home',
     component: AllTemplateFrontComponent,
   },
+  { path: 'report', component: FormReportComponent},
+  { path: 'reportlist', component: ListreportComponent},
+  { path: 'returnform', component:ReturnFormComponent},
+  { path: 'returnlist', component:ListreturnsComponent},
+  { path: 'maprelais', component:MapPointsRelaisComponent},
+  { path: 'qrscanner', component:QrScannerComponent},
+
+
+
+
+  
+
+
 
   {
     path: 'admin',
@@ -55,9 +74,11 @@ const routes: Routes = [
       { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'recruitment', component: RecruitmentManagementComponent },
+      { path: 'reportlist', component: FormReportComponent},
+      { path: 'maprelais', component:MapPointsRelaisComponent},
     ]
   },
-  { path: 'loginAdmin', component: LoginComponent, },
+  { path: 'loginAdmin', component: LoginComponent },
   { path: 'login', component: LoginclientComponent }, // Use the new LoginclientComponent
   { path: 'register', component: RegisterComponent }, // Use the new RegisterComponent
   { path: 'registerAdmin', component: RegisterAdminComponent },

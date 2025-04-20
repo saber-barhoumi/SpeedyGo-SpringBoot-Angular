@@ -1,0 +1,27 @@
+<div class="container mt-4">
+    <h2>Liste des retours</h2>
+  
+    <table class="table table-bordered table-striped mt-3" *ngIf="returns.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Raison</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of returns">
+          <td>{{ r.returnID }}</td>
+          <td>{{ r.retourstatus }}</td>
+          <td>{{ r.reason_description }}</td>
+          <td>{{ r.retourtype }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="returns.length === 0" class="alert alert-info">
+      Aucun retour trouvé.
+    </div>
+  </div>
+  

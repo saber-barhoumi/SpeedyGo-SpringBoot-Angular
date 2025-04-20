@@ -1,6 +1,7 @@
 package com.ski.speedygobackend.Entity.UserManagement;
 
 import com.ski.speedygobackend.Entity.ChatbotManagement.SpeedyChat;
+import com.ski.speedygobackend.Entity.ComfirmationTransfert;
 import com.ski.speedygobackend.Entity.CommunicationManagement.ChatRoom;
 import com.ski.speedygobackend.Entity.LoyaltyManagement.LoyaltyCard;
 import com.ski.speedygobackend.Entity.OfferManagement.Store;
@@ -83,4 +84,6 @@ public class User implements Serializable {
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private Set<ChatRoom> chatRooms;
+
+
 }

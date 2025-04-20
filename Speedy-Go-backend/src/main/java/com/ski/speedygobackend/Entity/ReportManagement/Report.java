@@ -21,7 +21,7 @@ public class Report implements Serializable {
     String reportName;
     String reportDescription;
     @Enumerated(EnumType.STRING)
-    ReportStatus status; ;
+    ReportStatus status;
 
     @ManyToOne
     private User user;

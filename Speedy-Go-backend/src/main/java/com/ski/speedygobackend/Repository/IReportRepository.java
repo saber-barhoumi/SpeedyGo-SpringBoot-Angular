@@ -1,4 +1,7 @@
 package com.ski.speedygobackend.Repository;
 
-public interface IReportRepository {
+import com.ski.speedygobackend.Entity.ReportManagement.Report;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IReportRepository extends JpaRepository<Report,Long> {
 }

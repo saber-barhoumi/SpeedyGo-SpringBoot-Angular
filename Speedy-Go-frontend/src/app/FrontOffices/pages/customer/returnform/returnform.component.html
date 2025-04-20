@@ -1,0 +1,38 @@
+<div class="container mt-4">
+    <h2>Ajouter un Retour</h2>
+    <form [formGroup]="returnForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="retourstatus">Statut du retour</label>
+        <select class="form-control" formControlName="retourstatus" required>
+          <option value="PENDING">PENDING</option>
+          <option value="ACCEPTED">ACCEPTED</option>
+          <option value="REJECTED">REJECTED</option>
+        </select>
+      </div>
+  
+      <div class="form-group mt-2">
+        <label for="reason_description">Raison</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="reason_description"
+          required
+        />
+      </div>
+  
+      <div class="form-group mt-2">
+        <label for="retourtype">Type de retour</label>
+        <select class="form-control" formControlName="retourtype" required>
+          <option value="RETURN">RETURN</option>
+          <option value="EXCHANGE">EXCHANGE</option>
+          <option value="REFUND">REFUND</option>
+
+        </select>
+      </div>
+  
+      <button type="submit" class="btn btn-success mt-3" [disabled]="returnForm.invalid">
+        Ajouter
+      </button>
+    </form>
+  </div>
+  

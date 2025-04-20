@@ -1,12 +1,16 @@
 package com.ski.speedygobackend.Entity.ParcelPaymentManagement;
 
 import com.ski.speedygobackend.Entity.OfferManagement.Offres;
+import com.ski.speedygobackend.Entity.ReturnManagment.Returns;
 import com.ski.speedygobackend.Entity.TripManagement.Trip;
 import com.ski.speedygobackend.Enum.ParcelStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -39,4 +43,7 @@ public class Parcel implements Serializable {
 
     @ManyToOne
     private InternationalShipping internationalShipping;
-}
+
+    @OneToMany(mappedBy = "parcel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Returns> returnss = new ArrayList<>();
+    }

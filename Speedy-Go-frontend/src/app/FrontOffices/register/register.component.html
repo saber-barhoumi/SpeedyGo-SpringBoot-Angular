@@ -1,0 +1,85 @@
+<section>
+    <div class="login-box">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <h2>Register</h2>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" formControlName="firstName" required>
+                <label>First Name</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="person"></ion-icon></span>
+                <input type="text" formControlName="lastName" required>
+                <label>Last Name</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                <input type="email" formControlName="email" required>
+                <label>Email</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" formControlName="password" required>
+                <label>Password</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                <input type="password" formControlName="confirmPassword" required>
+                <label>Confirm Password</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="calendar"></ion-icon></span>
+                <input type="date" formControlName="birthDate" required>
+                <label></label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="call"></ion-icon></span>
+                <input type="text" formControlName="phoneNumber">
+                <label>Phone Number</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="home"></ion-icon></span>
+                <input type="text" formControlName="address" required>
+                <label>Address</label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="image"></ion-icon></span>
+                <input type="file" formControlName="profile_picture" (change)="onFileSelected($event)" accept="image/*">
+                <label></label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="male-female"></ion-icon></span>
+                <select formControlName="sexe">
+                    <option value="MEN">MEN</option>
+                    <option value="WOMEN">WOMEN</option>
+                </select>
+                <label></label>
+            </div>
+
+            <div class="input-box">
+                <span class="icon"><ion-icon name="briefcase"></ion-icon></span>
+                <select formControlName="role">
+                    <option value="PARTNER">PARTNER</option>
+                    <option value="CUSTOMER">CUSTOMER</option>
+                    <option value="DELEVERY">DELIVERY</option>
+                </select>
+                <label></label>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+</section>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

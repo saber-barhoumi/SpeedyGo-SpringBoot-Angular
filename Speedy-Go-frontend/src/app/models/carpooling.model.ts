@@ -1,10 +1,21 @@
+// models/carpooling.model.ts
 export interface Carpooling {
   carpoolingId?: number;
-  driverName: string;
+  userId?: number;
   departureLocation: string;
   destination: string;
-  arrivalTime: string | null; // أو string | Date | null
+  startTime: Date | string; // Add startTime field
+  arrivalTime?: Date | string;
   availableSeats: number;
   pricePerSeat: number;
-  description: string;
+  description?: string;
+  distanceKm: number;
+  durationMinutes: number;
+  vehicleType: string;
+  fuelType: string;
+  wifi?: number;
+  airConditioning?: number;
+  status?: string;
+  weatherType?: string;
+  reservationCarpoos?: any[];
 }

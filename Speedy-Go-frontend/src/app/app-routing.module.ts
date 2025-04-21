@@ -35,6 +35,7 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
 
 // Import InternationalShippingComponent
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
+import { ChatbotComponent } from './FrontOffices/pages/chatbot/chatbot.component';
 
 const routes: Routes = [
   {
@@ -124,6 +125,11 @@ const routes: Routes = [
     {
       path: 'international-shipping',
       component: InternationalShippingComponent,
+      // You can add canActivate guards here if needed
+    },
+    {
+      path: 'SpeedyChat',
+      component: ChatbotComponent,
       // You can add canActivate guards here if needed
     },
 ];

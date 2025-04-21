@@ -1,19 +1,20 @@
 package com.ski.speedygobackend.Entity.UserManagement;
 
 import com.ski.speedygobackend.Entity.ChatbotManagement.SpeedyChat;
-import com.ski.speedygobackend.Entity.CommunicationManagement.ChatRoom;
 import com.ski.speedygobackend.Entity.LoyaltyManagement.LoyaltyCard;
 import com.ski.speedygobackend.Entity.OfferManagement.Store;
 import com.ski.speedygobackend.Entity.ReportManagement.Report;
 import com.ski.speedygobackend.Entity.SpecificTripManagement.Reservation;
 import com.ski.speedygobackend.Enum.Role;
 import com.ski.speedygobackend.Enum.Sexe;
+import com.ski.speedygobackend.model.Conversation;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +61,9 @@ public class User implements Serializable {
     @Column(name = "sexe")
     Sexe sexe;
 
+    @Column(nullable = false)
+    private boolean online;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     Role role;
@@ -81,6 +85,12 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations;
 
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private Set<ChatRoom> chatRooms;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_conversations",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "conversation_id")
+    )
+    private Set<Conversation> conversations = new HashSet<>();
 }

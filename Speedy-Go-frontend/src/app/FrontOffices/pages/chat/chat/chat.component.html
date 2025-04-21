@@ -1,0 +1,178 @@
+<div class="chat-container">
+  <!-- Chat Icon -->
+  <button class="chat-icon" (click)="toggleChat()" [class.active]="isChatOpen" title="SpeedyChat">
+    <fa-icon [icon]="faComment"></fa-icon>
+  </button>
+
+  <!-- Chat Window -->
+  <div class="chat-window" [@slideInOut]="isChatOpen ? 'in' : 'out'">
+    <!-- Header -->
+    <div class="chat-header">
+      <h3 class="chat-title">SpeedyChat</h3>
+      <button class="close-btn" (click)="toggleChat()">
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+    </div>
+
+    <!-- Chat List or Active Chat -->
+    <ng-container *ngIf="!activeConversation; else conversationView">
+      <!-- No conversations state -->
+      <div *ngIf="conversations.length === 0" class="no-conversations-prompt">
+        <div class="prompt-content">
+          <p>No conversations yet. Join the community chat!</p>
+          <button (click)="openCommonChat()" class="start-conversation-btn">
+            Join Community Chat
+          </button>
+        </div>
+      </div>
+
+      <!-- Existing conversations view -->
+      <div *ngIf="conversations.length > 0" class="conversations-view">
+        <!-- Join Community Chat Button -->
+        <div class="common-chat-button">
+          <button (click)="openCommonChat()" class="join-common-chat-btn">
+            Join Community Chat
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <fa-icon [icon]="faSearch" class="search-icon"></fa-icon>
+            <input type="text" placeholder="Search conversations..." class="search-input" [(ngModel)]="searchTerm" />
+          </div>
+        </div>
+
+        <!-- Conversations List -->
+        <div class="conversations-list">
+          <ng-container *ngIf="filterConversations().length > 0; else noConversations">
+            <div *ngFor="let conversation of filterConversations()" class="conversation-item"
+              [class.unread]="conversation.lastMessage && !conversation.lastMessage.read && conversation.lastMessage.senderId !== currentUser?.userId"
+              (click)="openConversation(conversation)">
+              <!-- For common conversation, show special badge -->
+              <div *ngIf="conversation.title === 'General Chat'" class="common-chat-badge">
+                Community
+              </div>
+              <div *ngIf="conversation.title !== 'General Chat'" class="avatar-container">
+                <div class="avatar">
+                  <ng-container *ngIf="getOtherParticipant(conversation)?.profilePicture; else defaultAvatar">
+                    <img [src]="'data:' + getOtherParticipant(conversation)?.profilePictureType + ';base64,' +
+                      getOtherParticipant(conversation)?.profilePicture" alt="Profile">
+                  </ng-container>
+                  <ng-template #defaultAvatar>
+                    <fa-icon [icon]="faUser"></fa-icon>
+                  </ng-template>
+                </div>
+                <div class="online-indicator" [class.online]="getOtherParticipant(conversation)?.online"></div>
+              </div>
+
+              <div class="conversation-details">
+                <div class="conversation-header">
+                  <span class="conversation-name">
+                    {{ conversation.title === 'General Chat' ? 'Community Chat' :
+                    getOtherParticipant(conversation)?.firstName + ' ' +
+                    getOtherParticipant(conversation)?.lastName }}
+                  </span>
+                  <span class="conversation-time" *ngIf="conversation.lastMessage">{{
+                    formatTime(conversation.lastMessage.timestamp) }}</span>
+                </div>
+                <div class="conversation-message" *ngIf="conversation.lastMessage">
+                  {{ conversation.lastMessage.content }}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noConversations>
+            <div class="no-conversations">
+              No matching conversations found
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Active Conversation View -->
+    <ng-template #conversationView>
+      <div class="conversation-container">
+        <!-- Conversation Header -->
+        <div class="conversation-header-bar" *ngIf="activeConversation">
+          <div class="participant-info">
+            <!-- Show different header for common conversation -->
+            <ng-container *ngIf="activeConversation.title === 'General Chat'; else regularConversationHeader">
+              <div class="common-chat-icon">
+                <fa-icon [icon]="faUsers"></fa-icon>
+              </div>
+              <div class="common-chat-title">
+                Community Chat
+              </div>
+              <div class="participant-count">
+                {{ activeConversation.participants.length || 0 }} participants
+              </div>
+            </ng-container>
+
+            <ng-template #regularConversationHeader>
+              <div class="avatar-container">
+                <div class="avatar">
+                  <ng-container *ngIf="getOtherParticipant(activeConversation)?.profilePicture; else defaultAvatar">
+                    <img [src]="'data:' + getOtherParticipant(activeConversation)?.profilePictureType + ';base64,' +
+                      getOtherParticipant(activeConversation)?.profilePicture" alt="Profile">
+                  </ng-container>
+                  <ng-template #defaultAvatar>
+                    <fa-icon [icon]="faUser"></fa-icon>
+                  </ng-template>
+                </div>
+                <div class="online-indicator" [class.online]="getOtherParticipant(activeConversation)?.online"></div>
+              </div>
+              <div class="participant-name">
+                {{ getOtherParticipant(activeConversation)?.firstName }} {{
+                getOtherParticipant(activeConversation)?.lastName }}
+              </div>
+            </ng-template>
+          </div>
+          <button class="back-btn" (click)="closeConversation()">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-container" #messageContainer>
+          <ng-container *ngIf="messages.length > 0; else noMessages">
+            <div *ngFor="let message of messages" class="message-item"
+              [class.own-message]="message.senderId === currentUser?.userId">
+              <!-- For common chat, show sender name for others' messages -->
+              <div *ngIf="activeConversation && activeConversation.title === 'General Chat' && message.senderId !== currentUser?.userId"
+                class="message-sender">
+                {{ message.senderName }}
+              </div>
+              <!-- Online status indicator -->
+              <span class="status-indicator"
+                    [class.online]="chatService.isUserOnline(message.senderId)">
+              </span>
+              <div class="message-bubble">
+                {{ message.content }}
+              </div>
+              <div class="message-time">
+                {{ formatTime(message.timestamp) }}
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noMessages>
+            <div class="no-messages">
+              No messages yet. Start the conversation!
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Message Input -->
+        <form [formGroup]="messageForm" (ngSubmit)="sendMessage()" class="message-input-container">
+          <input type="text" formControlName="message" placeholder="Type a message..." class="message-input" />
+          <button type="submit" class="send-btn" [disabled]="messageForm.invalid">
+            <fa-icon [icon]="faPaperPlane"></fa-icon>
+          </button>
+        </form>
+      </div>
+    </ng-template>
+  </div>
+</div>

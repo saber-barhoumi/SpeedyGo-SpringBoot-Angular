@@ -1,9 +1,10 @@
+// FrontOffices/pages/delivery/carpooling/carpooling.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooling.service';
 import { TripsService } from 'src/app/services/delivery/trips/trips.service';
 import { GouvernoratService } from 'src/app/services/delivery/gouvernorats/gouvernorats.service';
 import { Carpooling } from 'src/app/models/carpooling.model';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // Add these imports
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-carpooling',
@@ -18,15 +19,15 @@ export class CarpoolingComponent implements OnInit {
   calculatedPrice: number | null = null;
 
   // Dropdown options
-  gouvernorats: string[] = []; // Remove loadGouvernorats method
+  gouvernorats: string[] = [];
   vehicleTypes = ['compact', 'sedan', 'SUV'];
   fuelTypes = ['gasoline', 'diesel'];
   weatherTypes = ['Clear', 'Rain', 'Cloudy'];
-  carpoolingForm!: FormGroup; // Use non-null assertion operator
+  carpoolingForm!: FormGroup;
 
   constructor(
     private carpoolingService: CarpoolingService,
-    private fb: FormBuilder, // Use FormBuilder with injection
+    private fb: FormBuilder,
     private gouvernoratService: GouvernoratService,
     private tripsService: TripsService
   ) {
@@ -35,14 +36,19 @@ export class CarpoolingComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCarpoolings();
-    this.gouvernorats = this.gouvernoratService.getGouvernorats(); // Direct assignment
+    this.gouvernorats = this.gouvernoratService.getGouvernorats();
     this.setupFormListeners();
   }
 
   initForm(): void {
+    // Get current date/time and add 1 hour to set default start time
+    const defaultStartTime = new Date();
+    defaultStartTime.setHours(defaultStartTime.getHours() + 1);
+    
     this.carpoolingForm = this.fb.group({
       departureLocation: ['', Validators.required],
       destination: ['', Validators.required],
+      startTime: [defaultStartTime.toISOString().slice(0, 16), Validators.required], // Add startTime with default value
       distanceKm: [{ value: '', disabled: true }, Validators.required],
       durationMinutes: [{ value: '', disabled: true }, Validators.required],
       vehicleType: ['', Validators.required],
@@ -90,48 +96,55 @@ export class CarpoolingComponent implements OnInit {
       });
     }
   }
-  // Add this method to your component
-editCarpooling(carpooling: Carpooling): void {
-  this.isEditing = true;
-  this.showForm = true;
-  
-  // Enable the form controls that are normally disabled
-  this.carpoolingForm.get('distanceKm')?.enable();
-  this.carpoolingForm.get('durationMinutes')?.enable();
-  
-  // Set the carpooling ID for updating
-  // If the form doesn't have a carpoolingId control, add it
-  if (!this.carpoolingForm.contains('carpoolingId')) {
-    this.carpoolingForm.addControl('carpoolingId', this.fb.control(carpooling.carpoolingId));
-  } else {
-    this.carpoolingForm.get('carpoolingId')?.setValue(carpooling.carpoolingId);
+
+  editCarpooling(carpooling: Carpooling): void {
+    this.isEditing = true;
+    this.showForm = true;
+    
+    // Enable the form controls that are normally disabled
+    this.carpoolingForm.get('distanceKm')?.enable();
+    this.carpoolingForm.get('durationMinutes')?.enable();
+    
+    // Set the carpooling ID for updating
+    if (!this.carpoolingForm.contains('carpoolingId')) {
+      this.carpoolingForm.addControl('carpoolingId', this.fb.control(carpooling.carpoolingId));
+    } else {
+      this.carpoolingForm.get('carpoolingId')?.setValue(carpooling.carpoolingId);
+    }
+    
+    // Format the start time for the datetime-local input
+    let startTimeFormatted = '';
+    if (carpooling.startTime) {
+      const startTime = new Date(carpooling.startTime);
+      startTimeFormatted = startTime.toISOString().slice(0, 16);
+    }
+    
+    // Populate the form with the carpooling data
+    this.carpoolingForm.patchValue({
+      departureLocation: carpooling.departureLocation,
+      destination: carpooling.destination,
+      startTime: startTimeFormatted,
+      distanceKm: carpooling.distanceKm,
+      durationMinutes: carpooling.durationMinutes,
+      vehicleType: carpooling.vehicleType,
+      fuelType: carpooling.fuelType,
+      availableSeats: carpooling.availableSeats,
+      wifi: carpooling.wifi || 0,
+      airConditioning: carpooling.airConditioning || 0,
+      weatherType: carpooling.weatherType || 'Clear',
+      description: carpooling.description || ''
+    });
+    
+    // Set the calculated price
+    this.calculatedPrice = carpooling.pricePerSeat;
+    
+    // After form is populated, disable the read-only fields again
+    this.carpoolingForm.get('distanceKm')?.disable();
+    this.carpoolingForm.get('durationMinutes')?.disable();
+    
+    // Scroll to the form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  
-  // Populate the form with the carpooling data
-  this.carpoolingForm.patchValue({
-    departureLocation: carpooling.departureLocation,
-    destination: carpooling.destination,
-    distanceKm: carpooling.distanceKm,
-    durationMinutes: carpooling.durationMinutes,
-    vehicleType: carpooling.vehicleType,
-    fuelType: carpooling.fuelType,
-    availableSeats: carpooling.availableSeats,
-    wifi: carpooling.wifi || 0,
-    airConditioning: carpooling.airConditioning || 0,
-    weatherType: carpooling.weatherType || 'Clear',
-    description: carpooling.description || ''
-  });
-  
-  // Set the calculated price
-  this.calculatedPrice = carpooling.pricePerSeat;
-  
-  // After form is populated, disable the read-only fields again
-  this.carpoolingForm.get('distanceKm')?.disable();
-  this.carpoolingForm.get('durationMinutes')?.disable();
-  
-  // Scroll to the form
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
   loadCarpoolings(): void {
     this.isLoading = true;
@@ -201,13 +214,28 @@ editCarpooling(carpooling: Carpooling): void {
     // Add the calculated price to the carpooling data
     carpoolingData.pricePerSeat = this.calculatedPrice as number;
     
-    // Ensure wifi and airConditioning are sent as integers, not booleans
-    carpoolingData.wifi = carpoolingData.wifi ? 1 : 0;
-    carpoolingData.airConditioning = carpoolingData.airConditioning ? 1 : 0;
+    // Ensure all required fields are present and properly formatted
+    const formData = {
+      departureLocation: carpoolingData.departureLocation,
+      destination: carpoolingData.destination,
+      distanceKm: Number(carpoolingData.distanceKm),
+      durationMinutes: Number(carpoolingData.durationMinutes),
+      vehicleType: carpoolingData.vehicleType,
+      fuelType: carpoolingData.fuelType,
+      availableSeats: Number(carpoolingData.availableSeats),
+      pricePerSeat: this.calculatedPrice,
+      startTime: typeof carpoolingData.startTime === 'string' ? 
+                 new Date(carpoolingData.startTime).toISOString() : 
+                 carpoolingData.startTime,
+      wifi: carpoolingData.wifi ? 1 : 0,
+      airConditioning: carpoolingData.airConditioning ? 1 : 0,
+      description: carpoolingData.description || '',
+      weatherType: carpoolingData.weatherType || 'Clear'
+    };
     
-    console.log('Sending carpooling data:', carpoolingData);
+    console.log('Sending carpooling data:', formData);
     
-    this.carpoolingService.createCarpooling(carpoolingData).subscribe({
+    this.carpoolingService.createCarpooling(formData as Carpooling).subscribe({
       next: () => {
         this.loadCarpoolings();
         this.resetForm();
@@ -218,6 +246,7 @@ editCarpooling(carpooling: Carpooling): void {
       }
     });
   }
+
   updateCarpooling(carpoolingData: Carpooling): void {
     // Add the calculated price to the carpooling data
     carpoolingData.pricePerSeat = this.calculatedPrice as number;

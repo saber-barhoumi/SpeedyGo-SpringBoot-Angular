@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface ICarpoolingServices {
     List<Carpooling> getAllCarpoolings();
+    List<Carpooling> getUpcomingCarpoolings(); // Added method for upcoming trips
     Carpooling getCarpoolingById(Long id);
     Carpooling createCarpooling(Carpooling carpooling, String username);
     Carpooling updateCarpooling(Long id, Carpooling carpooling, String username);
@@ -12,4 +13,5 @@ public interface ICarpoolingServices {
     double calculatePrice(Carpooling carpooling);
     Carpooling acceptCarpooling(Long id, String username);
     List<Carpooling> getCarpoolingsByUser(String username);
+    void checkAndSendTripStartNotifications(); // Added method for checking and sending notifications
 }

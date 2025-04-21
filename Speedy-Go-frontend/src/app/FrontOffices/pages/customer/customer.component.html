@@ -30,37 +30,136 @@
   <div *ngIf="showCarpoolingList">
     <div class="blog-section">
       <div class="container">
-        <h2 class="text-center mb-4">List of Carpoolings</h2>
+        <!-- Carpooling View Toggle -->
+        <div class="mb-4 mt-4">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn" 
+                    [ngClass]="viewMode === 'upcoming' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="toggleViewMode('upcoming')">
+              Upcoming Carpoolings
+            </button>
+            <button type="button" class="btn" 
+                    [ngClass]="viewMode === 'all' ? 'btn-primary' : 'btn-outline-primary'"
+                    (click)="toggleViewMode('all')">
+              All Carpoolings
+            </button>
+          </div>
+        </div>
+
+        <!-- Carpooling List -->
+        <h2 class="text-center mb-4">
+          {{ viewMode === 'upcoming' ? 'Upcoming Carpoolings' : 'All Carpoolings' }}
+        </h2>
+        
         <div class="row">
-          <div class="col-12 col-sm-6 col-md-4 mb-5" *ngFor="let carpooling of carpoolings">
-            <div class="post-entry">
-              <div class="post-content-entry">
-                <h3>Destination: {{ carpooling.destination }}</h3>
-                <div class="meta">
-                  <span>Date: {{ carpooling.arrivalTime | date }}</span> <br>
-                  <span>Time: {{ carpooling.arrivalTime | date:'shortTime' }}</span> <br>
-                  <span>Seats: {{ carpooling.availableSeats }}</span> <br>
-                  <span>Price: {{ carpooling.pricePerSeat }} TND</span>
+          <ng-container *ngFor="let carpooling of viewMode === 'upcoming' ? upcomingCarpoolings : carpoolings">
+            <div class="col-12 col-sm-6 col-md-4 mb-5">
+              <div class="post-entry" [ngClass]="{'border-warning border-3': isStartingSoon(carpooling.startTime)}">
+                <div class="post-content-entry">
+                  <h3>{{ carpooling.departureLocation }} to {{ carpooling.destination }}</h3>
+                  <div class="meta">
+                    <!-- Show start time with proper formatting -->
+                    <span><strong>Start:</strong> {{ carpooling.startTime | date:'medium' }}</span> <br>
+                    
+                    <!-- Show time remaining if trip is upcoming -->
+                    <span *ngIf="carpooling.startTime && isInFuture(carpooling.startTime)" class="text-primary">
+                      {{ getTimeUntilStart(carpooling.startTime) }}
+                    </span>
+                    
+                    <!-- Show trip info -->
+                    <span><strong>Seats:</strong> {{ carpooling.availableSeats }}</span> <br>
+                    <span><strong>Price:</strong> {{ carpooling.pricePerSeat }} TND</span> <br>
+                    <span><strong>Vehicle:</strong> {{ carpooling.vehicleType }}</span> <br>
+                    
+                    <!-- Show amenities -->
+                    <div class="amenities mt-2">
+                      <span *ngIf="carpooling.wifi == 1" class="badge bg-info me-1">
+                        <i class="fa fa-wifi"></i> WiFi
+                      </span>
+                      <span *ngIf="carpooling.airConditioning == 1" class="badge bg-info me-1">
+                        <i class="fa fa-snowflake"></i> A/C
+                      </span>
+                      <span class="badge bg-info">
+                        {{ carpooling.weatherType }}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <!-- Show alert if trip is starting soon -->
+                  <div *ngIf="isStartingSoon(carpooling.startTime)" class="alert alert-warning mt-2">
+                    <i class="fa fa-clock"></i> Trip starting soon!
+                  </div>
+
+                  <!-- Add this below the price display in the carpooling card -->
+                  <div class="form-group mt-2">
+                    <label for="seatsSelector{{carpooling.carpoolingId}}">Number of seats:</label>
+                    <select 
+                      id="seatsSelector{{carpooling.carpoolingId}}" 
+                      class="form-control"
+                      [(ngModel)]="selectedSeats[carpooling.carpoolingId || 0]"
+                      (change)="updateSelectedSeats(carpooling.carpoolingId || 0, selectedSeats[carpooling.carpoolingId || 0])"
+                      [disabled]="carpooling.availableSeats < 1">
+                      <option *ngFor="let i of getAvailableSeatsArray(carpooling.availableSeats); let idx = index" [value]="idx + 1">
+                        {{ idx + 1 }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="price-info mt-2">
+                    <span class="fw-bold">Price per seat: {{ carpooling.pricePerSeat }} TND</span><br>
+                    <span class="text-primary fw-bold" *ngIf="selectedSeats[carpooling.carpoolingId || 0] > 1">
+                      Total: {{ totalPrices[carpooling.carpoolingId || 0] }} TND for {{ selectedSeats[carpooling.carpoolingId || 0] }} seats
+                    </span>
+                  </div>
+                  
+                  <button class="btn btn-primary mt-2" 
+                          (click)="reserveCarpooling(carpooling.carpoolingId || 0)"
+                          [disabled]="carpooling.availableSeats < 1">
+                    {{ carpooling.availableSeats < 1 ? 'No Seats Available' : 'Reserve' }}
+                  </button>
                 </div>
-                <button class="btn btn-primary mt-2" (click)="reserveCarpooling(carpooling.carpoolingId)">Reserve</button>
               </div>
             </div>
+          </ng-container>
+          
+          <!-- Show message if no carpoolings are available -->
+          <div class="col-12 text-center" *ngIf="viewMode === 'upcoming' && upcomingCarpoolings.length === 0">
+            <div class="alert alert-info">No upcoming carpoolings available</div>
+          </div>
+          <div class="col-12 text-center" *ngIf="viewMode === 'all' && carpoolings.length === 0">
+            <div class="alert alert-info">No carpoolings available</div>
           </div>
         </div>
 
         <h2 class="text-center mt-5">My Carpooling Reservations</h2>
         <div class="row" *ngIf="myReservations && myReservations.length > 0; else noReservations">
           <div class="col-12 col-sm-6 col-md-4 mb-5" *ngFor="let reservation of myReservations">
-            <div class="post-entry">
+            <div class="post-entry" [ngClass]="{'border-warning border-3': reservation.carpooling.start_time && isStartingSoon(reservation.carpooling.start_time)}">
               <div class="post-content-entry">
-                <h3>Reservation ID: {{ reservation.reservation_id }}</h3>
+                <h3>{{ reservation.carpooling.departure_location }} to {{ reservation.carpooling.destination }}</h3>
                 <div class="meta">
-                  <span>Carpooling ID: {{ reservation.carpooling.carpooling_id }}</span> <br>
-                  <span>Departure: {{ reservation.carpooling.departure_location }}</span> <br>
-                  <span>Destination: {{ reservation.carpooling.destination }}</span> <br>
-                  <span>User ID: {{ reservation.user_id }}</span>
+                  <!-- Show start time if available -->
+                  <span *ngIf="reservation.carpooling.start_time">
+                    <strong>Start:</strong> {{ reservation.carpooling.start_time | date:'medium' }}
+                  </span> <br>
+                  
+                  <!-- Show time remaining if trip is upcoming -->
+                  <span *ngIf="reservation.carpooling.start_time && isInFuture(reservation.carpooling.start_time)" class="text-primary">
+                    {{ getTimeUntilStart(reservation.carpooling.start_time) }}
+                  </span>
+                  
+                  <span><strong>Price:</strong> {{ reservation.carpooling.price_per_seat || 'N/A' }} TND</span> <br>
+                  <span><strong>Reservation ID:</strong> {{ reservation.reservation_id }}</span>
                 </div>
-                <button class="btn btn-danger mt-2" (click)="deleteMyReservation(reservation.reservation_id)">Delete</button>
+                
+                <!-- Show alert if trip is starting soon -->
+                <div *ngIf="reservation.carpooling.start_time && isStartingSoon(reservation.carpooling.start_time)" class="alert alert-warning mt-2">
+                  <i class="fa fa-clock"></i> Trip starting soon!
+                </div>
+                
+                <button class="btn btn-danger mt-2" (click)="deleteMyReservation(reservation.reservation_id)">
+                  Cancel Reservation
+                </button>
               </div>
             </div>
           </div>

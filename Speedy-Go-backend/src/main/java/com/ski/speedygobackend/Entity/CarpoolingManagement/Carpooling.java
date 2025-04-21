@@ -34,6 +34,9 @@ public class Carpooling implements Serializable {
     @NotNull
     @Column(nullable = false)
     String destination;
+    @NotNull
+    @Column(nullable = false)
+    LocalDateTime startTime; // Added trip start time
     @Column(nullable = true)
     LocalDateTime arrivalTime;
     @Column(nullable = true)

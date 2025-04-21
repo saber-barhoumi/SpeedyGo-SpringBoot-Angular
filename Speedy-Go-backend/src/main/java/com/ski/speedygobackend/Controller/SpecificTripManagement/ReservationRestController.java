@@ -1,4 +1,5 @@
 package com.ski.speedygobackend.Controller.SpecificTripManagement;
 
-public class ReservationRestController {
+public class
+ReservationRestController {
 }

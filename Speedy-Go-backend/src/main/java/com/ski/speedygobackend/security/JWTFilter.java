@@ -67,6 +67,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                         logger.debug("JWT Token validated for user: {}", username);
+                        logger.debug("User authorities: {}", userDetails.getAuthorities());
+
+
                     }
                 }
             } catch (Exception e) {

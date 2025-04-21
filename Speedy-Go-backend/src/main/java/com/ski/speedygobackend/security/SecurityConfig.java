@@ -30,6 +30,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+
 public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
@@ -77,7 +78,12 @@ public class SecurityConfig {
                         // Customer-specific endpoints
                         .requestMatchers("/api/carpoolings/reservations/me").authenticated()
                         .requestMatchers("/api/carpoolings/add").authenticated()
-                        .requestMatchers("/api/carpoolings/{carpoolingId}/reserve").hasAuthority("CUSTOMER")
+                        .requestMatchers("/api/carpoolings/{id}/reserve").hasAnyRole("CUSTOMER", "DELEVERY", "USER")
+
+                        .requestMatchers("/api/carpoolings/{id}/reserve").authenticated()
+
+
+
 
                         // Require authentication for all other requests
                         .anyRequest().authenticated()

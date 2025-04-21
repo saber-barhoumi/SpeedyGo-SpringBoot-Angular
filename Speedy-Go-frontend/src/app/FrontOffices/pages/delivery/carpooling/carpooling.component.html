@@ -1,3 +1,4 @@
+<!-- FrontOffices/pages/delivery/carpooling/carpooling.component.html -->
 <div class="container-fluid py-6 wow bounceInUp" data-wow-delay="0.1s">
   <div class="container">
     <div class="p-5 bg-light rounded">
@@ -38,6 +39,14 @@
                     <option value="">Select Destination</option>
                     <option *ngFor="let gov of gouvernorats" [value]="gov">{{gov}}</option>
                   </select>
+                </div>
+                
+                <!-- Add Start Time field -->
+                <div class="col-md-6">
+                  <label class="form-label">Start Time</label>
+                  <input type="datetime-local" formControlName="startTime" 
+                         class="form-control p-3 border-primary bg-light">
+                  <small class="text-muted">When will the trip start?</small>
                 </div>
 
                 <div class="col-md-6">
@@ -151,6 +160,7 @@
                   <tr>
                     <th>Departure</th>
                     <th>Destination</th>
+                    <th>Start Time</th>
                     <th>Distance (km)</th>
                     <th>Duration (min)</th>
                     <th>Vehicle</th>
@@ -164,6 +174,7 @@
                   <tr *ngFor="let carpooling of carpoolings">
                     <td>{{ carpooling.departureLocation }}</td>
                     <td>{{ carpooling.destination }}</td>
+                    <td>{{ carpooling.startTime | date:'short' }}</td>
                     <td>{{ carpooling.distanceKm }}</td>
                     <td>{{ carpooling.durationMinutes }}</td>
                     <td>{{ carpooling.vehicleType }}</td>

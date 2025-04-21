@@ -1,134 +1,165 @@
 package com.ski.speedygobackend.Controller.CarpoolingManagement;
 
 import com.ski.speedygobackend.Entity.CarpoolingManagement.Carpooling;
-import com.ski.speedygobackend.Entity.CarpoolingManagement.Trips;
+import com.ski.speedygobackend.Entity.CarpoolingManagement.ReservationCarpoo;
+import com.ski.speedygobackend.Entity.UserManagement.User;
+import com.ski.speedygobackend.Repository.IUserRepository;
 import com.ski.speedygobackend.Service.CarpoolingManagement.ICarpoolingServices;
-import com.ski.speedygobackend.Service.CarpoolingManagement.TripsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ski.speedygobackend.Service.CarpoolingManagement.IReservationCarpooServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/carpoolings")
 public class CarpoolingRestController {
-    private static final Logger logger = LoggerFactory.getLogger(CarpoolingRestController.class);
 
-    private final ICarpoolingServices carpoolingServices;
-    private final TripsService tripsService; // Add the TripsService
+    private final ICarpoolingServices carpoolingService;
+    private final IReservationCarpooServices reservationService;
+    private final IUserRepository userRepository;
 
     @Autowired
-    public CarpoolingRestController(ICarpoolingServices carpoolingServices, TripsService tripsService) {
-        this.carpoolingServices = carpoolingServices;
-        this.tripsService = tripsService; // Inject the TripsService
+    public CarpoolingRestController(
+            ICarpoolingServices carpoolingService,
+            IReservationCarpooServices reservationService,
+            IUserRepository userRepository) {
+        this.carpoolingService = carpoolingService;
+        this.reservationService = reservationService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Carpooling>> getAllCarpoolings() {
-        return ResponseEntity.ok(carpoolingServices.getAllCarpoolings());
+    public List<Carpooling> getAllCarpoolings() {
+        return carpoolingService.getAllCarpoolings();
     }
 
-    @GetMapping("/my-carpoolings")
-    public ResponseEntity<List<Carpooling>> getMyCarpoolings(Principal principal) {
-        return ResponseEntity.ok(carpoolingServices.getCarpoolingsByUser(principal.getName()));
+    @GetMapping("/upcoming")
+    public List<Carpooling> getUpcomingCarpoolings() {
+        return carpoolingService.getUpcomingCarpoolings();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Carpooling> getCarpooling(@PathVariable Long id) {
-        return ResponseEntity.ok(carpoolingServices.getCarpoolingById(id));
+    public Carpooling getCarpoolingById(@PathVariable Long id) {
+        return carpoolingService.getCarpoolingById(id);
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Carpooling> createCarpooling(
-            @RequestBody Carpooling carpooling,
-            Principal principal
-    ) {
-        return ResponseEntity.ok(carpoolingServices.createCarpooling(carpooling, principal.getName()));
+    public Carpooling createCarpooling(@RequestBody Carpooling carpooling, Principal principal) {
+        return carpoolingService.createCarpooling(carpooling, principal.getName());
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Carpooling> updateCarpooling(
-            @PathVariable Long id,
-            @RequestBody Carpooling carpooling,
-            Principal principal
-    ) {
-        return ResponseEntity.ok(carpoolingServices.updateCarpooling(id, carpooling, principal.getName()));
+    public Carpooling updateCarpooling(@PathVariable Long id, @RequestBody Carpooling carpooling, Principal principal) {
+        return carpoolingService.updateCarpooling(id, carpooling, principal.getName());
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteCarpooling(
-            @PathVariable Long id,
-            Principal principal
-    ) {
-        carpoolingServices.deleteCarpooling(id, principal.getName());
+    public ResponseEntity<Void> deleteCarpooling(@PathVariable Long id, Principal principal) {
+        carpoolingService.deleteCarpooling(id, principal.getName());
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<Carpooling> acceptCarpooling(
-            @PathVariable Long id,
-            Principal principal
-    ) {
-        return ResponseEntity.ok(carpoolingServices.acceptCarpooling(id, principal.getName()));
+    @PostMapping("/calculate-price")
+    public double calculatePrice(@RequestBody Carpooling carpooling) {
+        return carpoolingService.calculatePrice(carpooling);
     }
 
-    // Keep the original price calculation endpoint for backward compatibility
-    @PostMapping("/calculate-price")
-    public ResponseEntity<?> calculatePrice(@RequestBody Carpooling carpooling) {
+    @PostMapping("/{id}/accept")
+    public Carpooling acceptCarpooling(@PathVariable Long id, Principal principal) {
+        return carpoolingService.acceptCarpooling(id, principal.getName());
+    }
+
+    @PostMapping("/{id}/reserve")
+    @PreAuthorize("hasAnyRole('DELEVERY', 'USER')") // Add role-based access
+    public ResponseEntity<?> reserveCarpooling(@PathVariable Long id, Principal principal) {
         try {
-            logger.info("Original endpoint - Calculating price for: {}", carpooling);
+            // Get the current user
+            String username = principal.getName();
 
-            // If departure and destination are set but distance or duration is missing, look up trip data
-            if (carpooling.getDepartureLocation() != null && !carpooling.getDepartureLocation().isEmpty() &&
-                    carpooling.getDestination() != null && !carpooling.getDestination().isEmpty() &&
-                    (carpooling.getDistanceKm() == null || carpooling.getDistanceKm() <= 0 ||
-                            carpooling.getDurationMinutes() == null || carpooling.getDurationMinutes() <= 0)) {
+            // Get user ID from the authenticated user
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-                Trips trip = tripsService.findByLocations(
-                        carpooling.getDepartureLocation(), carpooling.getDestination());
+            Long userId = user.getUserId();
 
-                if (trip != null) {
-                    // Update carpooling with trip data
-                    carpooling.setDistanceKm(trip.getDistanceKm());
-                    carpooling.setDurationMinutes(trip.getDurationMinutes());
-                    carpooling.setVehicleType(trip.getVehicleType());
-                    carpooling.setFuelType(trip.getFuelType());
-                    carpooling.setWeatherType(trip.getWeatherType());
+            // Get the carpooling
+            Carpooling carpooling = carpoolingService.getCarpoolingById(id);
 
-                    logger.info("Trip data found: distance={}km, duration={}min",
-                            carpooling.getDistanceKm(), carpooling.getDurationMinutes());
-                }
-            }
+            // Create and save reservation
+            ReservationCarpoo reservation = new ReservationCarpoo();
+            reservation.setCarpooling(carpooling);
+            reservation.setUserId(userId);
+            reservation.setSeatsReserved(1);
 
-            // Add null checks
-            if (carpooling.getDistanceKm() == null) {
-                carpooling.setDistanceKm(0.0);
-            }
-            if (carpooling.getDurationMinutes() == null) {
-                carpooling.setDurationMinutes(0);
-            }
+            // Save the reservation
+            ReservationCarpoo savedReservation = reservationService.saveReservation(reservation);
 
-            double price = carpoolingServices.calculatePrice(carpooling);
-            logger.info("Calculated price: {}", price);
-
-            // Return price along with the updated distance and duration
-            Map<String, Object> response = new HashMap<>();
-            response.put("price", price);
-            response.put("distanceKm", carpooling.getDistanceKm());
-            response.put("durationMinutes", carpooling.getDurationMinutes());
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(savedReservation);
         } catch (Exception e) {
-            logger.error("Error calculating price", e);
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body("Error reserving carpooling: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/reservations/me")
+    @PreAuthorize("hasAnyRole('DELEVERY', 'USER')") // Add role-based access
+    public ResponseEntity<?> getMyReservations(Principal principal) {
+        try {
+            String username = principal.getName();
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            List<ReservationCarpoo> reservations = reservationService.getReservationsByUserId(user.getUserId());
+            return ResponseEntity.ok(reservations);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving reservations: " + e.getMessage());
+        }
+    }
+
+
+
+    @GetMapping("/reservations/me/upcoming")
+    @PreAuthorize("hasAnyRole('DELEVERY', 'USER')") // Add role-based access
+    public ResponseEntity<?> getMyUpcomingReservations(Principal principal) {
+        try {
+            String username = principal.getName();
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            List<ReservationCarpoo> reservations = reservationService.getUpcomingReservationsByUserId(user.getUserId());
+            return ResponseEntity.ok(reservations);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error retrieving upcoming reservations: " + e.getMessage());
+        }
+    }
+
+
+
+@DeleteMapping("/reservations/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable Long id, Principal principal) {
+        try {
+            // Get user for validation
+            String username = principal.getName();
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            // Get reservation
+            ReservationCarpoo reservation = reservationService.getReservationById(id);
+
+            // Verify ownership (optional security check)
+            if (!reservation.getUserId().equals(user.getUserId())) {
+                return ResponseEntity.badRequest().body("You are not authorized to delete this reservation");
+            }
+
+            // Delete reservation
+            reservationService.deleteReservation(id);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting reservation: " + e.getMessage());
         }
     }
 }

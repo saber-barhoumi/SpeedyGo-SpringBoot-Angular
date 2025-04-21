@@ -1,9 +1,11 @@
+// models/carpooling.model.ts
 export interface Carpooling {
   carpoolingId?: number;
   userId?: number;
   departureLocation: string;
   destination: string;
-  arrivalTime?: Date;
+  startTime: Date | string; // Add startTime field
+  arrivalTime?: Date | string;
   availableSeats: number;
   pricePerSeat: number;
   description?: string;
@@ -13,6 +15,7 @@ export interface Carpooling {
   fuelType: string;
   wifi?: number;
   airConditioning?: number;
-  weatherType?: string;
   status?: string;
+  weatherType?: string;
+  reservationCarpoos?: any[];
 }

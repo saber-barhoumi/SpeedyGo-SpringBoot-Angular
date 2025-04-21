@@ -25,5 +25,12 @@ public class ReservationCarpoo {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "seats_reserved", nullable = false)
+    private Integer seatsReserved = 1; // Add default value
+    public ReservationCarpoo() {
+        // Default constructor
+        this.seatsReserved = 1; // Default to 1 seat
+    }
+
     // You can add more fields like reservationDate, etc.
 }

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class QrScannerService {
-  private apiUrl = 'http://localhost:8086/pointsrelais/confirmer';
+  private apiUrl = 'http://localhost:8084/pointsrelais/confirmer';
 
   constructor(private http: HttpClient) {}
 

@@ -7,7 +7,7 @@ import { PointRelais } from 'src/app/models/points-relais.model';
   providedIn: 'root'
 })
 export class PointsRelaisService {
-  private apiUrl = 'http://localhost:8086/pointsrelais';
+  private apiUrl = 'http://localhost:8084/pointsrelais';
 
   constructor(private http: HttpClient) {}
 

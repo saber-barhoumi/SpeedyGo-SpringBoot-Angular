@@ -1,0 +1,12 @@
+
+.mat-datepicker-content {
+    z-index: 10000 !important;
+  }
+  .cal-disabled-day {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    pointer-events: none !important;
+    opacity: 0.5;
+  }
+  
+  

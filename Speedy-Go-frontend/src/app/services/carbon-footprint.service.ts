@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CarbonFootprintService {
 
-  private apiUrl = 'http://localhost:8086/carbon/predict';  // URL de ton API Spring
+  private apiUrl = 'http://localhost:8084/carbon/predict';  // URL de ton API Spring
 
   constructor(private http: HttpClient) { }
 

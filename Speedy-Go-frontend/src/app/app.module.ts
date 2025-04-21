@@ -46,6 +46,14 @@ import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
 import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
+
+
 
 @NgModule({
   declarations: [
@@ -103,12 +111,24 @@ import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfo
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
-    VehicleModule
+
+    
+    VehicleModule,
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+
+    
+    
+
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+
     
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, // Now this will work
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }, 
   ],
   bootstrap: [AppComponent]
 })

@@ -8,7 +8,7 @@ import { Report } from 'src/app/models/report';
 })
 export class ReportService {
 
-  private apiUrl = 'http://localhost:8086/report';
+  private apiUrl = 'http://localhost:8084/report';
 
   constructor(private http: HttpClient) { }
 

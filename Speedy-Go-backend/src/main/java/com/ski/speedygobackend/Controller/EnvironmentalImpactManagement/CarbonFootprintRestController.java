@@ -1,32 +1,51 @@
 package com.ski.speedygobackend.Controller.EnvironmentalImpactManagement;
 
-import com.ski.speedygobackend.Entity.EnvironmentalImpactManagement.CarbonFootPrint;
-import com.ski.speedygobackend.Repository.IVehicleRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ski.speedygobackend.DTO.CarbonFootPrintDTO;
 import com.ski.speedygobackend.Service.EnvironmentalImpactManagement.CarbonFootprintServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.net.http.HttpRequest;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/carbon-footprint")
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/carbon")
 public class CarbonFootprintRestController {
-   private  CarbonFootprintServicesImpl carbonFootprintServices;
-    @GetMapping("/analyze")
-    public ResponseEntity<?> analyzeCarbonFootprint() {
-        String filePath = "C:\\Users\\medal\\Downloads\\SpeedyGo-SpringBoot-Angular\\Speedy-Go-backend\\carbon_data";
-        try {
-            carbonFootprintServices.exportCarbonFootPrintToCSV(filePath); // export CSV
-            List<Map<String, Object>> predictions = carbonFootprintServices.analyzeCSVWithAI(filePath);
-            return ResponseEntity.ok(predictions);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+
+    @Autowired
+    private CarbonFootprintServicesImpl carbonFootprintServices;
+
+    @GetMapping("/data")
+    public List<CarbonFootPrintDTO> getCarbonData() {
+        List<CarbonFootPrintDTO> carbonData = carbonFootprintServices.getAllAsDTO();
+        if (carbonData.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No data available");
         }
+        return carbonData;
     }
 
+    @PostMapping("/predict")
+    public ResponseEntity<String> predictEmission() throws IOException, InterruptedException {
+        List<CarbonFootPrintDTO> data = carbonFootprintServices.getAllAsDTO();
+        String json = new ObjectMapper().writeValueAsString(data);
 
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:5000/predict"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
 
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        return ResponseEntity.ok(response.body());
+    }
 }

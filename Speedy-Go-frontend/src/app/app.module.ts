@@ -44,6 +44,7 @@ import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.comp
 import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
 import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,9 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
     ReturnFormComponent,
     ListreturnsComponent,
     MapPointsRelaisComponent,
-    QrScannerComponent
+    QrScannerComponent,
+    AffichmapComponent,
+  
    
     
   ],

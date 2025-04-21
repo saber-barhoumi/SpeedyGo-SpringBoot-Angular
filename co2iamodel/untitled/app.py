@@ -1,47 +1,56 @@
-from flask import Flask, request, jsonify
-import pandas as pd
 import joblib
+import pandas as pd
+from flask import Flask, request, jsonify
 
+# Charger le modèle
+model = joblib.load('model_carbon.pkl')
+
+# Créer l'application Flask
 app = Flask(__name__)
 
-# Charger le modèle pré-entraîné
-model = joblib.load("C:\\Users\\medal\\Downloads\\SpeedyGo-SpringBoot-Angular\\co2iamodel\\untitled\\random_forest_model.pkl")
+@app.route('/predict', methods=['POST'])
+def predict():
+    # Récupérer les données envoyées dans la requête POST
+    data = request.get_json()
 
+    # Vérifier si les données sont envoyées sous forme de liste ou dictionnaire
+    if isinstance(data, dict):  # Cas où une seule entrée est envoyée
+        data = [data]  # Encapsuler dans une liste pour uniformiser
 
+    # Convertir les données en DataFrame
+    df = pd.DataFrame(data)
 
-# Essayer de charger le modèle depuis le fichier .pkl
-try:
-    model = joblib.load("C:\\Users\\medal\\Downloads\\SpeedyGo-SpringBoot-Angular\\co2iamodel\\untitled\\random_forest_model.pkl")
-    print("Modèle chargé avec succès.")
-except Exception as e:
-    print(f"Erreur lors du chargement du modèle : {e}")
+    # Renommer les colonnes
+    df.rename(columns={
+        'vehicleType': 'vehicle_type',
+        'capaciteMaxColis': 'capaciteMaxColis',
+        'consommationParKm': 'consommationParKm',
+        'energie': 'energie'
+    }, inplace=True)
 
-@app.route('/predict_from_csv', methods=['POST'])
-def predict_from_csv():
-    file_path = request.json.get('file_path')
+    # Encoder les colonnes catégorielles
+    df['vehicle_type'] = df['vehicle_type'].astype('category').cat.codes
+    df['energie'] = df['energie'].astype('category').cat.codes
 
+    # Faire la prédiction
     try:
-        # Charger le fichier CSV généré à partir de Spring
-        df = pd.read_csv(file_path)
+        prediction = model.predict(df[['vehicle_type', 'capaciteMaxColis', 'consommationParKm', 'energie']])
 
-        # Vérifier que les colonnes nécessaires sont présentes
-        if "ConsommationParKm" not in df.columns or "CapaciteMaxColis" not in df.columns:
-            return jsonify({"error": "Les colonnes nécessaires sont manquantes dans le CSV"}), 400
+        # Conseils en fonction des émissions de CO2
+        advice = []
+        for pred in prediction:
+            if pred < 50:
+                advice.append("Ce véhicule est très écologique et respectueux de l'environnement.")
+            elif 50 <= pred < 100:
+                advice.append("Ce véhicule est modéré en termes d'émissions de CO2. Il reste une bonne option pour l'environnement.")
+            else:
+                advice.append("Ce véhicule génère des émissions plus élevées de CO2. Vous pourriez envisager une alternative plus écologique.")
 
-        # Sélectionner les colonnes nécessaires
-        features = df[["ConsommationParKm", "CapaciteMaxColis"]]
-
-        # Effectuer la prédiction
-        predictions = model.predict(features)
-
-        # Ajouter les prédictions au DataFrame
-        df["PredictedEmission"] = predictions
-
-        # Retourner les résultats avec les prédictions
-        return jsonify(df.to_dict(orient='records'))
+        return jsonify({'prediction': prediction.tolist(), 'advice': advice})
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 400
 
+# Lancer l'application Flask
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(debug=True)

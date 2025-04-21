@@ -41,6 +41,7 @@ import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/re
 import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.component';
 import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
 import { QrScannerComponent } from './qrscanner/qrscanner.component';
+import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
 const routes: Routes = [
   {
     path: '',
@@ -53,11 +54,7 @@ const routes: Routes = [
     component: AllTemplateFrontComponent,
   },
   { path: 'report', component: FormReportComponent},
-  { path: 'reportlist', component: ListreportComponent},
   { path: 'returnform', component:ReturnFormComponent},
-  { path: 'returnlist', component:ListreturnsComponent},
-  { path: 'maprelais', component:MapPointsRelaisComponent},
-  { path: 'qrscanner', component:QrScannerComponent},
 
 
 
@@ -74,8 +71,11 @@ const routes: Routes = [
       { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'recruitment', component: RecruitmentManagementComponent },
-      { path: 'reportlist', component: FormReportComponent},
+      { path: 'reportlist', component: ListreportComponent},
       { path: 'maprelais', component:MapPointsRelaisComponent},
+      { path: 'returnlist', component:ListreturnsComponent},
+      { path: 'qrscanner', component:QrScannerComponent},
+
     ]
   },
   { path: 'loginAdmin', component: LoginComponent },
@@ -134,6 +134,12 @@ const routes: Routes = [
       path: 'customer',
       component: CustomerComponent,
       canActivate: [authGuard, RoleGuard],
+      children: [
+        { path: 'report', component: FormReportComponent },
+        { path: 'returnform', component: ReturnFormComponent },
+        { path: 'affichmap', component:AffichmapComponent},
+
+      ]
     },
     {
       path: 'carpooling',

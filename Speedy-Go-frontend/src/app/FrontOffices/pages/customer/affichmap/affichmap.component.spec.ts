@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QrscannerComponent } from './qrscanner.component';
+import { AffichmapComponent } from './affichmap.component';
 
-describe('QrscannerComponent', () => {
-  let component: QrscannerComponent;
-  let fixture: ComponentFixture<QrscannerComponent>;
+describe('AffichmapComponent', () => {
+  let component: AffichmapComponent;
+  let fixture: ComponentFixture<AffichmapComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [QrscannerComponent]
+      declarations: [AffichmapComponent]
     });
-    fixture = TestBed.createComponent(QrscannerComponent);
+    fixture = TestBed.createComponent(AffichmapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

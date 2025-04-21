@@ -42,6 +42,7 @@ import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.comp
 import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
 import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
+import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
 const routes: Routes = [
   {
     path: '',
@@ -53,9 +54,7 @@ const routes: Routes = [
     path: 'home',
     component: AllTemplateFrontComponent,
   },
-  { path: 'report', component: FormReportComponent},
-  { path: 'returnform', component:ReturnFormComponent},
-
+ 
 
 
 
@@ -75,6 +74,8 @@ const routes: Routes = [
       { path: 'maprelais', component:MapPointsRelaisComponent},
       { path: 'returnlist', component:ListreturnsComponent},
       { path: 'qrscanner', component:QrScannerComponent},
+      { path: 'carbon', component:CarbonFootprintComponent},
+      
 
     ]
   },

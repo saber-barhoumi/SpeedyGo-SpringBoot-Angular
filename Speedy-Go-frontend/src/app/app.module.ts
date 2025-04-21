@@ -45,6 +45,7 @@ import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-po
 import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
+import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affi
     MapPointsRelaisComponent,
     QrScannerComponent,
     AffichmapComponent,
+    CarbonFootprintComponent,
   
    
     

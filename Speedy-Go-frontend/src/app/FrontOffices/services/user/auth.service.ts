@@ -7,7 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8084/api/auth'; // Replace with your backend URL
+  private baseUrl = 'http://localhost:8086/api/auth'; // Replace with your backend URL
 
   constructor(private http: HttpClient) {}
 

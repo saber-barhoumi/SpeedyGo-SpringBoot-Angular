@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ski.speedygobackend.Service.statistiqueService.statistiqueServiceImpl;
 
 @RestController
-@RequestMapping("/statistiques")
+@RequestMapping("/api/statistiques")
 public class statistiqueController {
 
     @Autowired

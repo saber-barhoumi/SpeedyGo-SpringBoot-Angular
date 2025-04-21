@@ -16,7 +16,7 @@ import com.ski.speedygobackend.DTO.offresDetailsDTO;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/offres")
+@RequestMapping("api/offres")
 
 public class OffresRestController {
 

@@ -26,7 +26,7 @@ import java.util.List;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/stores")
+@RequestMapping("api/stores")
 @RequiredArgsConstructor
 public class StoreRestController {
     private final IStoreServices storeServices;

@@ -90,7 +90,13 @@ const routes: Routes = [
 
 
    {
-    path: 'storlist',
+    path: 'partner',
+    component: StoreListComponent,
+   },
+
+
+   {
+    path: 'stores',
     component: StoreListComponent,
    },
 

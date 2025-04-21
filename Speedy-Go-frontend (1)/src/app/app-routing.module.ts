@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';
-import { AllTemplateBackComponent } from './BackOffices/all-template-back/all-template-back.component'; // Ajout de l'importation
+import { AllTemplateBackComponent } from './BackOffices/all-template-back/all-template-back.component';
 import { LoginComponent } from './BackOffices/login/login.component';
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { authGuard } from './FrontOffices/guards/auth.guard';
@@ -22,6 +22,10 @@ import { VehicleListComponent } from './vehicle-list/vehicle-list.component';
 import { BodyComponent } from './FrontOffices/body/body.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
 import { RoleGuard } from './FrontOffices/guards/role.guard';
+import { LivraisonListComponent } from './livraison-management/livraison-list/livraison-list.component';
+import { LivraisonFormComponent } from './livraison-management/livraison-form/livraison-form.component';
+import { LivraisonViewComponent } from './livraison-management/livraison-view/livraison-view.component';
+
 
 const routes: Routes = [
   {
@@ -31,42 +35,59 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: AllTemplateFrontComponent,
+    component: AllTemplateFrontComponent
   },
-  
   {
     path: 'admin',
-    component: AllTemplateBackComponent, children: [
+    component: AllTemplateBackComponent,
+    children: [
       { path: 'users', component: GestionUserComponent, canActivate: [BackofficeAuthGuard] },
-      { path: 'home',component:BodyBackComponent,canActivate: [BackofficeAuthGuard]} ,
-      { path: 'update-user/:id', component: UpdateUserComponent,canActivate: [BackofficeAuthGuard] },
-      { path: 'add-user', component: AddUserComponent ,canActivate: [BackofficeAuthGuard]},
-      { path: 'recruitment', component: RecruitmentManagementComponent },  
+      { path: 'home', component: BodyBackComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
+      { path: 'recruitment', component: RecruitmentManagementComponent }
+    ]
+  },
+  { path: 'loginAdmin', component: LoginComponent },
+  { path: 'login', component: LoginclientComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'registerAdmin', component: RegisterAdminComponent },
 
-
-  ] },
-  {path: 'loginAdmin', component:LoginComponent,},
-  {path: 'login', component:LoginclientComponent},
-  {path: 'register', component:RegisterComponent},
-  {path: 'registerAdmin', component:RegisterAdminComponent},
-    // New vehicle routes
-    { path: 'vehicles', component: VehicleListComponent },
-    { path: 'vehicles/add', component: VehicleFormComponent },
-    { path: 'vehicles/edit/:id', component: VehicleFormComponent },
-    { path: 'vehicles/:id', component: VehicleDetailComponent },
   {
-    path: 'recruitment',component: AllTemplateFrontComponent, canActivate: [authGuard, RoleGuard],
+    path: 'vehicles',
+    component: AllTemplateFrontComponent,
+    children: [
+  { path: 'vehicles', component: VehicleListComponent },
+  { path: 'add', component: VehicleFormComponent },
+  { path: 'edit/:id', component: VehicleFormComponent },
+  { path: ':id', component: VehicleDetailComponent },
+]
+},
+
+
+  // Livraison Management
+  {
+    path: 'livraison-management',
+    component: AllTemplateFrontComponent,
+    children: [
+      { path: '', component: LivraisonListComponent },
+      { path: 'create', component: LivraisonFormComponent },
+      { path: 'edit/:id', component: LivraisonFormComponent },
+      { path: 'view/:id', component: LivraisonViewComponent }
+    ]
+  },
+
+  // Recruitment Front routes
+  {
+    path: 'recruitment',
+    component: AllTemplateFrontComponent,
+    canActivate: [authGuard, RoleGuard],
     data: { allowedRoles: ['DELEVERY', 'DELIVERY', 'ADMIN'] },
     children: [
+      { path: 'home', component: BodyComponent },
       {
-        path: 'home',
-        component: BodyComponent,
-      },
-      {
-        
         path: 'apply',
         component: RecruitmentFormComponent,
-       
         data: { title: 'Apply for Delivery Driver Position' }
       },
       {
@@ -77,20 +98,14 @@ const routes: Routes = [
       {
         path: 'my-applications',
         component: MyApplicationsComponent,
-      
         data: { title: 'My Applications' }
       },
       {
         path: 'view/:id',
         component: RecruitmentDetailComponent,
-  
         data: { title: 'Application Details' }
       },
-      {
-        path: '',
-        redirectTo: 'my-applications',
-        pathMatch: 'full'
-      }
+      { path: '', redirectTo: 'my-applications', pathMatch: 'full' }
     ]
   }
 ];
@@ -99,4 +114,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,130 +1,76 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { DeliveryVehicle, VehicleType } from 'src/app/models/vehicle.model';
-import { AuthService } from 'src/app/FrontOffices/services/user/auth.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { DeliveryVehicle } from '../../models/vehicle.model';
+import { environment } from 'src/app/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehicleService {
-  private apiUrl = environment.apiUrl + '/api/deliveryvehicles';
+  private apiUrl = `${environment.apiUrl}/api/deliveryvehicles`;
 
-  constructor(private http: HttpClient,    private authService: AuthService
-  ) { }
+  constructor(private http: HttpClient) { }
 
-   // Check authentication status before each operation
-   private checkAuthStatus(): Observable<never> | null {
-    if (!this.authService.isAuthenticated()) {
-      return throwError(() => new Error('User must be authenticated to perform this operation'));
-    }
-    return null;
+  // Get all vehicles
+  getAllVehicles(): Observable<DeliveryVehicle[]> {
+    return this.http.get<DeliveryVehicle[]>(this.apiUrl);
   }
 
- // Get all vehicles
- getAllVehicles(): Observable<DeliveryVehicle[]> {
-  const authCheck = this.checkAuthStatus();
-  if (authCheck) return authCheck;
-  
-  return this.http.get<DeliveryVehicle[]>(this.apiUrl)
-    .pipe(
-      tap(vehicles => {
-        console.log('Fetched vehicles', vehicles);
-        // Log current user and timestamp
-        console.log(`Operation performed at: ${new Date('2025-03-03 14:57:18').toISOString()}`);
-        console.log(`By user: YoussefHarrabi`);
-      }),
-      catchError(this.handleError)
-    );
-}
-
-  // Get vehicle by ID
+  // Get a vehicle by ID
   getVehicleById(id: number): Observable<DeliveryVehicle> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
-    
-    return this.http.get<DeliveryVehicle>(`${this.apiUrl}/${id}`)
-      .pipe(catchError(this.handleError));
+    return this.http.get<DeliveryVehicle>(`${this.apiUrl}/${id}`);
   }
 
-  // Create new vehicle
+  // Create a new vehicle (without photo)
   createVehicle(vehicle: DeliveryVehicle): Observable<DeliveryVehicle> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
-    
-    return this.http.post<DeliveryVehicle>(this.apiUrl, vehicle)
-      .pipe(
-        tap(newVehicle => console.log('Created vehicle', newVehicle)),
-        catchError(this.handleError)
-      );
+    return this.http.post<DeliveryVehicle>(this.apiUrl, vehicle);
   }
 
-  // Update existing vehicle
-  updateVehicle(id: number, vehicle: DeliveryVehicle): Observable<DeliveryVehicle> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
+  // Create a new vehicle with photo
+  createVehicleWithPhoto(vehicle: DeliveryVehicle, photo: File): Observable<DeliveryVehicle> {
+    const formData = new FormData();
+    formData.append('vehicle', new Blob([JSON.stringify(vehicle)], {type: 'application/json'}));
     
-    return this.http.put<DeliveryVehicle>(`${this.apiUrl}/${id}`, vehicle)
-      .pipe(
-        tap(updatedVehicle => console.log('Updated vehicle', updatedVehicle)),
-        catchError(this.handleError)
-      );
-  }
-
-  // Delete vehicle
-  deleteVehicle(id: number): Observable<void> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
-    
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
-      .pipe(catchError(this.handleError));
-  }
-
-  // Get vehicles by type
-  getVehiclesByType(vehicleType: VehicleType): Observable<DeliveryVehicle[]> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
-    
-    return this.http.get<DeliveryVehicle[]>(`${this.apiUrl}/type/${vehicleType}`)
-      .pipe(catchError(this.handleError));
-  }
-
-
-  // Check if license plate is already registered
-  // Check if license plate is already registered
-  checkLicensePlate(licensePlate: string): Observable<{exists: boolean}> {
-    const authCheck = this.checkAuthStatus();
-    if (authCheck) return authCheck;
-    
-    const params = new HttpParams().set('licensePlate', licensePlate);
-    return this.http.get<{exists: boolean}>(`${this.apiUrl}/check-license-plate`, { params })
-      .pipe(catchError(this.handleError));
-  }
-
-  // Error handler
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
-    
-    // Log timestamp for error tracking
-    const timestamp = new Date('2025-03-03 14:57:18').toISOString();
-    console.error(`Error occurred at ${timestamp}`);
-    console.error(`User: YoussefHarrabi`);
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      if (error.error && typeof error.error === 'object' && error.error.error) {
-        errorMessage = error.error.error;
-      } else {
-        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-      }
+    if (photo) {
+      formData.append('photo', photo);
     }
+
+    return this.http.post<DeliveryVehicle>(`${this.apiUrl}/with-photo`, formData);
+  }
+
+  // Update a vehicle (without photo)
+  updateVehicle(id: number, vehicle: DeliveryVehicle): Observable<DeliveryVehicle> {
+    return this.http.put<DeliveryVehicle>(`${this.apiUrl}/${id}`, vehicle);
+  }
+
+  // Update a vehicle with photo
+  updateVehicleWithPhoto(id: number, vehicle: DeliveryVehicle, photo: File | null): Observable<DeliveryVehicle> {
+    const formData = new FormData();
+    formData.append('vehicle', new Blob([JSON.stringify(vehicle)], {type: 'application/json'}));
     
-    console.error(errorMessage);
-    return throwError(() => new Error(errorMessage));
+    if (photo) {
+      formData.append('photo', photo);
+    }
+
+    return this.http.put<DeliveryVehicle>(`${this.apiUrl}/${id}/with-photo`, formData);
+  }
+
+  // Delete a vehicle
+  deleteVehicle(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  // Upload just a photo and get back the path
+  uploadVehiclePhoto(photo: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', photo);
+
+    return this.http.post<any>(`${this.apiUrl}/upload-photo`, formData);
+  }
+
+  // Check if a license plate is already registered
+  checkLicensePlate(licensePlate: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/check-license-plate?licensePlate=${licensePlate}`);
   }
 }

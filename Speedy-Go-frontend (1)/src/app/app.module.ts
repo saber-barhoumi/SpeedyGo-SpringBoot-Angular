@@ -32,6 +32,11 @@ import { VehicleListComponent } from './vehicle-list/vehicle-list.component';
 import { VehicleDetailComponent } from './vehicle-detail/vehicle-detail.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
 import { WebcamModule } from 'ngx-webcam';
+import { LivraisonListComponent } from './livraison-management/livraison-list/livraison-list.component';
+import { LivraisonFormComponent } from './livraison-management/livraison-form/livraison-form.component';
+import { AiVehicleSuggestionDialogComponent } from './livraison-management/ai-vehicle-suggestion-dialog/ai-vehicle-suggestion-dialog.component';
+import { LivraisonViewComponent } from './livraison-management/livraison-view/livraison-view.component';
+import { DatePipe } from '@angular/common';
 
 
 
@@ -60,7 +65,11 @@ import { WebcamModule } from 'ngx-webcam';
     VehicleFormComponent,
     VehicleListComponent,
     VehicleDetailComponent,
-    RecruitmentManagementComponent
+    RecruitmentManagementComponent,
+    LivraisonListComponent,
+    LivraisonFormComponent,
+    AiVehicleSuggestionDialogComponent,
+    LivraisonViewComponent
   ],
   imports: [
     BrowserModule,
@@ -78,6 +87,7 @@ import { WebcamModule } from 'ngx-webcam';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },  
+    DatePipe //
   ],
   bootstrap: [AppComponent]
 })

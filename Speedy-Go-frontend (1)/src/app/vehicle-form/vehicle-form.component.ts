@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -24,7 +24,20 @@ export class VehicleFormComponent implements OnInit {
   currentYear = new Date().getFullYear();
   currentUser: any;
   
-  // User ID for when we need to associate the vehicle with a user
+  // Added for photo upload functionality
+  previewImageUrl: string = '';
+  selectedFileName: string = '';
+  uploadedFile: File | null = null;
+  isUploading: boolean = false;
+  
+  // Sample vehicle images for selection
+  sampleImages = [
+    { value: '/uploads/vehicles/truck-1.jpg', label: 'Delivery Truck' },
+    { value: '/uploads/vehicles/van-1.jpg', label: 'Delivery Van' },
+    { value: '/uploads/vehicles/toyota-hiace.jpg', label: 'Toyota Hiace' },
+    { value: '/uploads/vehicles/mercedes-sprinter.jpg', label: 'Mercedes Sprinter' },
+    { value: '/uploads/vehicles/refrigerated-truck.jpg', label: 'Refrigerated Truck' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -49,7 +62,7 @@ export class VehicleFormComponent implements OnInit {
     this.currentUser = this.authService.getUser();
     
     // Check for edit mode
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params: ParamMap) => {
       const id = params.get('id');
       if (id) {
         this.isEditMode = true;
@@ -64,7 +77,7 @@ export class VehicleFormComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged()
       )
-      .subscribe(value => {
+      .subscribe((value: string) => {
         if (value && value.length > 3) {
           this.checkLicensePlate(value);
         } else {
@@ -72,7 +85,6 @@ export class VehicleFormComponent implements OnInit {
         }
       });
   }
-
 
   createForm(): void {
     this.vehicleForm = this.fb.group({
@@ -98,7 +110,7 @@ export class VehicleFormComponent implements OnInit {
     });
 
     // Add conditional validators for insurance details
-    this.vehicleForm.get('isInsured')?.valueChanges.subscribe(isInsured => {
+    this.vehicleForm.get('isInsured')?.valueChanges.subscribe((isInsured: boolean) => {
       const insuranceProvider = this.vehicleForm.get('insuranceProvider');
       const insurancePolicyNumber = this.vehicleForm.get('insurancePolicyNumber');
       
@@ -134,11 +146,16 @@ export class VehicleFormComponent implements OnInit {
           vehiclePhotoPath: vehicle.vehiclePhotoPath || ''
         });
 
+        // Set the preview image if there is one
+        if (vehicle.vehiclePhotoPath) {
+          this.previewImageUrl = vehicle.vehiclePhotoPath;
+        }
+
         // When editing, don't check the existing license plate
         const licensePlateControl = this.vehicleForm.get('licensePlate');
         const originalLicensePlate = vehicle.licensePlate;
         
-        licensePlateControl?.valueChanges.subscribe(value => {
+        licensePlateControl?.valueChanges.subscribe((value: string) => {
           if (value !== originalLicensePlate) {
             this.checkLicensePlate(value);
           } else {
@@ -173,18 +190,165 @@ export class VehicleFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.vehicleForm.invalid || this.licensePlateExists) {
-      // Mark all fields as touched to trigger validation visuals
-      Object.keys(this.vehicleForm.controls).forEach(key => {
-        const control = this.vehicleForm.get(key);
-        control?.markAsTouched();
-      });
-      this.toastr.error('Please correct the errors in the form.');
-      return;
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastr.error('File size exceeds 5MB limit');
+        return;
+      }
+      
+      // Check file type
+      if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
+        this.toastr.error('Only image files (JPEG, PNG, GIF) are allowed');
+        return;
+      }
+      
+      this.uploadedFile = file;
+      this.selectedFileName = file.name;
+      
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewImageUrl = e.target.result;
+        
+        // For now, we'll use this URL directly for development
+        // In production, we would upload to server first
+        this.vehicleForm.patchValue({ 
+          vehiclePhotoPath: this.previewImageUrl
+        });
+      };
+      reader.readAsDataURL(file);
     }
+  }
 
-    this.isSubmitting = true;
+  onSampleImageSelected(event: any): void {
+    const path = event.target.value;
+    
+    if (path) {
+      // Clear any previously uploaded file
+      this.uploadedFile = null;
+      this.selectedFileName = '';
+      
+      // Use the selected sample image
+      this.previewImageUrl = path;
+      this.vehicleForm.patchValue({
+        vehiclePhotoPath: path
+      });
+    } else {
+      this.previewImageUrl = '';
+    }
+  }
+
+  uploadFile(): Promise<string> {
+    // This would typically be an API call to upload the file
+    this.isUploading = true;
+    
+    return new Promise((resolve) => {
+      // Simulate network delay
+      setTimeout(() => {
+        // In a real app, you'd call your backend API to upload the file
+        // and get back the stored file path
+        
+        // Return a dummy file path for now
+        const timestamp = new Date().getTime();
+        const path = `/uploads/vehicles/custom-${timestamp}.jpg`;
+        this.isUploading = false;
+        resolve(path);
+      }, 1500);
+    });
+  }
+
+// Update the onSubmit method to use the file upload functionality
+onSubmit(): void {
+  if (this.vehicleForm.invalid || this.licensePlateExists) {
+    // Mark all fields as touched to trigger validation visuals
+    Object.keys(this.vehicleForm.controls).forEach(key => {
+      const control = this.vehicleForm.get(key);
+      control?.markAsTouched();
+    });
+    this.toastr.error('Please correct the errors in the form.');
+    return;
+  }
+
+  this.isSubmitting = true;
+  const formData = this.vehicleForm.value as DeliveryVehicle;
+  
+  // If insurance is not selected, set these to null or empty
+  if (!formData.isInsured) {
+    formData.insuranceProvider = '';
+    formData.insurancePolicyNumber = '';
+  }
+  
+  console.log('Submitting vehicle data:', formData);
+
+  // If no actual file but just a URL path, use the regular endpoints
+  if (this.isEditMode && this.vehicleId) {
+    if (this.uploadedFile) {
+      // Update with photo upload
+      this.vehicleService.updateVehicleWithPhoto(this.vehicleId, formData, this.uploadedFile).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.toastr.success('Vehicle updated successfully!');
+          this.router.navigate(['/vehicles']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error updating vehicle:', err);
+          this.toastr.error(err.message || 'Failed to update vehicle. Please try again.');
+        }
+      });
+    } else {
+      // Regular update without photo
+      this.vehicleService.updateVehicle(this.vehicleId, formData).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.toastr.success('Vehicle updated successfully!');
+          this.router.navigate(['/vehicles']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error updating vehicle:', err);
+          this.toastr.error(err.message || 'Failed to update vehicle. Please try again.');
+        }
+      });
+    }
+  } else {
+    if (this.uploadedFile) {
+      // Create with photo upload
+      this.vehicleService.createVehicleWithPhoto(formData, this.uploadedFile).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.toastr.success('Vehicle added successfully!');
+          this.router.navigate(['/vehicles']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error adding vehicle:', err);
+          this.toastr.error(err.message || 'Failed to add vehicle. Please try again.');
+        }
+      });
+    } else {
+      // Regular create without photo
+      this.vehicleService.createVehicle(formData).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.toastr.success('Vehicle added successfully!');
+          this.router.navigate(['/vehicles']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          console.error('Error adding vehicle:', err);
+          this.toastr.error(err.message || 'Failed to add vehicle. Please try again.');
+        }
+      });
+    }
+  }
+}
+
+  saveVehicle(): void {
     const formData = this.vehicleForm.value as DeliveryVehicle;
     
     // If insurance is not selected, set these to null or empty
@@ -222,5 +386,15 @@ export class VehicleFormComponent implements OnInit {
         }
       });
     }
+  }
+  
+  // Helper method to clear file selection
+  clearFileSelection(): void {
+    this.uploadedFile = null;
+    this.selectedFileName = '';
+    this.previewImageUrl = '';
+    this.vehicleForm.patchValue({
+      vehiclePhotoPath: ''
+    });
   }
 }

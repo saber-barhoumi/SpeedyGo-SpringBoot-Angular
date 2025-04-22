@@ -1,36 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/user/auth.service';
-import { Router } from '@angular/router'; // Import Router
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-delivery',
   templateUrl: './delivery.component.html',
-  styleUrls: ['./delivery.component.css'],
-  providers: [AuthService]
+  styleUrls: ['./delivery.component.css']
 })
 export class DeliveryComponent implements OnInit {
 
+  isLoggedIn: boolean = false;
+
   constructor(
     private authService: AuthService,
-    private router: Router // Inject Router and define as private property
-  ) { }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+
     console.log("Delivery Component is working!");
 
-    // Check if the user has the "delivery" role
     if (!this.hasDeliveryRole()) {
-      // If not, redirect to another page (e.g., home or login)
-      this.router.navigate(['/home']); // Or '/login'
+      this.router.navigate(['/home']);
     }
   }
 
   hasDeliveryRole(): boolean {
-    // Check if the user has the "delivery" role
     return this.authService.getUserRole() === 'DELEVERY';
   }
 
-  goToCarpooling() {
-    this.router.navigate(['/carpooling']); // Navigate to /carpooling
+  goToCarpooling(): void {
+    this.router.navigate(['/carpooling']);
   }
 }

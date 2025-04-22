@@ -35,6 +35,8 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
 
 // Import InternationalShippingComponent
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
+import { ChatbotComponent } from './FrontOffices/pages/chatbot/chatbot.component';
+
 import { FormReportComponent } from './FrontOffices/pages/customer/formreport/formreport.component';
 import { ListreportComponent } from './BackOffices/listreport/listreport.component';
 import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/returnform.component';
@@ -45,7 +47,7 @@ const routes: Routes = [
   {
     path: '',
     component: AllTemplateFrontComponent,
-    
+
     //canActivate: [authGuard] // Remove authGuard from default route
   },
   {
@@ -62,7 +64,7 @@ const routes: Routes = [
 
 
 
-  
+
 
 
 
@@ -145,6 +147,11 @@ const routes: Routes = [
     {
       path: 'international-shipping',
       component: InternationalShippingComponent,
+      // You can add canActivate guards here if needed
+    },
+    {
+      path: 'SpeedyChat',
+      component: ChatbotComponent,
       // You can add canActivate guards here if needed
     },
 ];

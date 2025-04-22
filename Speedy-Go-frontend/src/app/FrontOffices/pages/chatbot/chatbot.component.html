@@ -1,0 +1,134 @@
+<!-- src/app/FrontOffices/pages/chatbot/chatbot.component.html -->
+<div class="chatbot-container" [ngClass]="{'dark-mode': isDarkMode}">
+  <!-- Sidebar -->
+  <div class="sidebar" [ngClass]="{'sidebar-expanded': showSidebar}">
+    <div class="sidebar-header">
+      <button class="new-chat-btn" (click)="startNewChat()">
+        <span class="icon">+</span>
+        <span>New Chat</span>
+      </button>
+      
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search conversations..." 
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+          class="search-input"
+        >
+      </div>
+    </div>
+    
+    <div class="chat-history">
+      <div 
+        *ngFor="let session of filteredSessions" 
+        class="chat-item" 
+        [ngClass]="{'active': currentSession?.id === session.id}"
+        (click)="selectSession(session.id)"
+      >
+        <div class="chat-item-title">{{ session.title }}</div>
+        <div class="chat-item-date">{{ session.lastUpdated | date:'short' }}</div>
+        <button class="delete-btn" (click)="deleteSession(session.id, $event)">×</button>
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <button class="toggle-theme-btn" (click)="toggleTheme()">
+        <span *ngIf="isDarkMode">☀️ Light Mode</span>
+        <span *ngIf="!isDarkMode">🌙 Dark Mode</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Main Chat Area -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <button class="toggle-sidebar-btn" (click)="toggleSidebar()">
+        <span>☰</span>
+      </button>
+      <h2>{{ currentSession?.title || 'Speedy Go AI Assistant' }}</h2>
+      <div class="header-actions">
+        <button class="action-btn" (click)="toggleTheme()">
+          <span *ngIf="isDarkMode">☀️</span>
+          <span *ngIf="!isDarkMode">🌙</span>
+        </button>
+        <button class="action-btn" (click)="shareConversation()">Share</button>
+        <!-- Add this button when in dialog mode -->
+        <button *ngIf="isInDialogMode()" class="action-btn close-dialog-btn" (click)="closeDialog()">
+          <span>✕</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="messages-container" #messagesContainer>
+      <div *ngIf="!currentSession || currentSession.messages.length === 0" class="welcome-message">
+        <h1>Welcome to Speedy Go AI Assistant</h1>
+        <p>How can I help you today?</p>
+      </div>
+      
+      <div *ngFor="let message of currentSession?.messages" class="message" [ngClass]="message.role">
+        <div class="message-avatar">
+          <div class="avatar" [ngClass]="message.role">
+            {{ message.role === 'user' ? '👤' : '🤖' }}
+          </div>
+        </div>
+        <div class="message-content">
+          <div class="message-header">
+            <span class="message-sender">{{ message.role === 'user' ? 'You' : 'AI Assistant' }}</span>
+            <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+          </div>
+          <div class="message-text" [innerHTML]="formatMessage(message.content)"></div>
+          <div class="message-actions" *ngIf="message.role === 'assistant'">
+            <button class="action-btn small" (click)="copyToClipboard(message.content)">Copy</button>
+            <button class="action-btn small" (click)="shareMessage(message)">Share</button>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="isLoading" class="loading-indicator">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="input-area">
+      <textarea 
+      #messageInput
+      placeholder="Message the AI assistant..." 
+      [(ngModel)]="userMessage" 
+      (keydown.enter)="onEnterPress($event)"
+      [disabled]="isLoading"
+      rows="1"
+      class="message-input"
+    ></textarea>
+      <button class="send-btn" [disabled]="!userMessage.trim() || isLoading" (click)="sendMessage()">
+        <span>Send</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Share Dialog -->
+  <div class="dialog-overlay" *ngIf="showShareDialog">
+    <div class="dialog">
+      <div class="dialog-header">
+        <h3>Share Conversation</h3>
+        <button class="close-btn" (click)="showShareDialog = false">×</button>
+      </div>
+      <div class="dialog-content">
+        <p>Copy the link to share this conversation:</p>
+        <div class="share-link-container">
+          <input type="text" [value]="shareLink" class="share-link" readonly #shareInput>
+          <button class="copy-btn" (click)="copyShareLink(shareInput)">Copy</button>
+        </div>
+        <div class="share-buttons">
+          <button class="share-btn email" (click)="shareViaEmail()">Email</button>
+          <button class="share-btn twitter" (click)="shareViaSocial('twitter')">Twitter</button>
+          <button class="share-btn facebook" (click)="shareViaSocial('facebook')">Facebook</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

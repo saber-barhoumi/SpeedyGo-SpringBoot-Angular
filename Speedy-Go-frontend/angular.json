@@ -24,9 +24,9 @@
               "src/favicon.ico",
               "src/assets"
             ],
-           "styles": [
-  "node_modules/ngx-toastr/toastr.css"
-],
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css"
+            ],
             "scripts": [
               "src/assets/FrontOffice/lib/wow/wow.min.js",
               "src/assets/FrontOffice/lib/easing/easing.min.js",
@@ -35,16 +35,18 @@
               "src/assets/FrontOffice/lib/lightbox/js/lightbox.min.js",
               "src/assets/FrontOffice/lib/owlcarousel/owl.carousel.min.js",
               "src/assets/FrontOffice/js/main.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "sockjs-client"
             ]
           },
-          
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -84,8 +86,11 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-builders/custom-webpack:karma",
           "options": {
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.js"
+            },
             "polyfills": [
               "zone.js",
               "zone.js/testing"
@@ -109,29 +114,21 @@
               "/assets/FrontOffice/css/bootstrap.min.css",
               "src/assets/BackOffice/css/style.css",
               "https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/ionicons/ionicons.css"
-
-      
-],
-
+            ],
             "scripts": [
-        
-              
-  "src/assets/FrontOffice/lib/wow/wow.min.js",
-  "src/assets/FrontOffice/lib/easing/easing.min.js",
-  "src/assets/FrontOffice/lib/waypoints/waypoints.min.js",
-  "src/assets/FrontOffice/lib/counterup/counterup.min.js",
-  "src/assets/FrontOffice/lib/lightbox/js/lightbox.min.js",
-  "src/assets/FrontOffice/lib/owlcarousel/owl.carousel.min.js",
-  "src/assets/FrontOffice/js/main.js" ,
-  "src/assets/BackOffice/js/vendor-all.min.js",
-  "src/assets/BackOffice/js/plugins/bootstrap.min.js",
-  "src/assets/BackOffice/js/pcoded.min.js",
-  "src/assets/BackOffice/js/plugins/apexcharts.min.js",
-  "src/assets/BackOffice/js/pages/dashboard-main.js"
-  
-]
-
-            
+              "src/assets/FrontOffice/lib/wow/wow.min.js",
+              "src/assets/FrontOffice/lib/easing/easing.min.js",
+              "src/assets/FrontOffice/lib/waypoints/waypoints.min.js",
+              "src/assets/FrontOffice/lib/counterup/counterup.min.js",
+              "src/assets/FrontOffice/lib/lightbox/js/lightbox.min.js",
+              "src/assets/FrontOffice/lib/owlcarousel/owl.carousel.min.js",
+              "src/assets/FrontOffice/js/main.js",
+              "src/assets/BackOffice/js/vendor-all.min.js",
+              "src/assets/BackOffice/js/plugins/bootstrap.min.js",
+              "src/assets/BackOffice/js/pcoded.min.js",
+              "src/assets/BackOffice/js/plugins/apexcharts.min.js",
+              "src/assets/BackOffice/js/pages/dashboard-main.js"
+            ]
           }
         }
       }

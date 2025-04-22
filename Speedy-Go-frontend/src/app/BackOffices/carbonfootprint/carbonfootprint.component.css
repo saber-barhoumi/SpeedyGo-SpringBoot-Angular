@@ -1,0 +1,30 @@
+/* Centrer le contenu sur la page */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Prendre toute la hauteur de la page */
+    text-align: center; /* Centrer le texte */
+  }
+  
+  /* Carte contenant le graphique */
+  .card {
+    width: 80%;
+    max-width: 900px;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Design du body de la carte */
+  .card-body {
+    padding: 20px;
+  }
+  
+  /* Ajuster la taille du canvas pour le graphique */
+  canvas {
+    width: 100% !important;
+    height: 400px;
+  }
+  

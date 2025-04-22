@@ -1,0 +1,88 @@
+/* Style général du conteneur */
+.container.mt-4 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Style du titre */
+.container.mt-4 h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Style du tableau */
+.table.table-striped {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* En-têtes du tableau */
+.table.table-striped thead th {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+/* Cellules du tableau */
+.table.table-striped tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+/* Lignes alternées (striped) */
+.table.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,0.02);
+}
+
+/* Style pour le texte "Aucun rapport trouvé" */
+.container.mt-4 p {
+  color: #6c757d;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Style pour les priorités - vous devrez ajouter des classes dans votre HTML ou utiliser [ngClass] */
+/* Exemple de classes à ajouter selon la valeur de priorité */
+.priority-low {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.priority-medium {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #fff8e1;
+  color: #ff8f00;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.priority-high {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #ffebee;
+  color: #c62828;
+  font-size: 0.8rem;
+  font-weight: 500;
+}

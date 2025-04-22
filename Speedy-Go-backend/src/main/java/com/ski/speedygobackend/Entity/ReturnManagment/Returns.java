@@ -7,6 +7,8 @@ import com.ski.speedygobackend.Enum.RetourType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import java.time.LocalDate;
+
 
 
 import java.util.Set;
@@ -23,11 +25,17 @@ public class Returns {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long returnID;
+
     @Enumerated(EnumType.STRING)
     RetourStatus retourstatus;
+
     private String reason_description;
+
     @Enumerated(EnumType.STRING)
     RetourType retourtype;
+
     @ManyToOne
     Parcel parcel;
+
+    private LocalDate retourdate;
 }

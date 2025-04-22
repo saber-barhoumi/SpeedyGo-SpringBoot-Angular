@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AllTemplateFrontComponent } from './FrontOffices/all-template-front/all-template-front.component';
@@ -14,7 +14,7 @@ import { SidebarBackComponent } from './BackOffices/sidebar-back/sidebar-back.co
 import { BodyBackComponent } from './BackOffices/body-back/body-back.component';
 import { LoginComponent } from './BackOffices/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http'; // Update this line
 import { LoginclientComponent } from './FrontOffices/login/login.component';
 import { RegisterComponent } from './FrontOffices/register/register.component';
 import { RegisterAdminComponent } from './BackOffices/register-admin/register-admin.component';
@@ -41,6 +41,22 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { UserProfileComponent } from './FrontOffices/pages/user-profile/user-profile.component';
+import { FormReportComponent } from './FrontOffices/pages/customer/formreport/formreport.component';
+import { ListreportComponent } from './BackOffices/listreport/listreport.component';
+import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/returnform.component';
+import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.component';
+import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
+import { QrScannerComponent } from './qrscanner/qrscanner.component';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
+import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
+
+
 import { ChatbotComponent } from './FrontOffices/pages/chatbot/chatbot.component';
 import { ChatButtonComponent } from './FrontOffices/pages/SpeedyChat/chat-button/chat-button.component';
 import { ChatDialogComponent } from './FrontOffices/pages/components/chat-dialog/chat-dialog.component';
@@ -83,9 +99,6 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
     RecruitmentFormComponent,
     MyApplicationsComponent,
     RecruitmentDetailComponent,
-    VehicleFormComponent,
-    VehicleListComponent,
-    VehicleDetailComponent,
     RecruitmentManagementComponent,
     CarpoolingComponent,
     CustomerComponent,
@@ -94,6 +107,17 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
     RecruitmentPageComponent,
     InternationalShippingComponent,
     UserProfileComponent,
+    FormReportComponent,
+    ListreportComponent,
+    ReturnFormComponent,
+    ListreturnsComponent,
+    MapPointsRelaisComponent,
+    QrScannerComponent,
+    AffichmapComponent,
+    CarbonFootprintComponent,
+
+
+
     ChatbotComponent,
     ChatButtonComponent,
     ChatDialogComponent,
@@ -104,10 +128,12 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
   imports: [
 
     BrowserModule,
+    RouterModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    ZXingScannerModule,
     BrowserAnimationsModule,
     MatDialogModule,
     FontAwesomeModule, // Add FontAwesomeModule here
@@ -121,12 +147,26 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
+
+
+    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+
+
+
+
+    BrowserAnimationsModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatNativeDateModule,
+
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     ChatService,  // Fixed position of ChatService
-    AuthService   // Added AuthService
+    AuthService,   // Added AuthService
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

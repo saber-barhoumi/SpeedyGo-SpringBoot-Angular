@@ -6,5 +6,6 @@ export interface Returns {
     parcel?: {
       parcelID: number;
     };
+    retourdate: Date;
   }
   

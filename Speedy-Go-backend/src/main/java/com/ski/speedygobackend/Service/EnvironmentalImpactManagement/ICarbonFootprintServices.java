@@ -1,11 +1,9 @@
 package com.ski.speedygobackend.Service.EnvironmentalImpactManagement;
 
-import com.ski.speedygobackend.Entity.EnvironmentalImpactManagement.CarbonFootPrint;
-import com.ski.speedygobackend.Entity.TripManagement.Vehicle;
+import com.ski.speedygobackend.DTO.CarbonFootPrintDTO;
 
-import java.io.IOException;
+import java.util.List;
 
 public interface ICarbonFootprintServices {
-
-    public void exportCarbonFootPrintToCSV(String filePath);
-    }
+    List<CarbonFootPrintDTO> getAllAsDTO();
+}

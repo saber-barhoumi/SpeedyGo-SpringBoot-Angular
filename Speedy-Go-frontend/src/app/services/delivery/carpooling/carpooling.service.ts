@@ -68,7 +68,7 @@ export class CarpoolingService {
       airConditioning: carpooling.airConditioning || 0,
       weatherType: carpooling.weatherType || 'Clear'
     };
-    
+
     // Try the new endpoint first
     return this.http.post<any>(`${this.priceUrl}/calculate`, requestData)
       .pipe(

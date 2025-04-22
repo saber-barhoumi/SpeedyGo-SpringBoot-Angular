@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CarbonFootPrintDTO {
-    private String vehicle_type;          // Exemple : "CAMION"
+    private String vehicleType;          // Exemple : "CAMION"
     private String energie;               // Exemple : "Diesel"
     private double consommationParKm;     // Exemple : 0.12
     private double capaciteMaxColis;      // Exemple : 300.0

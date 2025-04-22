@@ -1,53 +1,54 @@
 <div class="container mt-4">
-  <h2>Ajouter un Retour</h2>
-  <form [formGroup]="returnForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="retourstatus">Statut du retour</label>
-      <select class="form-control" formControlName="retourstatus" required>
-        <option value="PENDING">PENDING</option>
-        <option value="ACCEPTED">ACCEPTED</option>
-        <option value="REJECTED">REJECTED</option>
-      </select>
-    </div>
+  <div class="card shadow">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Ajouter un Retour</h2>
+      <form [formGroup]="returnForm" (ngSubmit)="onSubmit()">
 
-    <div class="form-group mt-2">
-      <label for="reason_description">Raison</label>
-      <input type="text" class="form-control" formControlName="reason_description" required />
-    </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <label for="reason_description" class="form-label">Raison</label>
+            <input type="text" class="form-control" formControlName="reason_description" required />
+          </div>
+        </div>
 
-    <div class="form-group mt-2">
-      <label for="retourtype">Type de retour</label>
-      <select class="form-control" formControlName="retourtype" required>
-        <option value="RETURN">RETURN</option>
-        <option value="EXCHANGE">EXCHANGE</option>
-        <option value="REFUND">REFUND</option>
-      </select>
-    </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <label for="retourtype" class="form-label">Type de retour</label>
+            <select class="form-control" formControlName="retourtype" required>
+              <option value="RETURN">RETURN</option>
+              <option value="EXCHANGE">EXCHANGE</option>
+              <option value="REFUND">REFUND</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- Utilisation du calendrier avec vue mensuelle -->
-    <div class="form-group mt-2">
-      <label>Date du retour</label>
-      <mwl-calendar-month-view
-        [viewDate]="viewDate"
-        [events]="[]"
-        [dayModifier]="dayModifier"
+        <div class="card mb-3">
+          <div class="card-body">
+            <label class="form-label">Date du retour</label>
+            <mwl-calendar-month-view
+              [viewDate]="viewDate"
+              [events]="[]"
+              [dayModifier]="dayModifier"
+              (dayClicked)="onDayClick($event.day)">
+            </mwl-calendar-month-view>
 
-        (dayClicked)="onDateSelected($event)">
-      </mwl-calendar-month-view>
-    </div>
-    <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
-      <button class="btn btn-outline-primary" (click)="prevMonth()">⬅ Mois précédent</button>
-      <h5>{{ viewDate | date:'MMMM yyyy' }}</h5>
-      <button class="btn btn-outline-primary" (click)="nextMonth()">Mois suivant ➡</button>
-    </div>
-    
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <button class="btn btn-outline-primary" type="button" (click)="prevMonth()">⬅ Mois précédent</button>
+              <h5 class="mb-0">{{ viewDate | date:'MMMM yyyy' }}</h5>
+              <button class="btn btn-outline-primary" type="button" (click)="nextMonth()">Mois suivant ➡</button>
+            </div>
 
-    <div *ngIf="selectedDate" class="mt-2">
-      <strong>Date sélectionnée :</strong> {{ selectedDate | date:'longDate' }}
-    </div>
+            <div *ngIf="selectedDate" class="mt-3">
+              <strong>Date sélectionnée :</strong> {{ selectedDate | date:'longDate' }}
+            </div>
+          </div>
+        </div>
 
-    <button type="submit" class="btn btn-success mt-3" [disabled]="returnForm.invalid">
-      Ajouter
-    </button>
-  </form>
+        <button type="submit" class="btn btn-success w-100 mt-2" [disabled]="returnForm.invalid">
+          Ajouter
+        </button>
+
+      </form>
+    </div>
+  </div>
 </div>

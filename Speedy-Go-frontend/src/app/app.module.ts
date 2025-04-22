@@ -68,6 +68,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatBadgeModule } from '@angular/material/badge';
+import { DeliveryVehicle} from 'src/app/models/vehicle.model'
 
 // Components and Services
 import { ChatComponent } from './FrontOffices/pages/chat/chat/chat.component';
@@ -115,6 +116,12 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
     QrScannerComponent,
     AffichmapComponent,
     CarbonFootprintComponent,
+    VehicleFormComponent,
+    VehicleListComponent,
+    VehicleDetailComponent,
+
+
+
 
 
 
@@ -135,6 +142,7 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
     ReactiveFormsModule,
     ZXingScannerModule,
     BrowserAnimationsModule,
+    
     MatDialogModule,
     FontAwesomeModule, // Add FontAwesomeModule here
     MatButtonModule,    // Add material modules

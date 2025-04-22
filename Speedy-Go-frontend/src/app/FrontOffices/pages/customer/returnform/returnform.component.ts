@@ -16,7 +16,6 @@ export class ReturnFormComponent {
 
   constructor(private fb: FormBuilder) {
     this.returnForm = this.fb.group({
-      retourstatus: ['', Validators.required],
       reason_description: ['', Validators.required],
       retourtype: ['', Validators.required],
       retourdate: ['', Validators.required]

@@ -44,60 +44,57 @@ export class RecruitmentFormComponent implements OnInit {
 
   handleImage(webcamImage: WebcamImage): void {
     this.webcamImage = webcamImage;
+    this.sendImageForOCR(webcamImage.imageAsBase64);
     this.showWebcam = false;
-    this.sendImageForOCR(webcamImage.imageAsDataUrl);
+    console.log('Base64 Image:', webcamImage.imageAsBase64);
   }
 
   get triggerObservable(): Observable<void> {
     return this.trigger.asObservable();
   }
 
-  // OCR Processing
-  sendImageForOCR(dataUrl: string) {
-    const blob = this.dataURLtoBlob(dataUrl);
+  sendImageForOCR(base64Image: string) {
+    const blob = this.base64ToBlob(base64Image, 'image/png');
     const formData = new FormData();
-    formData.append('file', blob, 'capture.png');
-
-    this.http.post<{ number: string }>('http://localhost:8084/api/ocr/ocr', formData).subscribe({
+    formData.append('image', blob, 'capture.png');
+  
+    this.http.post<{ number: string }>('http://localhost:8084/api/ocr', formData).subscribe({
       next: (res) => {
-        const number = res.number || '';
-        this.recruitmentForm.patchValue({
-          drivingLicenseNumber: number
-        });
-        this.toastr.success('ID number extracted successfully');
+        // Extract numbers only from the response
+        const number = res.number?.replace(/\D/g, '') || ''; // Removes all non-digit characters
+        console.log('Extracted Number:', number); // Log the number to the console
       },
-      error: (err) => {
-        console.error('OCR failed', err);
-        this.toastr.error('Failed to extract ID number from image');
-      }
+      error: (err) => console.error('OCR failed', err)
     });
   }
+  
+  
+  
 
-  // Convert Data URL to Blob
-  private dataURLtoBlob(dataurl: string): Blob {
-    const arr = dataurl.split(',');
-    const mime = arr[0].match(/:(.*?);/)![1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
+  base64ToBlob(base64: string, mime: string): Blob {
+    // Ensure the base64 string has the prefix
+    if (!base64.startsWith('data:')) {
+      base64 = `data:${mime};base64,${base64}`;
     }
-
-    return new Blob([u8arr], { type: mime });
+  
+    const base64Data = base64.split(',')[1]; // after the comma
+    const byteChars = atob(base64Data);
+    const byteNumbers = new Array(byteChars.length).fill(0).map((_, i) => byteChars.charCodeAt(i));
+    const byteArray = new Uint8Array(byteNumbers);
+  
+    return new Blob([byteArray], { type: mime });
   }
-
+  
   ngOnInit(): void {
     // Get the authenticated user
     this.currentUser = this.authService.getUser();
-
+    
     if (!this.authService.isAuthenticated()) {
       this.toastr.error('You must be logged in to access this page');
       this.router.navigate(['/login']);
       return;
     }
-
+    
     // Check for edit mode
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
@@ -107,7 +104,7 @@ export class RecruitmentFormComponent implements OnInit {
         this.loadRecruitmentDetails(+id);
       }
     });
-
+    
     // Load vehicles for the current user
     this.loadVehicles();
   }
@@ -130,17 +127,17 @@ export class RecruitmentFormComponent implements OnInit {
         // Get applicant user ID, handling both naming conventions (snake_case and camelCase)
         const applicantUserId = recruitment.applicant?.user_id || recruitment.applicant?.userId;
         const currentUserId = this.currentUser.userId || this.currentUser.user_id;
-
+        
         console.log('Edit - Applicant user ID:', applicantUserId);
         console.log('Edit - Current user ID:', currentUserId);
-
+        
         // Verify this belongs to the current user
         if (recruitment.applicant && applicantUserId != currentUserId) {
           this.toastr.error('You do not have permission to edit this application');
           this.router.navigate(['/recruitment/my-applications']);
           return;
         }
-
+        
         // Set form values
         this.recruitmentForm.patchValue({
           yearsOfExperience: recruitment.yearsOfExperience,
@@ -149,10 +146,10 @@ export class RecruitmentFormComponent implements OnInit {
           drivingLicenseCategory: recruitment.drivingLicenseCategory,
           coverLetter: recruitment.coverLetter,
           // Format the date to YYYY-MM-DD for the date input
-          drivingLicenseIssueDate: recruitment.drivingLicenseIssueDate ?
+          drivingLicenseIssueDate: recruitment.drivingLicenseIssueDate ? 
             recruitment.drivingLicenseIssueDate.substring(0, 10) : ''
         });
-
+        
         // Handle vehicle ID if present
         if (recruitment.deliveryVehicle && recruitment.deliveryVehicle.vehicleId) {
           this.recruitmentForm.patchValue({
@@ -196,7 +193,7 @@ export class RecruitmentFormComponent implements OnInit {
 
     this.isSubmitting = true;
     const formData = { ...this.recruitmentForm.value };
-
+    
     // Format date for backend (LocalDateTime format)
     if (formData.drivingLicenseIssueDate) {
       formData.drivingLicenseIssueDate = `${formData.drivingLicenseIssueDate}T00:00:00`;
@@ -205,7 +202,7 @@ export class RecruitmentFormComponent implements OnInit {
     // Handle vehicle reference
     const vehicleId = formData.vehicleId;
     delete formData.vehicleId; // Remove vehicleId from the main object
-
+    
     // Create deliveryVehicle object if a vehicle is selected
     if (vehicleId) {
       formData.deliveryVehicle = { vehicleId };
@@ -214,7 +211,7 @@ export class RecruitmentFormComponent implements OnInit {
     }
 
     console.log('Submitting recruitment data:', formData);
-
+    
     if (this.isEditMode && this.recruitmentId) {
       // Update existing application
       this.recruitmentService.updateRecruitment(this.recruitmentId, formData).subscribe({

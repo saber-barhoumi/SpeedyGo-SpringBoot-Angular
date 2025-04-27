@@ -10,8 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")  // Allow frontend requests
@@ -22,7 +25,7 @@ public class AuthController {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
-
+//login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
         try {
@@ -73,7 +76,7 @@ public class AuthController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
+//register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
@@ -89,6 +92,7 @@ public class AuthController {
 
             // Save user
             User savedUser = userRepository.save(user);
+            
 
             // Generate token
             String token = jwtUtils.generateToken(
@@ -96,6 +100,7 @@ public class AuthController {
                     savedUser.getRole(),
                     savedUser.getUserId()
             );
+
 
             // Create response
             Map<String, Object> response = new HashMap<>();
@@ -152,6 +157,70 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+    // ================= FORGOT PASSWORD =================
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email is required"));
+            }
+
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            String resetToken = UUID.randomUUID().toString();
+            user.setResetToken(resetToken);
+            user.setTokenExpiration(LocalDateTime.now().plusMinutes(30)); // Token valide 30 minutes
+            userRepository.save(user);
+
+            String resetLink = "http://localhost:4200/reset-password?token=" + resetToken;
+
+            // Simuler l'envoi email (plus tard remplacer par vrai service email)
+            System.out.println("Lien de réinitialisation : " + resetLink);
+
+            return ResponseEntity.ok(Map.of("message", "Reset password link has been sent to your email"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ================= RESET PASSWORD =================
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+
+            if (token == null || newPassword == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Token and new password are required"));
+            }
+
+            Optional<User> optionalUser = userRepository.findByResetToken(token);
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid token"));
+            }
+
+            User user = optionalUser.get();
+
+            if (user.getTokenExpiration() == null || user.getTokenExpiration().isBefore(LocalDateTime.now())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Token expired"));
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setResetToken(null);
+            user.setTokenExpiration(null);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
     }

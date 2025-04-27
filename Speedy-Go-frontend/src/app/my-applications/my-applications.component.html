@@ -39,7 +39,7 @@
               <table class="table table-hover">
                 <thead class="bg-light">
                   <tr>
-                 
+                    <th scope="col">ID</th>
                     <th scope="col">Date Applied</th>
                     <th scope="col">Status</th>
                     <th scope="col">Experience</th>
@@ -50,6 +50,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let app of applications">
+                        <td class="align-middle">#{{ app.recruitmentId }}</td>
                         <td class="align-middle">{{ formatDate(app.applicationDate) }}</td>
                         <td class="align-middle">
                           <span class="badge rounded-pill {{ getStatusBadgeClass(app.status) }} py-2 px-3">

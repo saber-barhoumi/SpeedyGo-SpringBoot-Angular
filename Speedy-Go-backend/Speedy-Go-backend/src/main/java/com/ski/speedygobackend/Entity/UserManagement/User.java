@@ -13,6 +13,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,28 @@ public class User implements Serializable {
     private String phoneNumber;
     private String address;
     private String profilePicture;
+    private String resetToken;
+    private LocalDateTime tokenExpiration;
+
+
+    // getters et setters
+
+    // Exemples :
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(LocalDateTime tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
 
 
 

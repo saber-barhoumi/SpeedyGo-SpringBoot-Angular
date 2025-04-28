@@ -1,0 +1,28 @@
+<div id="map" style="height: 500px; margin-top: 20px;"></div>
+
+<div class="form-container">
+  <input type="text" placeholder="Adresse de départ" [(ngModel)]="fromQuery" (input)="searchFrom()" />
+  <ul *ngIf="fromResults.length">
+    <li *ngFor="let result of fromResults" (click)="selectFrom(result)">
+      {{ result.display_name }}
+    </li>
+  </ul>
+
+  <input type="text" placeholder="Adresse d’arrivée" [(ngModel)]="toQuery" (input)="searchTo()" />
+  <ul *ngIf="toResults.length">
+    <li *ngFor="let result of toResults" (click)="selectTo(result)">
+      {{ result.display_name }}
+    </li>
+  </ul>
+
+  <button [disabled]="isLoading" (click)="calculateSmartRoute()">Calculer l’itinéraire</button>
+</div>
+
+<div *ngIf="isLoading">
+  <p>Chargement de l'itinéraire...</p>  <!-- Indicateur de chargement -->
+</div>
+
+<div *ngIf="distance && duration">
+  <p><strong>Distance :</strong> {{ distance }} km</p>
+  <p><strong>Durée estimée :</strong> {{ duration }}</p>
+</div>

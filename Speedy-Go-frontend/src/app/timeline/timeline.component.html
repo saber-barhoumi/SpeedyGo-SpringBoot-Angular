@@ -1,0 +1,10 @@
+<div class="timeline-container">
+  <div class="step" *ngFor="let status of orderStatus; let i = index">
+    <div class="dot" [ngClass]="dotCss[i]"></div>
+    <div class="line" *ngIf="i < orderStatus.length - 1"></div>
+    <div class="label" [ngClass]="cssClass[i]">{{ status }}</div>
+  </div>
+</div>
+<div *ngIf="showDeliveredMessage" class="delivered-message">
+  🎉 Livraison terminée !
+</div>

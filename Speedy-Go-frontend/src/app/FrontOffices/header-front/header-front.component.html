@@ -1,0 +1,56 @@
+
+
+
+
+ <nav>
+    <div class="container-fluid nav-bar">
+        <div class="container">
+            <nav class="navbar navbar-light navbar-expand-lg py-4">
+                <a href="index.html" class="navbar-brand">
+                    <h1 class="mb-0">
+                        <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold" />
+                      </h1>                    </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="service.html" class="nav-item nav-link">Services</a>
+                        <a href="delivery.html" class="nav-item nav-link">Delivery</a>
+                        <a href="pricing.html" class="nav-item nav-link">Pricing</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu bg-light">
+                                <a href="order.html" class="dropdown-item">Place Order</a>
+                                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                     F           <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
+                            </div>
+                        </div>
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <button class="btn-search btn btn-primary btn-md-square me-4 rounded-circle d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="order.html" class="btn btn-primary py-2 px-4 d-none d-xl-inline-block rounded-pill">Order Now</a>
+
+                     <!-- Show First Name if Logged In -->
+                     <span *ngIf="isLoggedIn" class="nav-item nav-link text-primary fw-bold">
+                      {{ first_name }}
+                    </span>
+                    <button *ngIf="isLoggedIn" (click)="logout()" class="btn btn-danger py-2 px-4 d-none d-xl-inline-block rounded-pill ms-4">
+                        Logout
+                      </button>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+        <!-- Navbar End -->
+ </nav>
+ 
+ <router-outlet></router-outlet>
+

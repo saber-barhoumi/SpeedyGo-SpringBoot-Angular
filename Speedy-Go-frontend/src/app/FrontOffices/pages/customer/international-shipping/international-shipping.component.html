@@ -1,0 +1,58 @@
+<div class="container">
+    <h2>Gestion des Expéditions Internationales</h2>
+  
+    <div class="form-container">
+      <h3>{{ isAdding ? 'Ajouter une Expédition' : 'Modifier une Expédition' }}</h3>
+      <form (ngSubmit)="isAdding ? addShipment() : updateExistingShipment()">
+        <input type="text" placeholder="Pays d'origine" [(ngModel)]="newShipment.originCountry" name="originCountry" required>
+        <input type="text" placeholder="Pays de destination" [(ngModel)]="newShipment.destinationCountry" name="destinationCountry" required>
+        <input type="number" placeholder="Coût d'expédition" [(ngModel)]="newShipment.shippingCost" name="shippingCost" required>
+        <input type="text" placeholder="Numéro de suivi" [(ngModel)]="newShipment.trackingNumber" name="trackingNumber" required>
+        <input type="number" placeholder="Poids" [(ngModel)]="newShipment.weight" name="weight" required>
+        <input type="date" placeholder="Date d'expédition" [(ngModel)]="newShipment.shippingDate" name="shippingDate" required>
+        <input type="date" placeholder="Date de livraison estimée" [(ngModel)]="newShipment.estimatedDeliveryDate" name="estimatedDeliveryDate" required>
+        <select [(ngModel)]="newShipment.shippingStatus" name="shippingStatus" required>
+          <option value="PENDING">En attente</option>
+          <option value="SHIPPED">Expédié</option>
+          <option value="DELIVERED">Livré</option>
+        </select>
+        <button type="submit">{{ isAdding ? 'Ajouter' : 'Modifier' }}</button>
+        <button type="button" (click)="cancelEdit()">Annuler</button>
+      </form>
+    </div>
+  
+    <h3>Liste des Expéditions</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Origine</th>
+          <th>Destination</th>
+          <th>Coût</th>
+          <th>Numéro de suivi</th>
+          <th>Poids</th>
+          <th>Date d'expédition</th>
+          <th>Date de livraison</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let shipment of shipments">
+          <td>{{ shipment.id }}</td>
+          <td>{{ shipment.originCountry }}</td>
+          <td>{{ shipment.destinationCountry }}</td>
+          <td>{{ shipment.shippingCost }} €</td>
+          <td>{{ shipment.trackingNumber }}</td>
+          <td>{{ shipment.weight }} kg</td>
+          <td>{{ shipment.shippingDate }}</td>
+          <td>{{ shipment.estimatedDeliveryDate }}</td>
+          <td>{{ shipment.shippingStatus }}</td>
+          <td>
+            <button (click)="deleteShipment(shipment.id)">Supprimer</button>
+            <button (click)="editShipment(shipment)">Modifier</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

@@ -1,0 +1,51 @@
+<!-- [ navigation menu ] start -->
+<nav class="pcoded-navbar">
+    <div class="navbar-wrapper">
+        <div class="navbar-content scroll-div">
+            <div>
+                <div class="main-menu-header">
+                    <img class="img-radius" src="assets/BackOffice/images/user/avatar-2.jpg" alt="User-Profile-Image">
+                    <div class="user-details">
+                        <span>{{ user.firstName }} {{ user.lastName }}</span>
+                        <div id="more-details">{{ user.role }} <i class="fa fa-chevron-down m-l-5"></i></div>
+                    </div>
+                </div>
+
+                <div class="collapse" id="nav-user-link">
+                    <ul class="list-unstyled">
+                        <li class="list-group-item"><a href="user-profile.html"><i class="feather icon-user m-r-5"></i> View Profile</a></li>
+                        <li class="list-group-item"><a href="#!"><i class="feather icon-settings m-r-5"></i> Settings</a></li>
+                        <li class="list-group-item"><a href="auth-normal-sign-in.html"><i class="feather icon-log-out m-r-5"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <ul class="nav pcoded-inner-navbar">
+                <!-- Existing menu items -->
+                <li class="nav-item">
+                    <a routerLink="/admin/home" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                        <span class="pcoded-mtext">Dashboard</span>
+                    </a>
+                </li>
+
+                <button [disabled]="parcelId === null" (click)="changeParcelStatus()" class="nav-link">
+                    <span class="pcoded-micon"><i class="feather icon-refresh-ccw"></i></span>
+                    <span class="pcoded-mtext">Changer statut</span>
+                  </button>
+                  
+                  
+                  
+
+                <!-- Other menu items -->
+                <li class="nav-item">
+                    <a routerLink="/admin/users" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
+                        <span class="pcoded-mtext">Gestion Utilisateur</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- [ navigation menu ] end -->

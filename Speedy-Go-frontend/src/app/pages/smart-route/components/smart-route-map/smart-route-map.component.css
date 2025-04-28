@@ -1,0 +1,13 @@
+#map {
+  height: 100vh;   /* Pleine hauteur de l'écran */
+  width: 100%;     /* Pleine largeur */
+  margin: 0;
+  padding: 0;
+  z-index: 0;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

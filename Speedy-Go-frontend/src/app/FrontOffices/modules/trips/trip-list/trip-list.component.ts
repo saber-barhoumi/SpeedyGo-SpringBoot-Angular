@@ -14,11 +14,14 @@ import { TripService } from '../trip/trip.service';
 export class TripListComponent implements OnInit {
   trips: Trip[] = [];
   specificTrips: SpecificTrip[] = [];
+  filteredTrips: Trip[] = []; // Added for filtered trips
   loading = true;
   error: string | null = null;
   tripToDelete: Trip | null = null;
   isDeleting = false;
   deleteModal: Modal | null = null;
+  searchTerm: string = ''; // Added for search functionality
+  activeFilter: string = 'all'; // Added for filtering
 
   constructor(private tripService: TripService, private specificTripService: SpecificTripService, private router: Router) {}
 
@@ -41,6 +44,11 @@ export class TripListComponent implements OnInit {
     this.tripService.getTrips().subscribe({
       next: (data: Trip[]) => {
         this.trips = data;
+        // Add expanded property to each trip for UI interaction
+        this.trips.forEach(trip => {
+          (trip as any).expanded = false;
+        });
+        this.filteredTrips = [...this.trips]; // Initialize filtered trips
         this.loading = false;
       },
       error: (err: any) => {
@@ -58,6 +66,10 @@ export class TripListComponent implements OnInit {
       next: (data: SpecificTrip[]) => {
         console.log('Specific trips loaded', data);
         this.specificTrips = data;
+        // Add expanded property to each specific trip for UI interaction
+        this.specificTrips.forEach(trip => {
+          (trip as any).expanded = false;
+        });
       },
       error: (err: any) => {
         console.error('Error fetching specific trips', err);
@@ -65,15 +77,59 @@ export class TripListComponent implements OnInit {
     });
   }
 
+  // Method to filter trips based on status
+  filterTrips(filterType: string): void {
+    this.activeFilter = filterType;
+    
+    if (filterType === 'all') {
+      this.filteredTrips = [...this.trips];
+    } else if (filterType === 'active') {
+      this.filteredTrips = this.trips.filter(trip => 
+        trip.trip_status === 'INPROGRESS' || trip.trip_status === 'SCHEDULED' || trip.trip_status === 'PENDING'
+      );
+    } else if (filterType === 'completed') {
+      this.filteredTrips = this.trips.filter(trip => trip.trip_status === 'COMPLETED');
+    } else if (filterType === 'cancelled') {
+      this.filteredTrips = this.trips.filter(trip => trip.trip_status === 'CANCELLED');
+    }
+    
+    // Apply search term if exists
+    if (this.searchTerm) {
+      this.applySearch();
+    }
+  }
+  
+  // Method to apply search term to filtered trips
+  applySearch(): void {
+    const term = this.searchTerm.toLowerCase();
+    if (!term) {
+      this.filterTrips(this.activeFilter);
+      return;
+    }
+    
+    this.filteredTrips = this.filteredTrips.filter(trip => 
+      trip.description.toLowerCase().includes(term) || 
+      trip.start_location.toLowerCase().includes(term) || 
+      trip.end_location.toLowerCase().includes(term)
+    );
+  }
+  
+  // Method to reload trips (for error state)
+  reloadTrips(): void {
+    this.loadTrips();
+  }
+
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'PLANNED':
+      case 'PENDING':
         return 'bg-info';
-      case 'IN_PROGRESS':
+      case 'INPROGRESS':
         return 'bg-warning';
       case 'COMPLETED':
         return 'bg-success';
       case 'CANCELLED':
+        return 'bg-danger';
+      case 'SCHEDULED':
         return 'bg-secondary';
       default:
         return 'bg-primary';
@@ -96,6 +152,7 @@ export class TripListComponent implements OnInit {
     this.tripService.deleteTrip(this.tripToDelete.id).subscribe({
       next: () => {
         this.trips = this.trips.filter(t => t.id !== this.tripToDelete?.id);
+        this.filteredTrips = this.filteredTrips.filter(t => t.id !== this.tripToDelete?.id);
         this.isDeleting = false;
         this.deleteModal?.hide();
         this.tripToDelete = null;
@@ -104,7 +161,8 @@ export class TripListComponent implements OnInit {
         console.error('Error deleting trip', err);
         this.isDeleting = false;
         this.deleteModal?.hide();
-        this.error = 'Failed to delete trip. Please try again later.';}
+        this.error = 'Failed to delete trip. Please try again later.';
+      }
     });
   }
 

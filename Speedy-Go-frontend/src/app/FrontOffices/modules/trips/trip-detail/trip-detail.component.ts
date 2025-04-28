@@ -122,6 +122,18 @@ export class TripDetailComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // This method is called from the template to reload trip details
+  loadTripDetails(): void {
+    // Reset any error state
+    this.error = null;
+    
+    // Show loading state
+    this.loading = true;
+    
+    // Reload trip data
+    this.loadTrip();
+  }
+
   initMap(): void {
     if (!this.trip) return;
 

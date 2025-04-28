@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpecificTripService } from 'src/app/FrontOffices/services/specific-trip/specific-trip.service';
+import { TunisiaRouteService, TouristAttraction } from 'src/app/FrontOffices/services/tunisia-route/tunisia-route.service';
 import { SpecificTrip } from 'src/app/FrontOffices/models/specific-trip.model';
 import * as bootstrap from 'bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-specific-trip-detail',
@@ -14,11 +16,13 @@ import { HttpClient } from '@angular/common/http';
   ]
 })
 export class SpecificTripDetailComponent implements OnInit {
-  specificTrip: SpecificTrip | null = null;
+  specificTrip: (SpecificTrip & { expanded?: boolean }) | null = null;
   loading = true;
   mapLoading = true; 
   error: string | null = null;
   updateTripForm: FormGroup;
+  governorates: string[] = [];
+  governoratesLoading = false;
 
   @ViewChild('departureLocationInput') departureLocationInput!: ElementRef;
   @ViewChild('passThroughLocationInput') passThroughLocationInput!: ElementRef;
@@ -35,14 +39,20 @@ export class SpecificTripDetailComponent implements OnInit {
     strokeOpacity: 0.8,
     strokeWeight: 5
   };
-  googleMapsApiKey = 'AIzaSyBQyBRLDvdrrGQk3NT8Sm9c5lX7Nizvj24';
+  googleMapsApiKey = environment.googleMapsApiKey;
+  
+  // Properties to store coordinates for Tunisia route analyzer
+  startCoordinates: [number, number] | null = null;
+  waypointCoordinates: [number, number] | null = null;
+  endCoordinates: [number, number] | null = null;
 
   constructor(
     private route: ActivatedRoute, 
     private specificTripService: SpecificTripService, 
     private router: Router, 
     private fb: FormBuilder,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private tunisiaRouteService: TunisiaRouteService
   ) {
     this.updateTripForm = this.fb.group({
       description: ['', Validators.required],
@@ -101,7 +111,11 @@ export class SpecificTripDetailComponent implements OnInit {
   loadSpecificTripDetails(id: number): void {
     this.specificTripService.getTripById(id).subscribe({
       next: (data: SpecificTrip) => {
-        this.specificTrip = data;
+        // Add expanded property to trip
+        this.specificTrip = {
+          ...data,
+          expanded: false
+        };
         this.loading = false;
         this.populateUpdateForm();
         
@@ -122,6 +136,7 @@ export class SpecificTripDetailComponent implements OnInit {
     if (!this.specificTrip) return;
     
     this.mapLoading = true;
+    this.governoratesLoading = true;
 
     if (this.specificTrip.passThroughLocation) {
       this.geocodeWithWaypoint(
@@ -318,6 +333,9 @@ export class SpecificTripDetailComponent implements OnInit {
           
           this.routePath = path;
         }
+
+        // Use Tunisia Route Service for route analysis
+        this.analyzeTunisiaRoute();
       } else {
         console.error('Directions request failed:', status);
         
@@ -326,10 +344,134 @@ export class SpecificTripDetailComponent implements OnInit {
         } else {
           this.routePath = [startLatLng, endLatLng];
         }
+
+        // Use Tunisia Route Service for route analysis
+        this.analyzeTunisiaRoute();
       }
       
       this.mapLoading = false;
     });
+  }
+
+  analyzeTunisiaRoute(): void {
+    if (!this.startMarker || !this.endMarker) {
+      console.error('Cannot analyze Tunisia route: Coordinates not available');
+      return;
+    }
+
+    this.governoratesLoading = true;
+    this.governorates = [];
+
+    // Format coordinates as [lat, lng] tuples for Tunisia route analysis
+    const pointA: [number, number] = [this.startMarker.position.lat, this.startMarker.position.lng];
+    
+    // If there's a waypoint, use it as pointB
+    let pointB: [number, number];
+    let pointC: [number, number];
+    
+    if (this.waypointMarker) {
+      pointB = [this.waypointMarker.position.lat, this.waypointMarker.position.lng];
+      pointC = [this.endMarker.position.lat, this.endMarker.position.lng];
+    } else {
+      // If no waypoint, calculate a middle point between start and end
+      pointB = [
+        (this.startMarker.position.lat + this.endMarker.position.lat) / 2,
+        (this.startMarker.position.lng + this.endMarker.position.lng) / 2
+      ];
+      pointC = [this.endMarker.position.lat, this.endMarker.position.lng];
+    }
+
+    // Call the Tunisia Route Service to get governorates
+    this.tunisiaRouteService.getTunisiaRouteGovernorates(pointA, pointB, pointC)
+      .subscribe({
+        next: (result) => {
+          this.governorates = result;
+          this.governoratesLoading = false;
+        },
+        error: (err) => {
+          console.error('Error analyzing Tunisia route:', err);
+          // Fallback to Google Maps geocoding method
+          this.getGovernoratesFromGeocoding(
+            this.specificTrip!.departureLocation, 
+            this.specificTrip!.arrivalLocation,
+            this.specificTrip!.passThroughLocation
+          );
+        }
+      });
+  }
+
+  getGovernoratesFromGeocoding(departure: string, arrival: string, passThrough?: string): void {
+    this.governoratesLoading = true;
+    this.governorates = [];
+    
+    const geocoder = new google.maps.Geocoder();
+    const promises: Promise<string>[] = [];
+    
+    // Get governorate for departure location
+    promises.push(
+      new Promise<string>((resolve) => {
+        geocoder.geocode({ address: departure }, (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+            const governorate = this.extractGovernorateFromResults(results);
+            resolve(governorate || '');
+          } else {
+            resolve('');
+          }
+        });
+      })
+    );
+    
+    // Get governorate for pass-through location if it exists
+    if (passThrough) {
+      promises.push(
+        new Promise<string>((resolve) => {
+          geocoder.geocode({ address: passThrough }, (results, status) => {
+            if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+              const governorate = this.extractGovernorateFromResults(results);
+              resolve(governorate || '');
+            } else {
+              resolve('');
+            }
+          });
+        })
+      );
+    }
+    
+    // Get governorate for arrival location
+    promises.push(
+      new Promise<string>((resolve) => {
+        geocoder.geocode({ address: arrival }, (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+            const governorate = this.extractGovernorateFromResults(results);
+            resolve(governorate || '');
+          } else {
+            resolve('');
+          }
+        });
+      })
+    );
+    
+    Promise.all(promises)
+      .then(results => {
+        // Filter out duplicates and undefined values
+        this.governorates = [...new Set(results.filter(gov => gov))];
+        this.governoratesLoading = false;
+      })
+      .catch(error => {
+        console.error('Error getting governorates:', error);
+        this.governoratesLoading = false;
+      });
+  }
+
+  extractGovernorateFromResults(results: google.maps.GeocoderResult[]): string | null {
+    for (const result of results) {
+      for (const component of result.address_components) {
+        if (component.types.includes('administrative_area_level_1')) {
+          return component.long_name;
+        }
+      }
+    }
+    return null;
   }
 
   populateUpdateForm(): void {
@@ -489,6 +631,242 @@ export class SpecificTripDetailComponent implements OnInit {
           this.error = 'Failed to delete trip. Please try again later.';
         }
       });
+    }
+  }
+
+  /**
+   * Opens the Tunisia Route Analyzer with the trip's coordinates
+   */
+  openTunisiaRouteAnalyzer(): void {
+    if (!this.startMarker || !this.endMarker) {
+      console.error('Cannot open Tunisia Route Analyzer: Coordinates not available');
+      return;
+    }
+
+    // Format coordinates as [lat, lng] tuples for the Tunisia Route Analyzer
+    const pointA: [number, number] = [this.startMarker.position.lat, this.startMarker.position.lng];
+    
+    // If there's a waypoint, use it as pointB
+    let pointB: [number, number];
+    let pointC: [number, number];
+    
+    if (this.waypointMarker) {
+      pointB = [this.waypointMarker.position.lat, this.waypointMarker.position.lng];
+      pointC = [this.endMarker.position.lat, this.endMarker.position.lng];
+    } else {
+      // If no waypoint, calculate a middle point between start and end
+      pointB = [
+        (this.startMarker.position.lat + this.endMarker.position.lat) / 2,
+        (this.startMarker.position.lng + this.endMarker.position.lng) / 2
+      ];
+      pointC = [this.endMarker.position.lat, this.endMarker.position.lng];
+    }
+
+    // Navigate to Tunisia Route Analyzer with coordinates as query parameters
+    this.router.navigate(['/tunisia-route'], {
+      queryParams: {
+        pointA: pointA.join(','),
+        pointB: pointB.join(','),
+        pointC: pointC.join(','),
+        tripDescription: this.specificTrip?.description || 'Trip Route Analysis'
+      }
+    });
+  }
+
+  /**
+   * Show tourist attractions for a selected governorate
+   * @param governorateName The name of the governorate
+   */
+  showTouristAttractions(governorateName: string): void {
+    // Create a loading modal first
+    let modalElement = document.getElementById('touristAttractionsModal');
+    
+    if (!modalElement) {
+      modalElement = document.createElement('div');
+      modalElement.className = 'modal fade';
+      modalElement.id = 'touristAttractionsModal';
+      modalElement.setAttribute('tabindex', '-1');
+      modalElement.setAttribute('aria-labelledby', 'touristAttractionsModalLabel');
+      modalElement.setAttribute('aria-hidden', 'true');
+      
+      document.body.appendChild(modalElement);
+    }
+    
+    // Set the loading content
+    modalElement.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="touristAttractionsModalLabel">
+              <i class="bi bi-geo-alt-fill me-2"></i>
+              Tourist Attractions in ${governorateName}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading attractions...</span>
+            </div>
+            <p class="mt-3 text-primary">Finding tourist attractions for ${governorateName}...</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Show the loading modal
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    
+    // Get tourist attractions for this governorate
+    this.tunisiaRouteService.getTouristAttractions(governorateName).subscribe({
+      next: (touristAttractions) => {
+        // Create modal content with the received attractions
+        let modalBody = '';
+        
+        if (touristAttractions.length > 0) {
+          modalBody = `
+            <div class="row row-cols-1 g-4">
+              ${touristAttractions.map(attraction => `
+                <div class="col">
+                  <div class="card shadow-sm h-100 attraction-card hover-card">
+                    <div class="row g-0 h-100">
+                      ${attraction.image ? 
+                        `<div class="col-md-4">
+                          <div class="attraction-image" style="background-image: url('${attraction.image}'); height: 100%; min-height: 200px; background-size: cover; background-position: center; border-top-left-radius: 4px; border-bottom-left-radius: 4px;"></div>
+                        </div>` : ''
+                      }
+                      <div class="col-md-${attraction.image ? '8' : '12'}">
+                        <div class="card-body d-flex flex-column">
+                          <div>
+                            <h4 class="card-title fw-bold text-primary">${attraction.name}</h4>
+                            ${attraction.rating ? 
+                              `<div class="rating mb-2">
+                                ${this.generateStarRating(attraction.rating)}
+                                <span class="rating-value ms-2 badge bg-warning text-dark rounded-pill">${attraction.rating.toFixed(1)}</span>
+                              </div>` : ''
+                            }
+                            <p class="card-text">${attraction.description}</p>
+                          </div>
+                          ${attraction.address ? 
+                            `<div class="mt-auto">
+                              <hr>
+                              <p class="card-text text-muted mb-0">
+                                <i class="bi bi-people-fill me-1"></i>${attraction.address}
+                              </p>
+                            </div>` : ''
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <style>
+              .hover-card {
+                transition: transform 0.3s, box-shadow 0.3s;
+                cursor: pointer;
+              }
+              .hover-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+              }
+              .rating {
+                display: flex;
+                align-items: center;
+              }
+              .attraction-card {
+                border-radius: 8px;
+                overflow: hidden;
+                border: none;
+              }
+            </style>
+          `;
+        } else {
+          modalBody = `
+            <div class="text-center py-4">
+              <i class="bi bi-geo-alt-fill text-muted fs-1 mb-3 d-block"></i>
+              <p class="text-muted">No tourist attractions found for ${governorateName}.</p>
+            </div>
+          `;
+        }
+        
+        // Update the modal content
+        const modalBodyElement = modalElement?.querySelector('.modal-body');
+        if (modalBodyElement) {
+          modalBodyElement.innerHTML = modalBody;
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching tourist attractions:', err);
+        
+        // Show error in modal
+        const errorContent = `
+          <div class="text-center py-5">
+            <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-4 d-block"></i>
+            <h5 class="text-danger mb-3">Connection Error</h5>
+            <p class="text-muted mb-4">Could not load tourist attractions for ${governorateName}.</p>
+            <button class="btn btn-primary" onclick="window.open('https://www.google.com/search?q=tourist+attractions+in+${governorateName}+Tunisia', '_blank')">
+              <i class="bi bi-search me-2"></i>Search on Google
+            </button>
+          </div>
+        `;
+        
+        // Update the modal content
+        const modalBodyElement = modalElement?.querySelector('.modal-body');
+        if (modalBodyElement) {
+          modalBodyElement.innerHTML = errorContent;
+        }
+      }
+    });
+  }
+  
+  /**
+   * Generate HTML for star rating display
+   * @param rating Rating value (0-5)
+   * @returns HTML string with star icons
+   */
+  private generateStarRating(rating: number): string {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
+    let starsHtml = '';
+    
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      starsHtml += '<i class="bi bi-star-fill text-warning"></i>';
+    }
+    
+    // Add half star if needed
+    if (halfStar) {
+      starsHtml += '<i class="bi bi-star-half text-warning"></i>';
+    }
+    
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      starsHtml += '<i class="bi bi-star text-warning"></i>';
+    }
+    
+    return starsHtml;
+  }
+
+  // Toggle expanded state for trip cards
+  toggleExpanded(): void {
+    if (this.specificTrip) {
+      this.specificTrip.expanded = !this.specificTrip.expanded;
+    }
+  }
+  
+  // Method to reload trip details
+  reloadTripDetails(): void {
+    if (this.specificTrip) {
+      this.loading = true;
+      this.error = null;
+      this.loadSpecificTripDetails(this.specificTrip.id);
     }
   }
 }

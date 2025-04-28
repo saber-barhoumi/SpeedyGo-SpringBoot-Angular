@@ -6,4 +6,5 @@ export interface Trip {
   trip_date: string;
   trip_status: string;
   phone_number: string;
+  expanded?: boolean; // Added for UI interaction
 }

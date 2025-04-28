@@ -1,3 +1,4 @@
+<app-header-front></app-header-front>
 <!-- Start Hero Section -->
 <div class="hero">
   <div class="container">
@@ -51,17 +52,45 @@
 
 
 
-<div class="offers-container">
+
+
+
+<div class="offers-container" [ngClass]="{'dark-mode': isDarkMode}">
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle" (click)="toggleDarkMode()">
+    <svg *ngIf="!isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+    <svg *ngIf="isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </div>
+
+  <!-- Loading State with Spinner Animation -->
   <div *ngIf="loading" class="loading-spinner">
-    <div class="spinner">🔄</div>
+    <div class="spinner"></div>
     <p>Chargement des offres...</p>
   </div>
 
+  <!-- No Results State with SVG Icon -->
   <div *ngIf="!loading && offers.length === 0" class="no-results">
-    <i class="icon-search-off">🚫</i>
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      <line x1="8" y1="11" x2="14" y2="11"></line>
+    </svg>
     <p>Aucune offre trouvée.</p>
   </div>
 
+  <!-- Offers Grid -->
   <div *ngIf="!loading && offers.length > 0" class="offers-grid">
     <div *ngFor="let offer of offers" class="discount-card-container">
       <div class="discount-card">
@@ -70,6 +99,12 @@
             <span>{{offer.discount}}%</span>
           </div>
           <div class="category-label">{{offer.category}}</div>
+          <!-- Add Favorite Button -->
+          <div class="favorite-button" (click)="isFavorite(offer.offre_id) ? removeFromFavorites(offer.offre_id) : addToFavorites(offer.offre_id)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path [attr.fill]="isFavorite(offer.offre_id) ? 'currentColor' : 'none'" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </div>
         </div>
         
         <div class="card-body">
@@ -103,24 +138,119 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                   <polyline points="9 22 9 12 15 12 15 22"></polyline>
-
                 </svg>
               </span>
               <span>Nom du magasin: <strong>{{offer.store_name}}</strong></span>
-
             </div>
           </div>
           
-          <button class="claim-button" [disabled]="!offer.available" (click)="openPaymentModal(offer)">
-            Réclamer l'offre
-          </button>
+          <div class="card-actions">
+            <button class="claim-button" [disabled]="!offer.available" (click)="openPaymentModal(offer)">
+              Réclamer l'offre
+            </button>
+            
+            <button class="comments-toggle-button" (click)="toggleComments(offer.offre_id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Commentaires</span>
+              <span class="comment-count" *ngIf="offerComments[offer.offre_id]">
+                {{ offerComments[offer.offre_id].length }}
+              </span>
+            </button>
+          </div>
+          
+          <!-- Comments Section -->
+          <div class="comments-section" *ngIf="showComments[offer.offre_id]" [@commentAnimation]>
+            <!-- Comment Loading State -->
+            <div *ngIf="loadingComments[offer.offre_id]" class="comments-loading">
+              <div class="spinner comments-spinner"></div>
+              <p>Chargement des commentaires...</p>
+            </div>
+            
+            <!-- Comment Error State -->
+            <div *ngIf="commentError[offer.offre_id]" class="comments-error">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <p>Impossible de charger les commentaires. Veuillez réessayer plus tard.</p>
+            </div>
+            
+            <!-- Comment Form -->
+            <div class="comment-form" *ngIf="userId && !commentError[offer.offre_id]">
+              <form [formGroup]="commentForm" (ngSubmit)="submitComment(offer.offre_id)">
+                <div class="form-group">
+                  <textarea 
+                    formControlName="commentText" 
+                    placeholder="Écrivez votre commentaire..." 
+                    [ngClass]="{'invalid': commentForm.get('commentText')?.invalid && commentForm.get('commentText')?.touched}"
+                  ></textarea>
+                  <div class="comment-validation-error" *ngIf="commentForm.get('commentText')?.invalid && commentForm.get('commentText')?.touched">
+                    <span *ngIf="commentForm.get('commentText')?.errors?.['required']">Le commentaire ne peut pas être vide.</span>
+                    <span *ngIf="commentForm.get('commentText')?.errors?.['minlength']">Le commentaire doit contenir au moins 3 caractères.</span>
+                    <span *ngIf="commentForm.get('commentText')?.errors?.['maxlength']">Le commentaire ne peut pas dépasser 500 caractères.</span>
+                  </div>
+                </div>
+                <button type="submit" [disabled]="commentForm.invalid || submittingComment" class="submit-comment-button">
+                  <span *ngIf="!submittingComment">Publier</span>
+                  <span *ngIf="submittingComment" class="spinner comment-submit-spinner"></span>
+                </button>
+              </form>
+            </div>
+            
+            <!-- Login Prompt if User Not Logged In -->
+            <div class="login-to-comment" *ngIf="!userId && !commentError[offer.offre_id]">
+              <p>Connectez-vous pour laisser un commentaire.</p>
+            </div>
+            
+            <!-- Comments List -->
+            <div class="comments-list" *ngIf="offerComments[offer.offre_id] && offerComments[offer.offre_id].length > 0">
+              <div class="comment-item" *ngFor="let comment of offerComments[offer.offre_id]" [@commentEntryAnimation]>
+                <div class="comment-avatar">
+                  <div class="avatar-placeholder">
+                    {{ getCommentUserName(comment) ? getCommentUserName(comment)!.charAt(0).toUpperCase() : '' }}
+                  </div>
+                </div>
+                <div class="comment-content">
+                  <div class="comment-header">
+                    <span class="comment-username">{{ getCommentUserName(comment) }}</span>
+                    <span class="comment-time">{{ formatCommentDate(comment.created_at || comment.date) }}</span>
+                  </div>
+                  <div class="comment-text">{{ comment.text }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- No Comments Message -->
+            <div class="no-comments" *ngIf="offerComments[offer.offre_id] && offerComments[offer.offre_id].length === 0 && !loadingComments[offer.offre_id]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <p>Aucun commentaire pour le moment. Soyez le premier à commenter!</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Error Message with SVG Icon -->
   <div *ngIf="error" class="error-message">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
     <p>Échec du chargement des offres. Veuillez réessayer plus tard.</p>
+  </div>
+
+  <!-- Floating Action Button -->
+  <div class="floating-action-btn" (click)="toggleFavorites()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
   </div>
 </div>
 
@@ -136,6 +266,30 @@
       <h2 *ngIf="paymentStep === 3">Paiement Réussi</h2>
     </div>
     
+    <!-- Payment Steps Indicator -->
+    <div class="payment-steps" *ngIf="paymentStep <= 3">
+      <div class="step" [ngClass]="{'active': paymentStep === 1, 'completed': paymentStep > 1}">
+        <div class="step-number">
+          <span *ngIf="paymentStep === 1">1</span>
+          <span *ngIf="paymentStep > 1">✓</span>
+        </div>
+        <div class="step-title">Détails</div>
+      </div>
+      <div class="step" [ngClass]="{'active': paymentStep === 2, 'completed': paymentStep > 2}">
+        <div class="step-number">
+          <span *ngIf="paymentStep <= 2">2</span>
+          <span *ngIf="paymentStep > 2">✓</span>
+        </div>
+        <div class="step-title">Paiement</div>
+      </div>
+      <div class="step" [ngClass]="{'active': paymentStep === 3}">
+        <div class="step-number">
+          <span>3</span>
+        </div>
+        <div class="step-title">Confirmation</div>
+      </div>
+    </div>
+    
     <!-- Step 1: Initial Payment Form -->
     <div class="payment-modal-content" *ngIf="paymentStep === 1">
       <div class="offer-summary" *ngIf="selectedOffer">
@@ -147,7 +301,9 @@
         </div>
       </div>
       
-      <button class="btn-acheter" (click)="fillDummyPaymentForm()">Payer</button>
+      <button class="btn-acheter" (click)="fillDummyPaymentForm()">
+        <span>Continuer vers le paiement</span>
+      </button>
     </div>
     
     <!-- Step 2: Filled Payment Form -->
@@ -177,7 +333,7 @@
       </div>
       
       <button class="btn-paye" [disabled]="paymentProcessing" (click)="processPayment()">
-        <span *ngIf="!paymentProcessing">Payer</span>
+        <span *ngIf="!paymentProcessing">Payer maintenant</span>
         <span *ngIf="paymentProcessing" class="spinner"></span>
       </button>
     </div>
@@ -201,3 +357,9 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+<app-footer-front></app-footer-front>

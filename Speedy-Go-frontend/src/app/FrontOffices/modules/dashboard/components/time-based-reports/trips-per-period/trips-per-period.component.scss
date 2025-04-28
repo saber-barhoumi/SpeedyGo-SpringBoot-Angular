@@ -1,0 +1,49 @@
+.mt-4 {
+  margin-top: 3.5rem !important;
+}
+.time-reports-container {
+  .no-data-message {
+    padding: 2rem;
+    text-align: center;
+    color: #718096;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    i {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #cbd5e0;
+    }
+  }
+  
+  .chart-container {
+    height: 300px;
+    position: relative;
+  }
+  
+  .summary-stats {
+    .summary-box {
+      padding: 1.25rem;
+      text-align: center;
+      background-color: #f8f9fa;
+      border-radius: 0.75rem;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      
+      .summary-title {
+        color: #718096;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .summary-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #4361ee;
+      }
+    }
+  }
+}

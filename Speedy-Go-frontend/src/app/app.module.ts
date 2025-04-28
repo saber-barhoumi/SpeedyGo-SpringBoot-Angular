@@ -60,6 +60,10 @@ import { StoreListComponent } from "./FrontOffices/modules/store/store/store.com
 import { StoreFilterComponent } from './FrontOffices/modules/store/Component/store-filter/store-filter.component';
 
 
+import { TunisiaRouteAnalyzerComponent } from './FrontOffices/modules/tunisia-route/tunisia-route-analyzer.component';
+import { TrakingComponent } from './FrontOffices/modules/trips/traking/traking.component';
+
+
 
 @NgModule({
   declarations: [
@@ -102,7 +106,9 @@ import { StoreFilterComponent } from './FrontOffices/modules/store/Component/sto
     DiscountOfferComponent,
     addstoreComponent,
     AddOfferComponent,
-    AddOfferComponent
+    AddOfferComponent,
+    TunisiaRouteAnalyzerComponent,
+    TrakingComponent,
   ],
   imports: [
     BrowserModule,
@@ -115,6 +121,8 @@ import { StoreFilterComponent } from './FrontOffices/modules/store/Component/sto
     FormsModule, 
     ReactiveFormsModule,
     BrowserAnimationsModule,
+  
+    GoogleMapsModule,
     
     ToastrModule.forRoot({
       timeOut: 3000,

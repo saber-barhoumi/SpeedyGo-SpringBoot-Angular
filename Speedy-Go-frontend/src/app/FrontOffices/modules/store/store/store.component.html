@@ -1,3 +1,4 @@
+<app-header-front></app-header-front>
 <!-- Start Hero Section -->
 <div class="hero">
   <div class="container">
@@ -17,7 +18,21 @@
       </div>
     </div>
   </div>
-</div>
+</div> 
+
+
+
+
+  <!-- Bootstrap CSS -->
+  <link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
+  
+  <!-- Bootstrap JS -->
+  <script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
+  <script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
+  <script src="/assets/FrontOffice/js2/custom.js"></script>
 
 
 
@@ -37,115 +52,131 @@
 
 
 
-
-
-<div class="store-container">
-    <div class="header-section">
+<div class="speedgo-store-container" [ngClass]="{'speedgo-dark-mode': isDarkMode}">
+    <div class="speedgo-header-section">
       <h1>Store Management</h1>
-      <button *ngIf="canEditOrDelete()" class="btn-primary" (click)="openStore(
-        0,
-        'add'
-        
-      )">
-        <i class="icon-add">+</i> New Store
-      </button>
+      <div class="speedgo-header-actions">
+        <button *ngIf="canEditOrDelete()" class="speedgo-btn-primary" (click)="openStore(0, 'add')">
+          <i class="fas fa-plus"></i> New Store
+        </button>
+        <button class="speedgo-btn-primary speedgo-dark-toggle" (click)="toggleDarkMode()">
+          <i class="fas" [ngClass]="isDarkMode ? 'fa-sun' : 'fa-moon'"></i>
+          {{ isDarkMode ? 'Light Mode' : 'Dark Mode' }}
+        </button>
+      </div>
     </div>
   
-    <div class="filters-section">
-      <div class="search-input">
+    <div class="speedgo-filters-section">
+      <div class="speedgo-search-input">
         <input type="text" placeholder="Search stores..." (input)="search($event)">
-        <i class="icon-search">🔍</i>
+        <i class="speedgo-icon-search">🔍</i>
       </div>
   
-      <div class="select-wrapper">
+      <div class="speedgo-select-wrapper">
         <select [(ngModel)]="selectedType" (change)="filterByType(selectedType)">
           <option value="">All Types</option>
           <option *ngFor="let type of storeTypes" [value]="type">
             {{type}}
           </option>
         </select>
-        <i class="icon-chevron-down">⬇️</i>
+        <i class="speedgo-icon-chevron-down">⬇️</i>
       </div>
   
-      <div class="select-wrapper">
+      <div class="speedgo-select-wrapper">
         <select [(ngModel)]="selectedStatus" (change)="filterByStatus(selectedStatus)">
           <option value="">All Statuses</option>
           <option *ngFor="let status of storeStatuses" [value]="status">
             {{status}}
           </option>
         </select>
-        <i class="icon-chevron-down">⬇️</i>
+        <i class="speedgo-icon-chevron-down">⬇️</i>
       </div>
     </div>
   
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner">🔄</div>
+    <div *ngIf="loading" class="speedgo-loading-spinner">
+      <div class="speedgo-spinner"></div>
     </div>
   
-    <div *ngIf="!loading && filteredStores.length === 0" class="no-results">
-      <i class="icon-search-off">🚫</i>
+    <div *ngIf="!loading && filteredStores.length === 0" class="speedgo-no-results">
+      <i class="speedgo-icon-search-off">🚫</i>
       <p>No stores found. Try changing your filters or add a new store.</p>
     </div>
   
-    <div class="store-grid" *ngIf="!loading && filteredStores.length > 0">
-      <div *ngFor="let store of paginatedStores" class="store-card">
-        <div class="card-image" [style.background-image]="'url(' + store.image + ')'">
-          <div class="card-badges">
-            <span class="store-type" [ngClass]="store.storeType.toLowerCase()">
-              <i [class]="'icon-' + getStoreTypeIcon(store.storeType)">
+    <div class="speedgo-store-grid" *ngIf="!loading && filteredStores.length > 0">
+      <div *ngFor="let store of paginatedStores" class="speedgo-store-card">
+        <div class="speedgo-card-image" [style.background-image]="'url(' + store.image + ')'">
+          <div class="speedgo-card-badges">
+            <span class="speedgo-store-type" [ngClass]="store.storeType.toLowerCase()">
+              <i [class]="'speedgo-icon-' + getStoreTypeIcon(store.storeType)">
                 {{ getStoreTypeIcon(store.storeType) }}
-
               </i>
               {{store.storeType}}
             </span>
-            <span class="store-status" [ngClass]="store.storeStatus.toLowerCase()">
-              <i [class]="'icon-' + getStatusIcon(store.storeStatus)">
+            <span class="speedgo-store-status" [ngClass]="store.storeStatus.toLowerCase()">
+              <i [class]="'speedgo-icon-' + getStatusIcon(store.storeStatus)">
                 {{ getStatusIcon(store.storeStatus) }}
-
               </i>
             </span>
           </div>
         </div>
         
-        <div class="card-content">
-          <h2 class="store-title">{{store.name}}</h2>
-          <p class="store-description">{{store.description | slice:0:100}}{{store.description.length > 100 ? '...' : ''}}</p>
+        <div class="speedgo-card-content">
+          <h2 class="speedgo-store-title">{{store.name}}</h2>
+          <p class="speedgo-store-description">{{store.description | slice:0:100}}{{store.description.length > 100 ? '...' : ''}}</p>
           
-          <div class="store-details">
-            <div class="detail-item">
-              <i class="icon-timer">⏱️</i>
+          <div class="speedgo-store-details">
+            <div class="speedgo-detail-item time">
+              <i class="fas fa-clock"></i>
               <span *ngIf="store.opening && store.closing">{{store.opening}} - {{store.closing}}</span>
               <span *ngIf="!store.opening || !store.closing" class="error-message">Opening Time and Closing Time are required</span>
             </div>
-            <div class="detail-item">
-              <i class="icon-flag">📞</i>
-              <span>{{store.phone}}</span>
+            <div class="speedgo-detail-item phone">
+              <i class="fas fa-phone"></i>
+              <span>{{store.phone || 'No phone provided'}}</span>
+            </div>
+            <div class="speedgo-detail-item location">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{store.city || 'No location provided'}}</span>
             </div>
           </div>
         </div>
         
-        <div class="card-actions">
-          <button class="btn-icon btn-view"  title="View">
+        <div class="speedgo-card-actions">
+          <button class="speedgo-btn-icon speedgo-btn-view" title="View Offers">
             <i class="fas fa-eye" (click)="store.storeID && goToOffre(store.storeID)"></i>
           </button>
-          <button class="btn-icon btn-edit" (click)="store.storeID && openStore(store.storeID, 'edit')" title="Edit">
+          <button class="speedgo-btn-icon speedgo-btn-edit" (click)="store.storeID && openStore(store.storeID, 'edit')" *ngIf="userRole !== 'CUSTOMER'" title="Edit Store">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="btn-icon btn-delete" (click)="store.storeID && deleteStore(store.storeID)" title="Delete">
+          <button class="speedgo-btn-icon speedgo-btn-delete" (click)="store.storeID && deleteStore(store.storeID)" *ngIf="userRole !== 'CUSTOMER'" title="Delete Store">
             <i class="fas fa-trash"></i>
           </button>
-          <button class="btn-icon btn-add"
-          
-          (click)="store.storeID && addOffer(store.storeID)" *ngIf="canEditOrDelete()">+ </button>
+          <button class="speedgo-btn-icon speedgo-btn-add" (click)="store.storeID && addOffer(store.storeID)" *ngIf="userRole !== 'CUSTOMER'" title="Add Offer">
+            <i class="fas fa-plus"></i>
+          </button>
         </div>
       </div>
     </div>
   
-    <div *ngIf="filteredStores.length > pageSize" class="pagination">
-      <button class="pagination-button" (click)="previousPage()" [disabled]="pageIndex === 0">Previous</button>
-      <span class="pagination-text">Page {{pageIndex + 1}} of {{totalPages}}</span>
+    <div *ngIf="filteredStores.length > pageSize" class="speedgo-pagination">
+      <button class="speedgo-pagination-button" (click)="previousPage()" [disabled]="pageIndex === 0">
+        <i class="fas fa-chevron-left"></i> Previous
+      </button>
+      
+      <div class="speedgo-pagination-numbers">
+        <button *ngFor="let page of getPaginationArray()" 
+                class="speedgo-pagination-number" 
+                [ngClass]="{'active': pageIndex === page - 1}"
+                (click)="goToPage(page - 1)">
+          {{page}}
+        </button>
+      </div>
+      
+      <button class="speedgo-pagination-button" (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1">
+        Next <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
-  </div> 
+  </div>
 
 
 
@@ -153,16 +184,4 @@
 
 
 
-
-
-
-  <!-- Bootstrap CSS -->
-<link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
-<link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
-
-<!-- Bootstrap JS -->
-<script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
-<script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
-<script src="/assets/FrontOffice/js2/custom.js"></script>
+<app-footer-front></app-footer-front>

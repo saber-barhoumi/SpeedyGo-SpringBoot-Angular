@@ -39,5 +39,24 @@ export class HeaderFrontComponent implements OnInit {
 
   toggleProfile(): void {
     this.showProfile = !this.showProfile; // Toggle profile visibility
+  } 
+
+
+
+  ToTrips() {
+    this.router.navigate(['/trips']);
   }
+
+  ToStore(): void {
+    this.router.navigate(['/storlist']);
+  }
+
+
+  
+
+
+
+
+
+
 }

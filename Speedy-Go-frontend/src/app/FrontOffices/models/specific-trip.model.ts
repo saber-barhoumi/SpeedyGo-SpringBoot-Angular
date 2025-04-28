@@ -20,5 +20,6 @@ export interface SpecificTrip {
     photo: string;
     reservation: any;
     trip_status: string;
+    expanded?: boolean; // Added for UI interaction
   }
   

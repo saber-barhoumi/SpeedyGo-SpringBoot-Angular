@@ -1,5 +1,5 @@
 
-
+<app-header-front></app-header-front>
 <!-- Start Hero Section -->
 <div class="hero">
   <div class="container">
@@ -26,266 +26,303 @@
 
 
 
+<!-- Modern Trip List Component with Enhanced UI -->
+<div class="trip-modern-container py-8">
+  <div class="trip-header">
+    <div class="trip-header-content">
+      <h1 class="trip-title">My Adventures</h1>
+      <p class="trip-subtitle">Manage your trips and track your journeys</p>
+    </div>
+    <button class="trip-add-btn" routerLink="/ajout_trip">
+      <div class="trip-btn-content">
+        <i class="bi bi-plus-circle"></i>
+        <span>Add New Trip</span>
+      </div>
+      <div class="trip-btn-glow"></div>
+    </button>
+  </div>
 
+  <!-- Search and Filter Section -->
+  <div class="trip-filters">
+    <div class="trip-search-wrapper">
+      <i class="bi bi-search trip-search-icon"></i>
+      <input type="text" class="trip-search-input" placeholder="Search your trips..." [(ngModel)]="searchTerm">
+    </div>
+    <div class="trip-filter-buttons">
+      <button class="trip-filter-btn" [class.active]="activeFilter === 'all'" (click)="filterTrips('all')">
+        All
+      </button>
+      <button class="trip-filter-btn" [class.active]="activeFilter === 'active'" (click)="filterTrips('active')">
+        Active
+      </button>
+      <button class="trip-filter-btn" [class.active]="activeFilter === 'completed'" (click)="filterTrips('completed')">
+        Completed
+      </button>
+      <button class="trip-filter-btn" [class.active]="activeFilter === 'cancelled'" (click)="filterTrips('cancelled')">
+        Cancelled
+      </button>
+    </div>
+  </div>
 
+  <!-- Loading Skeleton -->
+  <div *ngIf="loading" class="trip-skeleton-grid">
+    <div class="trip-skeleton-card" *ngFor="let _ of [].constructor(6)">
+      <div class="trip-skeleton-header"></div>
+      <div class="trip-skeleton-body">
+        <div class="trip-skeleton-line trip-skeleton-title"></div>
+        <div class="trip-skeleton-line"></div>
+        <div class="trip-skeleton-line"></div>
+        <div class="trip-skeleton-line trip-skeleton-short"></div>
+      </div>
+      <div class="trip-skeleton-footer"></div>
+    </div>
+  </div>
 
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && filteredTrips.length === 0" class="trip-empty-state">
+    <div class="trip-empty-icon">
+      <i class="bi bi-map"></i>
+    </div>
+    <h3 class="trip-empty-title">No adventures planned yet</h3>
+    <p class="trip-empty-text">Let's start planning your next amazing journey!</p>
+    <button class="trip-empty-button" routerLink="/ajout_trip">
+      <i class="bi bi-plus-circle me-2"></i> Start Planning
+    </button>
+  </div>
 
-<!-- Modernized Trip List Component -->
-<div class="container py-8">
-    <div class="d-flex justify-content-between align-items-center mb-6">
-      <h1 class="fw-800 text-gradient display-5 mb-0">My Adventures</h1>
-      <button class="btn btn-primary d-flex align-items-center" routerLink="/ajout_trip">
-        <i class="bi bi-plus-circle me-2"></i>Ajouter une Trip
+  <!-- Error State -->
+  <div *ngIf="!loading && error" class="trip-error-state">
+    <div class="trip-error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h3 class="trip-error-title">Oops! Something went wrong</h3>
+    <p class="trip-error-text">{{ error }}</p>
+    <button class="trip-retry-button" (click)="reloadTrips()">
+      <i class="bi bi-arrow-clockwise me-2"></i> Try Again
+    </button>
+  </div>
+
+  <!-- Trip Cards Grid -->
+  <div *ngIf="!loading && !error && filteredTrips.length > 0" class="trip-grid">
+    <div *ngFor="let trip of filteredTrips" class="trip-card-wrapper" [class.trip-card-expanded]="trip.expanded">
+      <div class="trip-card">
+        <div class="trip-card-header">
+          <div class="trip-card-badge" [ngClass]="getStatusBadgeClass(trip.trip_status)">
+            {{ trip.trip_status }}
+          </div>
+          <div class="trip-card-menu">
+            <button class="trip-card-menu-btn" type="button" (click)="trip.expanded = !trip.expanded">
+              <i class="bi" [ngClass]="trip.expanded ? 'bi-chevron-up' : 'bi-three-dots-vertical'"></i>
+            </button>
+          </div>
+        </div>
         
-      </button>
-     
-    </div>
-    <br>
-<br>
-    <!-- Loading Skeleton -->
-    <div *ngIf="loading" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-      <div class="col" *ngFor="let _ of [].constructor(3)">
-        <div class="card trip-card border-0 loading-skeleton" style="height: 320px">
-          <div class="card-header bg-transparent border-0"></div>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Empty State -->
-    <div *ngIf="!loading && !error && trips.length === 0" class="text-center py-12">
-      <div class="mb-6">
-        <i class="bi bi-airplane text-muted opacity-25" style="font-size: 6rem"></i>
-      </div>
-      <h3 class="h2 text-slate-800 mb-3">No adventures planned yet</h3>
-      <p class="text-muted mb-5">Let's start planning your next amazing journey!</p>
-      <button class="btn btn-lg btn-primary px-6" routerLink="/trips/create">
-        Start Planning
-      </button>
-    </div>
-  
-    <!-- Trip Cards Grid -->
-    <div *ngIf="!loading && trips.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-      <div *ngFor="let trip of trips" class="col">
-        <div class="card trip-card h-100">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-              <span class="badge rounded-pill fw-600 py-2 px-3" [ngClass]="getStatusBadgeClass(trip.trip_status)">
-                {{ trip.trip_status }}
-              </span>
-            </div>
-            <div class="dropdown">
-              <button class="btn btn-icon rounded-circle" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical fs-5 text-muted"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item d-flex align-items-center" [routerLink]="['/trips', trip.id]">
-                  <i class="bi bi-eye me-3"></i>Details
-                </a></li>
-                <li><a class="dropdown-item d-flex align-items-center" [routerLink]="['/trips/edit', trip.id]">
-                  <i class="bi bi-pencil-square me-3"></i>Edit
-                </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger d-flex align-items-center" (click)="confirmDelete(trip)">
-                  <i class="bi bi-trash me-3"></i>Delete
-                </a></li>
-              </ul>
-            </div>
-          </div>
+        <div class="trip-card-body">
+          <h3 class="trip-card-title">{{ trip.description }}</h3>
           
-          <div class="card-body">
-            <h3 class="card-title mb-4">{{ trip.description }}</h3>
+          <div class="trip-card-details">
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-start">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">From</div>
+                <div class="trip-card-value">{{ trip.start_location }}</div>
+              </div>
+            </div>
             
-            <div class="d-flex flex-column gap-3">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-indigo-50 text-indigo-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-geo-alt fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">From</div>
-                  <div class="fw-500">{{ trip.start_location }}</div>
-                </div>
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-end">
+                <i class="bi bi-signpost"></i>
               </div>
-              
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-pink-50 text-pink-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-signpost fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">To</div>
-                  <div class="fw-500">{{ trip.end_location }}</div>
-                </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">To</div>
+                <div class="trip-card-value">{{ trip.end_location }}</div>
               </div>
-              
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-calendar2-event fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Departure</div>
-                  <div class="fw-500">{{ trip.trip_date | date:'mediumDate' }}</div>
-                </div>
+            </div>
+            
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-date">
+                <i class="bi bi-calendar2-event"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Departure</div>
+                <div class="trip-card-value">{{ trip.trip_date | date:'mediumDate' }}</div>
               </div>
             </div>
           </div>
-          
-          <div class="card-footer">
-            <button class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center" 
-                    [routerLink]="['/tripdetail/', trip.id]">
-              <i class="bi bi-arrow-right-circle me-2"></i>
-              View Itinerary
-            </button>
-          </div>
+        </div>
+        
+        <div class="trip-card-footer">
+          <a class="trip-card-view-btn" [routerLink]="['/tripdetail/', trip.id]">
+            <span>View Itinerary</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+        
+        <div class="trip-card-actions" [class.show]="trip.expanded">
+          <a class="trip-action-btn trip-action-view" [routerLink]="['/tripdetail/', trip.id]">
+            <i class="bi bi-eye"></i>
+            <span>View</span>
+          </a>
+          <a class="trip-action-btn trip-action-edit" [routerLink]="['/trips/edit', trip.id]">
+            <i class="bi bi-pencil-square"></i>
+            <span>Edit</span>
+          </a>
+          <button class="trip-action-btn trip-action-delete" (click)="confirmDelete(trip)">
+            <i class="bi bi-trash"></i>
+            <span>Delete</span>
+          </button>
         </div>
       </div>
     </div>
-<br>
-<br>
-<div class="d-flex justify-content-between align-items-center mb-6">
-  <h1 class="fw-800 text-gradient display-5 mb-0">Specific Trips</h1>
+  </div>
 
-  <button class="btn btn-primary d-flex align-items-center" routerLink="/spesific_trip">
-    <i class="bi bi-plus-circle me-2"></i>Ajouter une spesific trip
-    
-  </button>
-</div>
-<br>
-<br>
-    <!-- Specific Trip Cards Grid -->
-    <div *ngIf="!loading && specificTrips.length > 0" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mt-4">
-      <div *ngFor="let trip of specificTrips" class="col">
-        <div class="card trip-card h-100">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-              <span class="badge rounded-pill fw-600 py-2 px-3" [ngClass]="getStatusBadgeClass(trip.trip_status)">
-                {{ trip.trip_status }}
-              </span>
-            </div>
-            <div class="dropdown">
-              <button class="btn btn-icon rounded-circle" type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical fs-5 text-muted"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item d-flex align-items-center" [routerLink]="['/trips', trip.id]">
-                  <i class="bi bi-eye me-3"></i>Details
-                </a></li>
-                <li><a class="dropdown-item d-flex align-items-center" [routerLink]="['/trips/edit', trip.id]">
-                  <i class="bi bi-pencil-square me-3"></i>Edit
-                </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger d-flex align-items-center" (click)="confirmDelete(trip)">
-                  <i class="bi bi-trash me-3"></i>Delete
-                </a></li>
-              </ul>
-            </div>
-          </div>
-          <div class="card-body">
-            <h3 class="card-title mb-4">{{ trip.description }}</h3>
-            <div class="d-flex flex-column gap-3">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-indigo-50 text-indigo-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-geo-alt fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Departure Location</div>
-                  <div class="fw-500">{{ trip.departureLocation }}</div>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-pink-50 text-pink-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-signpost fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Arrival Location</div>
-                  <div class="fw-500">{{ trip.arrivalLocation }}</div>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-calendar2-event fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Departure Date</div>
-                  <div class="fw-500">{{ trip.departureDate | date:'mediumDate' }}</div>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-clock fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Departure Time</div>
-                  <div class="fw-500">{{ trip.departureTime }}</div>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-calendar2-event fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Arrival Date</div>
-                  <div class="fw-500">{{ trip.arrivalDate | date:'mediumDate' }}</div>
-                </div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-clock fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Arrival Time</div>
-                  <div class="fw-500">{{ trip.arrivalTime }}</div>
-                </div>
-              </div>
-             
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper bg-purple-50 text-purple-600 rounded-circle p-3 me-3">
-                  <i class="bi bi-info-circle fs-5"></i>
-                </div>
-                <div>
-                  <div class="text-xs text-muted">Details</div>
-                  <div class="fw-500">{{ trip.tripDetails }}</div>
-                </div>
-              </div>
-              
-            </div>
-          </div>
-          <div class="card-footer">
-            <button class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center" 
-                    (click)="viewSpecificTripDetails(trip.id)">
-              <i class="bi bi-arrow-right-circle me-2"></i>
-              View Itinerary
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Specific Trips Section -->
+  <div class="trip-section-divider">
+    <div class="trip-section-line"></div>
+    <div class="trip-section-title">Specific Trips</div>
+    <div class="trip-section-line"></div>
+  </div>
   
-    <!-- Modern Modal -->
-    <!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2 class="modal-title fs-5">Confirm Deletion</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <div class="trip-header trip-header-specific">
+    <div class="trip-header-content">
+      <h2 class="trip-subtitle-specific">Customized transportation for your specific needs</h2>
+    </div>
+    <button class="trip-add-btn trip-add-specific" routerLink="/spesific_trip">
+      <div class="trip-btn-content">
+        <i class="bi bi-plus-circle"></i>
+        <span>Add Specific Trip</span>
+      </div>
+      <div class="trip-btn-glow"></div>
+    </button>
+  </div>
+
+  <!-- Specific Trip Cards Grid -->
+  <div *ngIf="!loading && specificTrips.length > 0" class="trip-grid">
+    <div *ngFor="let trip of specificTrips" class="trip-card-wrapper" [class.trip-card-expanded]="trip.expanded">
+      <div class="trip-card trip-card-specific">
+        <div class="trip-card-header">
+          <div class="trip-card-badge" [ngClass]="getStatusBadgeClass(trip.trip_status)">
+            {{ trip.trip_status }}
           </div>
-          <div class="modal-body">
-            <div class="alert bg-rose-50 border border-rose-100 rounded-xl mb-4">
-              <i class="bi bi-exclamation-octagon fs-4 text-rose-600 me-2"></i>
-              This action is permanent and cannot be undone
-            </div>
-            <p>Delete trip to <strong>{{ tripToDelete?.description }}</strong>?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-danger" (click)="deleteTrip()" [disabled]="isDeleting">
-              <i class="bi bi-trash me-2"></i>
-              {{ isDeleting ? 'Deleting...' : 'Delete Forever' }}
+          <div class="trip-card-menu">
+            <button class="trip-card-menu-btn" type="button" (click)="trip.expanded = !trip.expanded">
+              <i class="bi" [ngClass]="trip.expanded ? 'bi-chevron-up' : 'bi-three-dots-vertical'"></i>
             </button>
           </div>
         </div>
+        
+        <div class="trip-card-body">
+          <h3 class="trip-card-title">{{ trip.description }}</h3>
+          
+          <div class="trip-card-details">
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-location">
+                <i class="bi bi-geo-alt"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Departure</div>
+                <div class="trip-card-value">{{ trip.departureLocation }}</div>
+              </div>
+            </div>
+            
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-location-arrival">
+                <i class="bi bi-signpost"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Arrival</div>
+                <div class="trip-card-value">{{ trip.arrivalLocation }}</div>
+              </div>
+            </div>
+            
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-calendar">
+                <i class="bi bi-calendar2-event"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Date</div>
+                <div class="trip-card-value">{{ trip.departureDate | date:'mediumDate' }}</div>
+              </div>
+            </div>
+            
+            <div class="trip-card-detail">
+              <div class="trip-card-icon trip-icon-time">
+                <i class="bi bi-clock"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Time</div>
+                <div class="trip-card-value">{{ trip.departureTime }}</div>
+              </div>
+            </div>
+            
+            <div class="trip-card-detail trip-detail-wide">
+              <div class="trip-card-icon trip-icon-info">
+                <i class="bi bi-info-circle"></i>
+              </div>
+              <div class="trip-card-info">
+                <div class="trip-card-label">Details</div>
+                <div class="trip-card-value truncate-text">{{ trip.tripDetails }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="trip-card-footer">
+          <button class="trip-card-view-btn trip-view-specific" (click)="viewSpecificTripDetails(trip.id)">
+            <span>View Details</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+        
+        <div class="trip-card-actions" [class.show]="trip.expanded">
+          <button class="trip-action-btn trip-action-view" (click)="viewSpecificTripDetails(trip.id)">
+            <i class="bi bi-eye"></i>
+            <span>View</span>
+          </button>
+          <a class="trip-action-btn trip-action-edit" [routerLink]="['/specific-trips/edit', trip.id]">
+            <i class="bi bi-pencil-square"></i>
+            <span>Edit</span>
+          </a>
+          <button class="trip-action-btn trip-action-delete" (click)="confirmDelete(trip)">
+            <i class="bi bi-trash"></i>
+            <span>Delete</span>
+          </button>
+        </div>
       </div>
-    </div> -->
-  </div> 
+    </div>
+  </div>
 
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content trip-modal-content">
+        <div class="modal-header trip-modal-header">
+          <h2 class="modal-title trip-modal-title">
+            <i class="bi bi-exclamation-triangle-fill trip-modal-icon"></i>
+            Confirm Deletion
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body trip-modal-body">
+          <div class="trip-alert-warning">
+            <i class="bi bi-exclamation-octagon"></i>
+            <p>This action is permanent and cannot be undone</p>
+          </div>
+          <p class="trip-delete-message">Delete trip to <strong>{{ tripToDelete?.description }}</strong>?</p>
+        </div>
+        <div class="modal-footer trip-modal-footer">
+          <button type="button" class="trip-btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="trip-btn-delete" (click)="deleteTrip()" [disabled]="isDeleting">
+            <i class="bi bi-trash me-2"></i>
+            {{ isDeleting ? 'Deleting...' : 'Delete Forever' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
 
 
 
@@ -303,3 +340,12 @@
 <script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
 <script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
 <script src="/assets/FrontOffice/js2/custom.js"></script>
+
+
+
+
+
+
+
+
+<app-footer-front></app-footer-front>

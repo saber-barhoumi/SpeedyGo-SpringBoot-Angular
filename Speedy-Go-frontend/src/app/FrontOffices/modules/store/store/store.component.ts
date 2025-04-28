@@ -17,10 +17,17 @@ import { MatDialogModule } from '@angular/material/dialog';
 })
 export class StoreListComponent implements OnInit {
   userRole: string = '';
+  isDarkMode: boolean = false;
 
   constructor(private storeService: StoreService, private router: Router, private dialog: MatDialog) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.userRole = user.role || '';
+    
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode) {
+      this.isDarkMode = savedDarkMode === 'true';
+    }
   }
 
   goToOffre(
@@ -245,6 +252,28 @@ export class StoreListComponent implements OnInit {
     this.router.navigate(['/add-offer'], {
       queryParams: { storeId }
     });
+  }
+
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+    // Save preference to localStorage
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+  }
+
+  getPaginationArray(): number[] {
+    const pageCount = Math.min(5, this.totalPages); // Show max 5 page numbers
+    const halfWay = Math.floor(pageCount / 2);
+    const isStart = this.pageIndex <= halfWay;
+    const isEnd = this.pageIndex >= this.totalPages - halfWay - 1;
+    const startPage = isStart ? 1 : (isEnd ? this.totalPages - pageCount + 1 : this.pageIndex - halfWay + 1);
+    
+    return Array(pageCount).fill(0).map((_, i) => startPage + i);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.pageIndex = page;
+    }
   }
 }
 

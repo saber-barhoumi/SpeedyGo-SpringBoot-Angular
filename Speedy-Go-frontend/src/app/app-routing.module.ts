@@ -48,6 +48,10 @@ import { OffresComponent } from './FrontOffices/modules/store/offres/offres.comp
 import { addstoreComponent } from './FrontOffices/modules/store/Component/add-store/add-store.component'; 
 
 
+import { TunisiaRouteAnalyzerComponent } from './FrontOffices/modules/tunisia-route/tunisia-route-analyzer.component';
+import { TrakingComponent } from './FrontOffices/modules/trips/traking/traking.component';
+
+
 
 
 
@@ -96,7 +100,7 @@ const routes: Routes = [
 
 
    {
-    path: 'stores',
+    path: 'storlist',
     component: StoreListComponent,
    },
 
@@ -128,6 +132,13 @@ const routes: Routes = [
       { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'recruitment', component: RecruitmentManagementComponent },
+      { path: 'statistique', loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule), canActivate: [BackofficeAuthGuard] },
+      { path: 'trip-dashboard', loadChildren: () => import('./FrontOffices/modules/dashboard/dashboard.module').then(m => m.DashboardModule) } // New Trip Dashboard route
+
+
+
+
+
     ]
   },
   { path: 'loginAdmin', component: LoginComponent, },
@@ -200,6 +211,16 @@ const routes: Routes = [
       // You can add canActivate guards here if needed
     },  
 
+
+
+    {
+      path: 'tunisia-route',
+      component: TunisiaRouteAnalyzerComponent,
+     },
+     {
+      path: 'tracking',
+      component: TrakingComponent,
+     },
 
 
 

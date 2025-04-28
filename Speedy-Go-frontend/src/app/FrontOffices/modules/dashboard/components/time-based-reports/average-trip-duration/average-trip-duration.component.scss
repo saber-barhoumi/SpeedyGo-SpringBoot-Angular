@@ -1,0 +1,100 @@
+.time-reports-container {
+  .no-data-message {
+    padding: 2rem;
+    text-align: center;
+    color: #718096;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    i {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #cbd5e0;
+    }
+  }
+  
+  .duration-stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .progress-circle-container {
+      margin-bottom: 1.5rem;
+      
+      .progress-circle {
+        position: relative;
+        
+        .outer-circle {
+          position: relative;
+          width: 150px;
+          height: 150px;
+          
+          .inner-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            
+            .duration-value {
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: #4361ee;
+              margin-bottom: 0.25rem;
+            }
+            
+            .duration-label {
+              font-size: 0.75rem;
+              color: #718096;
+            }
+          }
+        }
+      }
+    }
+    
+    .duration-stats {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      
+      .stat-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 0.75rem;
+        width: 48%;
+        
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-color: rgba(67, 97, 238, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 0.75rem;
+          
+          i {
+            color: #4361ee;
+            font-size: 1.25rem;
+          }
+        }
+        
+        .stat-content {
+          .stat-label {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+          }
+          
+          .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+          }
+        }
+      }
+    }
+  }
+}

@@ -24,6 +24,7 @@
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@swimlane/ngx-charts": "^22.0.0-alpha.1",
     "@types/google.maps": "^3.58.1",
+    "ably": "^2.7.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
     "ionicons": "^7.4.0",

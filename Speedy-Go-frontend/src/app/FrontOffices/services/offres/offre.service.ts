@@ -8,6 +8,20 @@ export interface Store {
   storeID: number;
 }
 
+export interface Comment {
+  id?: number;
+  comment_id?: number;  // Backend returns comment_id
+  text: string;
+  date?: string;
+  created_at?: any;     // Backend returns created_at as array
+  userName?: string;
+  username?: string;    // Backend returns username 
+  userId?: number;
+  user_id?: number;     // Backend returns user_id
+  offreId?: number;
+  offre_id?: number;    // Backend returns offre_id
+}
+
 export interface Offer {
   offre_id: number;
   title: string;
@@ -19,6 +33,11 @@ export interface Offer {
   date_start: string | null;
   store_name: string;
   available: boolean;
+}
+
+export interface CommentRequest {
+  text: string;
+  userName: string;
 }
 
 @Injectable({
@@ -72,5 +91,26 @@ export class OffersService {
 
   getOffersByStoreId(storeId: number): Observable<Offer[]> {
     return this.http.get<Offer[]>(`${this.baseUrl}/all/${storeId}`, { headers: this.getHeaders() });
+  }
+
+  // Comment-related methods
+  getCommentsByOfferId(offreId: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${this.baseUrl}/comments/offre/${offreId}`, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching comments', error);
+          return throwError(error);
+        })
+      );
+  }
+
+  addComment(offreId: number, userId: number, comment: CommentRequest,userName:String): Observable<Comment> {
+    return this.http.post<Comment>(`${this.baseUrl}/comments/${offreId}/${userId}/${userName}`, comment, { headers: this.getHeaders() })
+      .pipe(
+        catchError(error => {
+          console.error('Error adding comment', error);
+          return throwError(error);
+        })
+      );
   }
 }

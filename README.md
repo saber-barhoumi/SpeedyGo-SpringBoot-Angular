@@ -19,8 +19,24 @@ This full stack system uses a modern and efficient technology stack to ensure ro
 - **Angular**: The frontend is developed with Angular, a feature-rich framework. Angular allows for the creation of a responsive, dynamic, and interactive user interface, ensuring smooth communication with backend services and providing an optimal user experience across all devices.
 
 ---
-## Home Page
- 
+## **✨ Features**
+
+- 🔐 User Authentication & Profile Management  
+- 📦 Parcel Delivery with Real-Time Tracking  
+- 🚗 Vehicle & Trip Management  
+- 💳 Secure Payments (cash, card, mobile)  
+- 📊 Statistics and Reports  
+- 🔔 Notifications & Chat System  
+- 🧠 AI-based Route Optimization  
+- 🎁 Loyalty Program for Frequent Users  
+
+---
+
+## **📦 How to Run the Project**
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/saber-barhoumi/SpeedyGo-SpringBoot-Angular.git
 
 
 

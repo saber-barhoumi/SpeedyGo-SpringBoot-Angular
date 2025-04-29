@@ -31,6 +31,8 @@ import { VehicleFormComponent } from './FrontOffices/pages/vehicle/vehicle-form/
 import { VehicleListComponent } from './FrontOffices/pages/vehicle/vehicle-list/vehicle-list.component';
 import { VehicleDetailComponent } from './FrontOffices/pages/vehicle/vehicle-detail/vehicle-detail.component';
 import { RecruitmentManagementComponent } from './BackOffices/recruitment-management/recruitment-management.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar'; // Importer MatSnackBarModule
+
 
 // Import CustomerComponent (and other missing components)
 import { CustomerComponent } from './FrontOffices/pages/customer/customer.component';
@@ -150,6 +152,7 @@ import { PriceFormatterPipe } from './pipes/price-formatter.pipe';
     MatInputModule,
     MatFormFieldModule,
     MatBadgeModule,
+    MatSnackBarModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

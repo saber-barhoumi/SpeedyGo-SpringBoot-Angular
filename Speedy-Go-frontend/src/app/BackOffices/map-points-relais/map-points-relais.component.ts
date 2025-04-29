@@ -100,7 +100,7 @@ export class MapPointsRelaisComponent implements OnInit {
     feature.setStyle(new Style({
       image: new Icon({
         src: 'assets/marker.png',
-        scale: 0.2,
+        scale: 0.07,
       }),
     }));
 

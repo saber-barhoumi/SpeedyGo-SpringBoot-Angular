@@ -61,7 +61,7 @@ const routes: Routes = [
 
 
 
-
+  { path: 'qrscanner', component:QrScannerComponent},
 
 
   {
@@ -75,7 +75,6 @@ const routes: Routes = [
       { path: 'reportlist', component: ListreportComponent},
       { path: 'maprelais', component:MapPointsRelaisComponent},
       { path: 'returnlist', component:ListreturnsComponent},
-      { path: 'qrscanner', component:QrScannerComponent},
       { path: 'carbon', component:CarbonFootprintComponent},
       
 
@@ -141,6 +140,7 @@ const routes: Routes = [
         { path: 'report', component: FormReportComponent },
         { path: 'returnform', component: ReturnFormComponent },
         { path: 'affichmap', component:AffichmapComponent},
+
 
       ]
     },

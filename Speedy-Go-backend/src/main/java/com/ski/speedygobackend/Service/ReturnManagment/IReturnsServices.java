@@ -6,8 +6,14 @@ import java.util.List;
 
 public interface IReturnsServices {
     List<Returns> getAllReturns();
+
     Returns getReturnsById(Long id);
+
     Returns saveReturns(Returns returns);
+
     void deleteReturns(Long id);
-    Returns assignParcelToReturn(Long returnId, Long parcelId);
-}
+
+    public void checkAndBanUser(Long userId);
+
+    }
+

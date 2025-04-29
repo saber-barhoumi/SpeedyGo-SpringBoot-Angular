@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { NgForm } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar'; // Importer MatSnackBar
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,11 @@ export class LoginclientComponent implements OnInit {
   email: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private snackBar: MatSnackBar // Injecter MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     console.log('ngOnInit du login lancé');
@@ -59,11 +64,11 @@ export class LoginclientComponent implements OnInit {
       catchError((error: HttpErrorResponse) => {
         console.error('Login Error:', error);
         if (error.status === 401) {
-          alert('Identifiants incorrects. Veuillez réessayer.');
+          this.showSnackBar('Identifiants incorrects. Veuillez réessayer.', 'error');
         } else if (error.status === 0) {
-          alert('Impossible de contacter le serveur.');
+          this.showSnackBar('Impossible de contacter le serveur.', 'error');
         } else {
-          alert('Erreur : ' + (error.error?.message || 'Problème inconnu.'));
+          this.showSnackBar('Erreur : ' + (error.error?.message || 'Problème inconnu.'), 'error');
         }
         return throwError(() => new Error(error.message));
       })
@@ -73,7 +78,7 @@ export class LoginclientComponent implements OnInit {
 
         if (response?.token) {
           this.authService.saveUserData(response.token, response.user);
-          alert('Connexion réussie !');
+          this.showSnackBar('Connexion réussie !', 'success');
 
           const userRole = response.user.role.toUpperCase();
           console.log('User Role:', userRole);
@@ -93,12 +98,21 @@ export class LoginclientComponent implements OnInit {
               break;
           }
         } else {
-          alert('Erreur : Token non reçu.');
+          this.showSnackBar('Erreur : Token non reçu.', 'error');
         }
       },
       error: (error) => {
         console.error('Erreur lors du login:', error);
       }
+    });
+  }
+
+  // Fonction pour afficher le SnackBar
+  showSnackBar(message: string, type: string): void {
+    const panelClass = type === 'error' ? 'snack-bar-error' : 'snack-bar-success';
+    this.snackBar.open(message, 'Fermer', {
+      duration: 3000,
+      panelClass: [panelClass] // Ajouter la classe CSS en fonction du type
     });
   }
 }

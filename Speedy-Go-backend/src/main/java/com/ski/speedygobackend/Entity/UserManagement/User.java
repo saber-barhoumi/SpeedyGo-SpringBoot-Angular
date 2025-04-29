@@ -99,4 +99,7 @@ public class User implements Serializable {
     private Set<ChatRoom> chatRooms;
 
 
+    private boolean banned = false;
+
+
 }

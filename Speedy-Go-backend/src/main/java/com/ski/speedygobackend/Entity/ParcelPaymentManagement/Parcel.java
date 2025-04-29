@@ -1,5 +1,6 @@
 package com.ski.speedygobackend.Entity.ParcelPaymentManagement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ski.speedygobackend.Entity.OfferManagement.Offres;
 import com.ski.speedygobackend.Entity.ReturnManagment.Returns;
 import com.ski.speedygobackend.Entity.TripManagement.Trip;
@@ -44,6 +45,4 @@ public class Parcel implements Serializable {
     @ManyToOne
     private InternationalShipping internationalShipping;
 
-    @OneToMany(mappedBy = "parcel", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Returns> returnss = new ArrayList<>();
-    }
+}

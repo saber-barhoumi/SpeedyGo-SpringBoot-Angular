@@ -28,6 +28,8 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
 
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
         try {
@@ -47,6 +49,13 @@ public class AuthController {
                 return ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("error", "Invalid credentials"));
+            }
+
+            // ✅ Ajouter ici vérification si l'utilisateur est banni
+            if (user.isBanned()) {
+                return ResponseEntity
+                        .status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Your account is banned. Please contact support."));
             }
 
             String token = jwtUtils.generateToken(
@@ -78,84 +87,65 @@ public class AuthController {
         }
     }
 
+
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam Map<String, String> userMap, @RequestParam("profile_picture") MultipartFile profilePicture) {
+    public ResponseEntity<?> register(
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("birthDate") String birthDate,
+            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("address") String address,
+            @RequestParam("sexe") String sexeStr,
+            @RequestParam("role") String roleStr,
+            @RequestParam(value = "profile_picture", required = false) MultipartFile profilePicture
+    ) {
         try {
-            System.out.println("userMap: " + userMap);
-            System.out.println("profilePicture: " + (profilePicture != null ? profilePicture.getOriginalFilename() : "null"));
-
-            // Validate profile picture
-            if (profilePicture == null || profilePicture.isEmpty()) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of("error", "Profile picture is required"));
+            // Validation image si elle existe
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                if (!profilePicture.getContentType().startsWith("image/")) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Invalid file type. Only images are allowed"));
+                }
+                // Vérifier la taille du fichier
+                if (profilePicture.getSize() > MAX_FILE_SIZE) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "File is too large, max size is 5MB"));
+                }
             }
 
-            if (!profilePicture.getContentType().startsWith("image/")) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of("error", "Invalid file type. Only images are allowed"));
+            if (userRepository.findByEmail(email).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
             }
 
-            // Check if email already exists
-            if (userRepository.findByEmail(userMap.get("email")).isPresent()) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of("error", "Email already registered"));
-            }
-
-            // Create a new User object
             User user = new User();
-            user.setFirstName(userMap.get("firstName"));
-            user.setLastName(userMap.get("lastName"));
-            user.setEmail(userMap.get("email"));
-            user.setPassword(passwordEncoder.encode(userMap.get("password")));
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(password));
 
-            // Convert birthDate from String to LocalDate
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate birthDate = LocalDate.parse(userMap.get("birthDate"), formatter);
-            user.setBirthDate(birthDate);
+            user.setBirthDate(LocalDate.parse(birthDate, formatter));
+            user.setPhoneNumber(phoneNumber);
+            user.setAddress(address);
 
-            user.setPhoneNumber(userMap.get("phoneNumber"));
-            user.setAddress(userMap.get("address"));
-
-            // Convert String to Sexe enum
-            Sexe sexe;
+            // Enum parsing
             try {
-                sexe = Sexe.valueOf(userMap.get("sexe"));
+                user.setSexe(Sexe.valueOf(sexeStr));
+                user.setRole(Role.valueOf(roleStr));
             } catch (IllegalArgumentException e) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of("error", "Invalid Sexe value: " + userMap.get("sexe")));
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid enum value: " + e.getMessage()));
             }
-            user.setSexe(sexe);
 
-            // Convert String to Role enum
-            Role role;
-            try {
-                role = Role.valueOf(userMap.get("role"));
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(Map.of("error", "Invalid Role value: " + userMap.get("role")));
+            // Enregistrement de la photo de profil si elle existe
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                user.setProfilePicture(profilePicture.getBytes());
+                user.setProfilePictureType(profilePicture.getContentType());
             }
-            user.setRole(role);
 
-            // Save the image as bytes
-            user.setProfilePicture(profilePicture.getBytes());
-            user.setProfilePictureType(profilePicture.getContentType());
-
-            // Save user
             User savedUser = userRepository.save(user);
 
-            // Generate token
-            String token = jwtUtils.generateToken(
-                    savedUser.getEmail(),
-                    savedUser.getRole(),
-                    savedUser.getUserId()
-            );
+            String token = jwtUtils.generateToken(savedUser.getEmail(), savedUser.getRole(), savedUser.getUserId());
 
-            // Create response
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", Map.of(
@@ -169,24 +159,13 @@ public class AuthController {
                     "profilePictureType", savedUser.getProfilePictureType()
             ));
 
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
-        }  catch (IllegalArgumentException e) {
-            e.printStackTrace(); // Log the exception
-            return ResponseEntity
-                    .badRequest()
-                    .body(Map.of("error", "Invalid enum value: " + e.getMessage()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
         }
     }
-
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {

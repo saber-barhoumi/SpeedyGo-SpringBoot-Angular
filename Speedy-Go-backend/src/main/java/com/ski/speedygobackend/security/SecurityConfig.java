@@ -3,8 +3,6 @@ package com.ski.speedygobackend.security;
 import com.ski.speedygobackend.Service.UserManagement.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -23,9 +21,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 
 import java.util.Arrays;
 
-
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -70,6 +65,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-resources/**"
+
                         ).permitAll()
 
                         // Admin-specific endpoints

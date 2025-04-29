@@ -1,7 +1,10 @@
 package com.ski.speedygobackend.Entity.ReturnManagment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ski.speedygobackend.Entity.ParcelPaymentManagement.Parcel;
+import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.RetourStatus;
 import com.ski.speedygobackend.Enum.RetourType;
 import jakarta.persistence.*;
@@ -19,6 +22,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level=AccessLevel.PRIVATE)
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy.class)
+
 @Entity
 public class Returns {
 
@@ -34,8 +39,17 @@ public class Returns {
     @Enumerated(EnumType.STRING)
     RetourType retourtype;
 
-    @ManyToOne
-    Parcel parcel;
 
     private LocalDate retourdate;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @PrePersist
+    public void prePersist() {
+        if (retourstatus == null) {
+            retourstatus = RetourStatus.PENDING;
+        }
+    }
 }
+

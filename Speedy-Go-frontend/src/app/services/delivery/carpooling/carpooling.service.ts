@@ -1,56 +1,110 @@
+// services/delivery/carpooling/carpooling.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, catchError, of } from 'rxjs';
 import { Carpooling } from 'src/app/models/carpooling.model';
-import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model'; // Import ReservationCarpoo
+import { environment } from '../../../environments/environment';
+import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class CarpoolingService {
-  private apiUrl = 'http://localhost:8084/api/carpoolings';
+  private apiUrl = `${environment.apiUrl}/carpoolings`;
+  private priceUrl = `${environment.apiUrl}/price`;
+  private reservationUrl = `${environment.apiUrl}/carpoolings/reservations`;
 
   constructor(private http: HttpClient) {}
 
-  // Fetch all carpoolings
+  // Get all carpoolings
   getAllCarpoolings(): Observable<Carpooling[]> {
-    return this.http.get<Carpooling[]>(this.apiUrl);
+    return this.http.get<Carpooling[]>(`${this.apiUrl}`);
   }
-  
-  // Add a new carpooling
-  addCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-  const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-  return this.http.post<Carpooling>(`${this.apiUrl}/add`, carpooling, { headers: headers });
-}
 
-  // Update an existing carpooling
-  updateCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include the JWT token
-    });
-    return this.http.put<Carpooling>(
-      `${this.apiUrl}/update/${carpooling.carpoolingId}`,
-      carpooling,
-      { headers: headers }
-    );
+  // Get upcoming carpoolings
+  getUpcomingCarpoolings(): Observable<Carpooling[]> {
+    return this.http.get<Carpooling[]>(`${this.apiUrl}/upcoming`);
   }
-  // Delete a carpooling by ID
+
+  // Get user's carpoolings
+  getMyCarpoolings(): Observable<Carpooling[]> {
+    return this.http.get<Carpooling[]>(`${this.apiUrl}/my-carpoolings`);
+  }
+
+  // Get carpooling by ID
+  getCarpoolingById(id: number): Observable<Carpooling> {
+    return this.http.get<Carpooling>(`${this.apiUrl}/${id}`);
+  }
+
+  // Create new carpooling
+  createCarpooling(carpooling: Carpooling): Observable<Carpooling> {
+    return this.http.post<Carpooling>(`${this.apiUrl}/create`, carpooling);
+  }
+
+  // Update carpooling
+  updateCarpooling(id: number, carpooling: Carpooling): Observable<Carpooling> {
+    return this.http.put<Carpooling>(`${this.apiUrl}/update/${id}`, carpooling);
+  }
+
+  // Delete carpooling
   deleteCarpooling(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
   }
 
-  reserveCarpooling(carpoolingId: number, userId: number): Observable<any> {
-    const url = `${this.apiUrl}/${carpoolingId}/reserve`;
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(url, userId, { headers: headers });
-  }
-  getMyReservations(): Observable<ReservationCarpoo[]> {
-    return this.http.get<ReservationCarpoo[]>(`${this.apiUrl}/reservations/me`); // Corrected URL
-  }
-  
-  deleteReservation(reservationId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/reservations/${reservationId}/delete`);
+  // Calculate price - updated to handle object response
+  calculatePrice(carpooling: Carpooling): Observable<any> {
+    // Ensure all required fields have default values to prevent null issues
+    const requestData = {
+      departureLocation: carpooling.departureLocation || '',
+      destination: carpooling.destination || '',
+      startTime: carpooling.startTime || new Date(),
+      distanceKm: carpooling.distanceKm || 0,
+      durationMinutes: carpooling.durationMinutes || 0,
+      vehicleType: carpooling.vehicleType || 'sedan',
+      fuelType: carpooling.fuelType || 'gasoline',
+      availableSeats: carpooling.availableSeats || 1,
+      description: carpooling.description || '',
+      wifi: carpooling.wifi || 0,
+      airConditioning: carpooling.airConditioning || 0,
+      weatherType: carpooling.weatherType || 'Clear'
+    };
+
+    // Try the new endpoint first
+    return this.http.post<any>(`${this.priceUrl}/calculate`, requestData)
+      .pipe(
+        catchError(error => {
+          console.error('Error calling new price endpoint, trying fallback', error);
+          // If the new endpoint fails, try the original endpoint as fallback
+          return this.http.post<any>(`${this.apiUrl}/calculate-price`, requestData);
+        })
+      );
   }
 
+  // Accept carpooling
+  acceptCarpooling(id: number): Observable<Carpooling> {
+    return this.http.post<Carpooling>(`${this.apiUrl}/${id}/accept`, {});
+  }
+
+  // Reserve a carpooling
+  reserveCarpooling(carpoolingId: number, userId: number, seatsReserved: number = 1): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${carpoolingId}/reserve`, {
+      userId: userId,
+      seatsReserved: seatsReserved
+    });
+  }
+
+  // Get user's reservations
+  getMyReservations(): Observable<ReservationCarpoo[]> {
+    return this.http.get<ReservationCarpoo[]>(`${this.reservationUrl}/me`);
+  }
+
+  // Get user's upcoming reservations
+  getMyUpcomingReservations(): Observable<ReservationCarpoo[]> {
+    return this.http.get<ReservationCarpoo[]>(`${this.reservationUrl}/me/upcoming`);
+  }
+
+  // Delete a reservation
+  deleteReservation(reservationId: number): Observable<any> {
+    return this.http.delete(`${this.reservationUrl}/${reservationId}`);
+  }
 }

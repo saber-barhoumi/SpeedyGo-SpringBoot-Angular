@@ -147,3 +147,16 @@ button{
     width: 290px;
   }
 }
+/* Style pour un snack-bar de succès */
+.snack-bar-success {
+  background-color: #4caf50; /* Vert */
+  color: white;
+  font-weight: bold;
+}
+
+/* Style pour un snack-bar d'erreur */
+.snack-bar-error {
+  background-color: #6868f3; /* Rouge */
+  color: white;
+  font-weight: bold;
+}

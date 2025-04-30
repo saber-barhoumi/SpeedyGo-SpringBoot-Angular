@@ -15,7 +15,6 @@ export class AuthService {
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/login`, { email, password }).pipe(
       tap((response) => {
-        // Save token and user data in localStorage
         this.saveToken(response.token);
         this.saveUserData(response.token, response.user);
       }),
@@ -37,7 +36,9 @@ export class AuthService {
       return throwError(() => new Error('No token found'));
     }
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<any>(`${this.baseUrl}/validate`, { headers });
+    return this.http.get<any>(`${this.baseUrl}/validate`, { headers }).pipe(
+      catchError(this.handleError)
+    );
   }
   
 
@@ -66,25 +67,21 @@ export class AuthService {
       return JSON.parse(localStorage.getItem('user') || '{}');
     } catch (error) {
       console.error('Error parsing user from localStorage', error);
-      return {}; // Return an empty object to prevent further errors
+      return {}; // Safe empty object
     }
   }
 
   // Save user data in localStorage
   saveUserData(token: string, user: any): void {
-    localStorage.setItem('token', token);
-
-    // Ensure user object has all required fields
     const userData = {
-      userId: user.id || user.userId || user.user_id,
-      email: user.email,
-      firstName: user.firstName || user.firstname || '',
-      lastName: user.lastName || user.lastname || '',
-      role: user.role || 'CUSTOMER', // Default to CUSTOMER if no role provided
-      profilePicture: user.profilePicture || '', // Add profile picture
-      address: user.address || '', // Add address
-      phoneNumber: user.phoneNumber || user.phone_number || '', // Add phone number
-      // Add other user fields as needed
+      userId: user?.id || user?.userId || user?.user_id || '',
+      email: user?.email || '',
+      firstName: user?.firstName || user?.firstname || '',
+      lastName: user?.lastName || user?.lastname || '',
+      role: user?.role || 'CUSTOMER',
+      profilePicture: user?.profilePicture || '',
+      address: user?.address || '',
+      phoneNumber: user?.phoneNumber || user?.phone_number || '',
     };
 
     localStorage.setItem('user', JSON.stringify(userData));
@@ -93,25 +90,19 @@ export class AuthService {
   // Get user role
   getUserRole(): string | null {
     const user = this.getUser();
-    return user ? user.role : null;
+    return user?.role || null;
   }
 
   // Check if user has a specific role
   hasRole(role: string | string[]): boolean {
     const userRole = this.getUserRole();
-
     if (!userRole) return false;
-
-    if (Array.isArray(role)) {
-      return role.includes(userRole);
-    }
-
-    return userRole === role;
+    return Array.isArray(role) ? role.includes(userRole) : userRole === role;
   }
 
   // Check if user is authenticated
   isAuthenticated(): boolean {
-    return !!this.getToken(); // Returns true if a token exists
+    return !!this.getToken();
   }
 
   // Logout method
@@ -122,14 +113,11 @@ export class AuthService {
 
   // Handle errors
   private handleError(error: any): Observable<any> {
-    console.error('Registration error:', error);
-    return throwError(() => {
-      let message = 'Registration failed';
-      if (error.error && error.error.error) {
-        message = error.error.error; // Use the error message from the backend
-      }
-      return new Error(message);
-    });
+    console.error('Request error:', error);
+    let message = 'Something went wrong';
+    if (error.error) {
+      message = error.error.error || error.error.message || message;
+    }
+    return throwError(() => new Error(message));
   }
-  
 }

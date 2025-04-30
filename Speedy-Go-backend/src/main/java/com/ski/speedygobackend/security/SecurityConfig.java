@@ -1,85 +1,94 @@
 package com.ski.speedygobackend.security;
 
 import com.ski.speedygobackend.Service.UserManagement.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 
 public class SecurityConfig {
 
-    @Autowired
-    private JWTFilter jwtFilter;
+    private final JWTFilter jwtFilter;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Value("${jwt.secret}")
-    private String jwtSecret;
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        // Convert the secret key String to a SecretKey object
-        var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    public SecurityConfig(JWTFilter jwtFilter, CustomUserDetailsService customUserDetailsService) {
+        this.jwtFilter = jwtFilter;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .cors(Customizer.withDefaults()) // Enable CORS with default configuration
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless API
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/upload/store/**").permitAll()
-                        .requestMatchers("/user/**").permitAll()
-                        .requestMatchers("api/auth/register").permitAll()
-                        .requestMatchers("/specific-trips/**").permitAll()
-                        .requestMatchers("/stores/**").permitAll()
-                        .requestMatchers("/stores/images/**").permitAll()
-                        .requestMatchers("/api/offres/**").permitAll()
-                        .requestMatchers("/offres/**").permitAll()
-                        .requestMatchers("/statistiques/**").permitAll()
-                        .requestMatchers("/api/statistiques/**").permitAll()
-                        .requestMatchers("/api/specific-trips/**").permitAll() // Ajouté pour inclure les URLs avec préfixe API
-                        .requestMatchers("/api/specific-trips/images/**").permitAll() // Ajouté spécifiquement pour les images
-                        .requestMatchers("/api/stores/**").permitAll()
-                       /////////////////////////////////
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // Disable CSRF protection
+                .csrf(AbstractHttpConfigurer::disable)
 
-                        .requestMatchers("api/uploads/**").permitAll()
+                // Configure CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-
-
-                        // Permit auth endpoints
-                        .anyRequest().authenticated() // Protect other requests
+                // Configure session management
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless sessions
-                //.oauth2ResourceServer(oauth2 -> oauth2
-                //        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())) // Configure JWT
-                //)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT Filter
-                .build();
+
+                // Configure authorization
+                .authorizeHttpRequests(authz -> authz
+                        // Public endpoints
+                        .requestMatchers(
+                                "/ws/**",
+                                "/public/**",
+                                "/api/auth/**",
+                                "/api/email/forgot-password",
+                                "/api/email/reset-password",
+                                "/api/carpoolings/calculate-price", // Original endpoint
+                                "/api/price/**", // New price calculation endpoint
+                                "/api/trips/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**"
+
+                        ).permitAll()
+
+                        // Admin-specific endpoints
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Customer-specific endpoints
+                        .requestMatchers("/api/carpoolings/reservations/me").authenticated()
+                        .requestMatchers("/api/carpoolings/add").authenticated()
+                        .requestMatchers("/api/carpoolings/{id}/reserve").hasAnyRole("CUSTOMER", "DELEVERY", "USER")
+
+                        .requestMatchers("/api/carpoolings/{id}/reserve").authenticated()
+
+
+
+
+                        // Require authentication for all other requests
+                        .anyRequest().authenticated()
+                )
+
+                // Add JWT filter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean
@@ -92,14 +101,25 @@ public class SecurityConfig {
         return customUserDetailsService;
     }
 
-    // Custom JWT Authentication Converter to convert JWT claims to authorities
-    private JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        authoritiesConverter.setAuthorityPrefix("ROLE_");
-        authoritiesConverter.setAuthoritiesClaimName("roles"); // Use "roles" claim in the JWT for authorities
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
-        return jwtAuthenticationConverter;
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // Replace wildcard with specific origin
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

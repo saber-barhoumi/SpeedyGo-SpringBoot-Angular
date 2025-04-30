@@ -1,0 +1,62 @@
+.fixed-chat-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px; // Position on the right side
+    left: auto; // Reset any left positioning
+    z-index: 1030;
+    
+    &.active {
+      a {
+        transform: rotate(45deg);
+        animation: pulse 1.5s infinite;
+      }
+    }
+    
+    a {
+      width: 60px; // Increased size
+      height: 60px; // Increased size
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); // Enhanced shadow
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: #4f46e5; // Keep the purple color
+      border: none; // Remove any borders
+      
+      &:hover {
+        transform: scale(1.1);
+        background-color: #4338ca;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5); // Larger shadow on hover
+      }
+      
+      i {
+        font-size: 24px; // Larger icon
+        color: white;
+      }
+    }
+  }
+  
+  // Pulsing animation
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); // Larger pulse
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+    }
+  }
+  
+  // Basic dialog styling
+  ::ng-deep .chatbot-dialog-container {
+    .mat-mdc-dialog-container {
+      padding: 0;
+      border-radius: 12px; // Rounded corners
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); // Enhanced shadow
+    }
+  }

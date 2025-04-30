@@ -9,7 +9,5 @@ public interface IReservationCarpooServices {
     ReservationCarpoo getReservationById(Long id);
     void deleteReservation(Long id);
     List<ReservationCarpoo> getReservationsByUserId(Long userId);
-
-
-
+    List<ReservationCarpoo> getUpcomingReservationsByUserId(Long userId); // Added method for upcoming reservations
 }

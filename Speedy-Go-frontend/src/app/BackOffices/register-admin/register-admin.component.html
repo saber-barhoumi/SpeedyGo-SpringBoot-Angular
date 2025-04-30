@@ -63,7 +63,14 @@
                             </div>
                         
                             <!-- Role (Hidden, Default: ADMIN) -->
-                            <input type="hidden" formControlName="role" value="ADMIN">
+                            <input type="hidden" formControlName="role" value="ADMIN"> 
+
+                            <!-- Profile Picture -->
+                            <div class="form-group mb-3">
+                             <label for="profilePicture">Profile Picture</label>
+                             <input type="file" class="form-control" (change)="onFileSelect($event)">
+                            </div> 
+  
                        
                         
                             <!-- Newsletter Checkbox -->

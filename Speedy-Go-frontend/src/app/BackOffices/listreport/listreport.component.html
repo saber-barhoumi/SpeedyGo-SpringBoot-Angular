@@ -1,0 +1,23 @@
+<div class="container mt-4">
+    <h2>Customer Reports List </h2>
+  
+    <table class="table table-striped" *ngIf="reports.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>Report Reason</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of reports">
+          <td>{{ report.report_name }}</td>
+          <td>{{ report.report_description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <ng-template #noData>
+      <p>Aucun rapport trouvé.</p>
+    </ng-template>
+  </div>
+  

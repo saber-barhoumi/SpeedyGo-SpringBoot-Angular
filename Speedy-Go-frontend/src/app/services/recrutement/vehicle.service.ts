@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/FrontOffices/services/user/auth.service';
   providedIn: 'root'
 })
 export class VehicleService {
-  private apiUrl = environment.apiUrl + '/api/deliveryvehicles';
+  private apiUrl = environment.apiUrl + '/deliveryvehicles';
 
   constructor(private http: HttpClient,    private authService: AuthService
   ) { }

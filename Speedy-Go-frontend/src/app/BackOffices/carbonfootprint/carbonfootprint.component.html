@@ -1,0 +1,22 @@
+<div class="container mt-4">
+    <div *ngIf="loading" class="text-center">Chargement des données...</div>
+    <div *ngIf="error" class="alert alert-danger">Erreur lors du chargement des données.</div>
+  
+    <div *ngIf="!loading && !error" class="card shadow p-4">
+      <h2 class="card-title text-center mb-4">Analyse de l'empreinte carbone</h2>
+  
+      <div style="height: 400px;">
+        <canvas #myChart></canvas>
+      </div>
+  
+      <div *ngIf="advice.length > 0" class="mt-4">
+        <h4 class="mb-3">Conseils personnalisés :</h4>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let msg of advice; let i = index">
+            <strong>Véhicule {{ i + 1 }} :</strong> {{ msg }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  

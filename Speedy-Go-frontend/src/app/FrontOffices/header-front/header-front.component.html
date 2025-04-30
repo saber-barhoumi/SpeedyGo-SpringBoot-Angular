@@ -1,36 +1,9 @@
 <div class="container-fluid nav-bar">
-    <div class="container">
-      <nav class="navbar navbar-light navbar-expand-lg py-4">
-        <!-- Logo and Brand -->
-        <a routerLink="/home" class="navbar-brand" href="/home">
-          <h1 class="mb-0">
-            <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
-          </h1>
-        </a>
-        
-        <ng-container *ngIf="!isLoggedIn">
-            <a _ngcontent-ng-c77235806="" routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
-                <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
-            </a>
-        </ng-container>
-
-        <!-- Display User Icon if logged in -->
-        <ng-container *ngIf="isLoggedIn">
-            <button _ngcontent-ng-c77235806="" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Profile" (click)="toggleProfile()">
-                <i _ngcontent-ng-c77235806="" class="fas fa-user"></i>
-            </button>
-        </ng-container>
-
-        <!-- Profile Info and Logout button (show/hide based on showProfile) -->
-        <div _ngcontent-ng-c77235806="" *ngIf="showProfile" class="profile-dropdown">
-            <span _ngcontent-ng-c77235806="" class="me-3">Welcome, {{ user?.first_name }}!</span> <!-- Display user name -->
-            <button _ngcontent-ng-c77235806="" class="btn btn-danger py-2 px-4 d-none d-xl-inline-block rounded-pill" (click)="logout()">Logout</button>
-        </div>
-
-        <!-- Panier Icon -->
-        <a href="" target="_blank" class="btn btn-md btn-primary">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-        </a>
+  <div class="container">
+    <nav class="navbar navbar-light navbar-expand-lg py-4">
+      <a routerLink="/home" class="navbar-brand">
+        <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
+      </a>
 
 
         <!-- Navbar Toggle Button -->
@@ -42,8 +15,6 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
           <div class="navbar-nav mx-auto">
             <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
-            <a (click)="ToStore()" class="nav-item nav-link"  routerLinkActive="active" >Store</a>
-            <a (click)="ToTrips()" class="nav-item nav-link">Trips</a>
             <a href="about.html" class="nav-item nav-link">About</a>
             <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
             <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
@@ -67,39 +38,25 @@
               <i class="fas fa-user"></i>
             </a>
           </ng-container>
-  
-          <!-- Display User Profile Picture if logged in -->
+
           <ng-container *ngIf="isLoggedIn">
-            <div class="profile-picture-container">
-              <!-- Profile Picture -->
-              <div (click)="toggleProfile()">
-                <img [src]="user?.profilePicture || 'assets/default-profile.png'" 
-                     alt="Profile Picture" 
-                     class="profile-picture rounded-circle">
-              </div>
-              
-              <!-- Profile Card -->
-              <div *ngIf="showProfile" class="profile-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ user?.firstName || 'N/A' }} {{ user?.lastName || 'N/A' }}</h5>
-                    <p class="card-text">
-                      <strong>Address:</strong> {{ user?.address || 'N/A' }}<br>
-                      <strong>Phone:</strong> {{ user?.phoneNumber || 'N/A' }}<br>
-                      <strong>Email:</strong> {{ user?.email || 'N/A' }}
-                    </p>
-                    <button class="btn btn-danger" (click)="logout()">Logout</button>
-                  </div>
-                </div>
+            <div class="profile-picture-container position-relative">
+              <img [src]="user?.profilePicture || 'assets/default-profile.png'"
+                   alt="Profile Picture"
+                   class="profile-picture rounded-circle"
+                   (click)="toggleProfile()">
+              <div *ngIf="showProfile" class="profile-dropdown">
+                <span class="me-3">Welcome, {{ user?.firstName }}</span>
+                <button class="btn btn-danger py-2 px-4 rounded-pill" (click)="logout()">Logout</button>
               </div>
             </div>
           </ng-container>
-  
-          <!-- Cart Icon -->
-          <a href="" target="_blank" class="btn btn-md btn-primary">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+
+          <a routerLink="/cart" class="btn btn-md btn-primary ms-2">
+            <i class="fa fa-shopping-cart"></i>
           </a>
         </div>
-      </nav>
-    </div>
+      </div>
+    </nav>
   </div>
+</div>

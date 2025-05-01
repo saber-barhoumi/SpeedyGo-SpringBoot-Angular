@@ -77,6 +77,17 @@ public class SecurityConfig {
                         .requestMatchers("/api/carpoolings/{id}/reserve").hasAnyRole("CUSTOMER", "DELEVERY", "USER")
 
                         .requestMatchers("/api/carpoolings/{id}/reserve").authenticated()
+                        .requestMatchers("/specific-trips/**").permitAll()
+                        .requestMatchers("/stores/**").permitAll()
+                        .requestMatchers("/stores/images/**").permitAll()
+                        .requestMatchers("/api/offres/**").permitAll()
+                        .requestMatchers("/offres/**").permitAll()
+                        .requestMatchers("/statistiques/**").permitAll()
+                        .requestMatchers("/api/statistiques/**").permitAll()
+                        .requestMatchers("/api/specific-trips/**").permitAll() // Ajouté pour inclure les URLs avec préfixe API
+                        .requestMatchers("/api/specific-trips/images/**").permitAll() // Ajouté spécifiquement pour les images
+                        .requestMatchers("/api/stores/**").permitAll()
+                        .requestMatchers("api/uploads/**").permitAll()
 
 
 

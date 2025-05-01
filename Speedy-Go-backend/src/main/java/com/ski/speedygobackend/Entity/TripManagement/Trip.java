@@ -40,10 +40,7 @@ public class Trip implements Serializable {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<Parcel> parcels;
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
-    @JsonManagedReference
 
-    private List<Carpooling> carpoolings;
 
 
 
@@ -58,6 +55,3 @@ public class Trip implements Serializable {
 
 
 }
-
-
-

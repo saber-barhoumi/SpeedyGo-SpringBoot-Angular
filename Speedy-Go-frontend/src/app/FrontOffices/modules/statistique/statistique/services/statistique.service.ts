@@ -30,7 +30,7 @@ export class StatistiqueService {
     const options = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+       
       })
     };
 

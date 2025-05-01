@@ -43,8 +43,8 @@ public class TripServicesImpl implements ITripServices {
             existingTrip.setDescription(trip.getDescription());
             existingTrip.setTripStatus(trip.getTripStatus());
             existingTrip.setParcels(trip.getParcels());
-            existingTrip.setCarpoolings(trip.getCarpoolings());
-            existingTrip.setCarbonFootprints(trip.getCarbonFootprints());
+
+
             existingTrip.setFeedbackAnalysis(trip.getFeedbackAnalysis());
             existingTrip.setSmartRoute(trip.getSmartRoute());
             existingTrip.setVehicles(trip.getVehicles());

@@ -60,7 +60,7 @@ export class AddOfferComponent implements OnInit {
         error: (error) => {
           console.error('Error creating offer', error);
           this.isSubmitting = false;
-          this.router.navigate(['/offres']);
+          this.router.navigate([`/offres/${this.storeId}`]);
 
         }
       });

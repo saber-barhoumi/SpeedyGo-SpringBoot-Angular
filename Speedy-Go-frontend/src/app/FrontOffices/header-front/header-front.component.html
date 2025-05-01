@@ -17,7 +17,9 @@
             <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
             <a href="about.html" class="nav-item nav-link">About</a>
             <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
-            <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
+            <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a> 
+            <a (click)="ToStore()" class="nav-item nav-link"  routerLinkActive="active" >Store</a>
+            <a (click)="ToTrips()" class="nav-item nav-link">Trips</a>
             <a href="pricing.html" class="nav-item nav-link">Pricing</a>
             <div class="nav-item dropdown">
               <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle">Pages</a>
@@ -54,9 +56,14 @@
 
           <a routerLink="/cart" class="btn btn-md btn-primary ms-2">
             <i class="fa fa-shopping-cart"></i>
+         
+         
+         
           </a>
+       
+       
         </div>
-      </div>
+  
     </nav>
   </div>
 </div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';  // Importation par défaut
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../../FrontOffices/services/user/auth.service';
 import { Client, Message as StompMessage } from '@stomp/stompjs';

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FideliteService } from '../services/fidelite.service';
 import { PointFidelite } from '../models/fidelite.model';
 
+
 @Component({
   selector: 'app-fidelite-list',
   templateUrl: './fidelite-list.component.html',

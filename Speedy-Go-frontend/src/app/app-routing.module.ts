@@ -37,16 +37,59 @@ import { CarpoolingComponent } from './FrontOffices/pages/delivery/carpooling/ca
 import { InternationalShippingComponent } from './FrontOffices/pages/customer/international-shipping/international-shipping.component';
 import { ChatbotComponent } from './FrontOffices/pages/chatbot/chatbot.component';
 
+import { FormReportComponent } from './FrontOffices/pages/customer/formreport/formreport.component';
+import { ListreportComponent } from './BackOffices/listreport/listreport.component';
+import { ReturnFormComponent } from './FrontOffices/pages/customer/returnform/returnform.component';
+import { ListreturnsComponent } from './BackOffices/listreturns/listreturns.component';
+import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-points-relais.component';
+import { QrScannerComponent } from './qrscanner/qrscanner.component';
+import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
+import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
+
+
+
+
+
+
+import { TripListComponent } from './FrontOffices/modules/trips/trip-list/trip-list.component';
+import { TripDetailComponent } from './FrontOffices/modules/trips/trip-detail/trip-detail.component';
+import { TripFormComponent } from './FrontOffices/modules/trips/trip-form/trip-form.component';
+import { SpecificTripDetailComponent } from './FrontOffices/modules/trips/specific-trip-detail/specific-trip-detail.component';
+import { SpecificTripFormComponent } from './FrontOffices/modules/trips/specific-trip-form/specific-trip-form.component';
+
+import { AddOfferComponent } from './FrontOffices/modules/store/Component/add-offer/add-offer.component';
+import { StoreListComponent } from './FrontOffices/modules/store/store/store.component';
+import { DiscountOfferComponent } from './FrontOffices/modules/store/Component/discount/discount.component';
+import { OffresComponent } from './FrontOffices/modules/store/offres/offres.component';
+import { addstoreComponent } from './FrontOffices/modules/store/Component/add-store/add-store.component'; 
+
+
+import { TunisiaRouteAnalyzerComponent } from './FrontOffices/modules/tunisia-route/tunisia-route-analyzer.component';
+import { TrakingComponent } from './FrontOffices/modules/trips/traking/traking.component';
+
+
+
+
+
+
 const routes: Routes = [
   {
     path: '',
     component: AllTemplateFrontComponent,
+
     //canActivate: [authGuard] // Remove authGuard from default route
   },
   {
     path: 'home',
     component: AllTemplateFrontComponent,
   },
+ 
+
+
+
+
+  { path: 'qrscanner', component:QrScannerComponent},
+
 
   {
     path: 'admin',
@@ -56,9 +99,20 @@ const routes: Routes = [
       { path: 'update-user/:id', component: UpdateUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'add-user', component: AddUserComponent, canActivate: [BackofficeAuthGuard] },
       { path: 'recruitment', component: RecruitmentManagementComponent },
+      { path: 'reportlist', component: ListreportComponent},
+      { path: 'maprelais', component:MapPointsRelaisComponent},
+      { path: 'returnlist', component:ListreturnsComponent},
+      { path: 'carbon', component:CarbonFootprintComponent},
+      { path: 'statistique', loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule), canActivate: [BackofficeAuthGuard] },
+      { path: 'trip-dashboard', loadChildren: () => import('./FrontOffices/modules/dashboard/dashboard.module').then(m => m.DashboardModule) } // New Trip Dashboard route
+
+
+
+      
+
     ]
   },
-  { path: 'loginAdmin', component: LoginComponent, },
+  { path: 'loginAdmin', component: LoginComponent },
   { path: 'login', component: LoginclientComponent }, // Use the new LoginclientComponent
   { path: 'register', component: RegisterComponent }, // Use the new RegisterComponent
   { path: 'registerAdmin', component: RegisterAdminComponent },
@@ -114,6 +168,13 @@ const routes: Routes = [
       path: 'customer',
       component: CustomerComponent,
       canActivate: [authGuard, RoleGuard],
+      children: [
+        { path: 'report', component: FormReportComponent },
+        { path: 'returnform', component: ReturnFormComponent },
+        { path: 'affichmap', component:AffichmapComponent},
+
+
+      ]
     },
     {
       path: 'carpooling',
@@ -127,11 +188,120 @@ const routes: Routes = [
       component: InternationalShippingComponent,
       // You can add canActivate guards here if needed
     },
+
+
+    {
+      path: 'tunisia-route',
+      component: TunisiaRouteAnalyzerComponent,
+     },
+     {
+      path: 'tracking',
+      component: TrakingComponent,
+     },
+
+
+
+
+
+
+
+
+    {
+      path: 'statistique',
+      loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule)
+     },
+
+    {
+      path: 'fidelite',
+      loadChildren: () => import('./FrontOffices/modules/cartes-fidelite/cartes-fidelite.module').then(m => m.CartesFideliteModule)
+     }, 
+
+
+
+
+
+
+
+
+
     {
       path: 'SpeedyChat',
       component: ChatbotComponent,
       // You can add canActivate guards here if needed
     },
+
+
+///////////////////////
+
+{
+  path: 'trips',
+  component: TripListComponent,
+ },
+
+ {
+  path: 'tripdetail/:id',
+  component: TripDetailComponent,
+ },
+ {
+  path: 'ajout_trip',
+  component: TripFormComponent,
+ },  
+
+ {
+  path: 'specific-trip-detail/:id',
+  component: SpecificTripDetailComponent,
+ }, 
+
+
+ {
+  path: 'spesific_trip',
+  component: SpecificTripFormComponent,
+ },
+
+
+ {
+  path: 'partner',
+  component: StoreListComponent,
+ },
+
+
+ {
+  path: 'storlist',
+  component: StoreListComponent,
+ },
+
+ {
+  path: 'offres/:id',
+  component: OffresComponent,
+ },
+
+{
+  path: 'add-offer',
+  component: AddOfferComponent,
+ },
+ {
+  path: 'add-store',
+  component: addstoreComponent,
+ },
+ {
+  path: 'edit-store/:id',
+  component: addstoreComponent,
+ },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ];
 
 @NgModule({

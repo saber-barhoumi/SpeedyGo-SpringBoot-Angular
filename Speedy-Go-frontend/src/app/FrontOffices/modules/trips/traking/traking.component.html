@@ -1,0 +1,83 @@
+<app-header-front></app-header-front>
+<div class="tracking-container">
+  <div class="tracking-header">
+    <h1>Real-Time Location Tracking</h1>
+    <p class="sub-title">Track your current location with precision</p>
+  </div>
+  
+  <div class="card">
+    <div class="map-container">
+      <div #mapElement id="map"></div>
+      <div class="map-overlay" *ngIf="currentLocation">
+        <div class="coordinates-box">
+          <div class="coordinate">
+            <span class="coordinate-label">Latitude</span>
+            <span class="coordinate-value">{{currentLocation.lat | number:'1.6-6'}}</span>
+          </div>
+          <div class="coordinate">
+            <span class="coordinate-label">Longitude</span>
+            <span class="coordinate-value">{{currentLocation.lng | number:'1.6-6'}}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Loading indicator -->
+      <div class="location-loading" *ngIf="isLocating">
+        <div class="spinner"></div>
+        <p>Obtaining your location...</p>
+      </div>
+      
+      <!-- Error message overlay -->
+      <div class="location-error-overlay" *ngIf="locationError">
+        <div class="error-container">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>Location Access Error</h3>
+          <p>{{ locationError }}</p>
+          <div class="error-help">
+            <p>To fix this issue:</p>
+            <ul>
+              <li>Make sure location services are enabled on your device</li>
+              <li>Allow this website to access your location when prompted</li>
+              <li>If you denied permission, click the location icon in your browser's address bar to grant permission</li>
+              <li>For Chrome: Check Settings → Privacy and Security → Site Settings → Location</li>
+              <li>For Firefox: Check Options/Preferences → Privacy & Security → Permissions → Location</li>
+            </ul>
+            <button class="retry-button" (click)="trackLocation()">Retry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="info-panel">
+      <div class="info-header">
+        <i class="fas fa-location-arrow"></i>
+        <h3>Location Information</h3>
+      </div>
+      <div class="info-content" *ngIf="currentLocation">
+        <p>Your device is being tracked in real-time. The blue marker indicates your current position with accuracy visualization.</p>
+        <div class="info-data">
+          <div class="data-row">
+            <span class="data-label">Status:</span>
+            <span class="data-value active">Active</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Updated:</span>
+            <span class="data-value">Just now</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-content" *ngIf="!currentLocation && !locationError">
+        <p>Waiting for location data... Please ensure location services are enabled on your device.</p>
+      </div>
+      <div class="info-content error-message" *ngIf="locationError">
+        <p>{{locationError}}</p>
+        <button class="retry-button-small" (click)="trackLocation()">Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<app-footer-front></app-footer-front> 

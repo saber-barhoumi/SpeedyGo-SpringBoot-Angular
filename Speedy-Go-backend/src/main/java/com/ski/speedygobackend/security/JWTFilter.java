@@ -32,7 +32,6 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Skip JWT validation for public endpoints
         String path = request.getRequestURI();
         logger.debug("Processing request: {} {}", request.getMethod(), path);
 
@@ -54,6 +53,20 @@ public class JWTFilter extends OncePerRequestFilter {
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
                     if (jwtUtils.validateToken(token, username)) {
+
+                        // 🔥 VÉRIFICATION AJOUTÉE ICI 🔥
+                        if (!userDetails.isEnabled()) {
+                            logger.warn("Blocked user tried to authenticate: {}", username);
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User account is disabled or banned.");
+                            return;
+                        }
+
+                        if (!userDetails.isAccountNonLocked()) {
+                            logger.warn("Locked user tried to authenticate: {}", username);
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User account is locked.");
+                            return;
+                        }
+
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(
                                         userDetails,
@@ -68,8 +81,6 @@ public class JWTFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                         logger.debug("JWT Token validated for user: {}", username);
                         logger.debug("User authorities: {}", userDetails.getAuthorities());
-
-
                     }
                 }
             } catch (Exception e) {
@@ -79,6 +90,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
 
     private boolean isPublicPath(String path) {
         return path.equals("/api/carpoolings/calculate-price") ||

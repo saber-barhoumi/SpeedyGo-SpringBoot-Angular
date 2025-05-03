@@ -25,13 +25,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        boolean isAccountNonLocked = !user.isBanned(); // s'il est banni, compte bloqué
+        boolean isEnabled = !user.isBanned();           // s'il est banni, pas activé
+        boolean isAccountNonExpired = true;             // tu peux mettre à false si tu veux gérer expiration
+        boolean isCredentialsNonExpired = true;         // pareil pour expiration mot de passe
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .authorities(Collections.singletonList(
                         new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
                 ))
+                .accountLocked(!isAccountNonLocked)          // Important ici !!
+                .disabled(!isEnabled)                        // Important aussi
+                .accountExpired(!isAccountNonExpired)
+                .credentialsExpired(!isCredentialsNonExpired)
                 .build();
     }
-    }
+
+
+}
 

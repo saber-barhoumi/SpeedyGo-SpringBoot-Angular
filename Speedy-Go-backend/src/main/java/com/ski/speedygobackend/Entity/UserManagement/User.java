@@ -1,6 +1,8 @@
 package com.ski.speedygobackend.Entity.UserManagement;
 
 import com.ski.speedygobackend.Entity.ChatbotManagement.SpeedyChat;
+import com.ski.speedygobackend.Entity.ComfirmationTransfert;
+import com.ski.speedygobackend.Entity.CommunicationManagement.ChatRoom;
 import com.ski.speedygobackend.Entity.LoyaltyManagement.LoyaltyCard;
 import com.ski.speedygobackend.Entity.OfferManagement.Store;
 import com.ski.speedygobackend.Entity.ReportManagement.Report;
@@ -93,4 +95,11 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "conversation_id")
     )
     private Set<Conversation> conversations = new HashSet<>();
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private Set<ChatRoom> chatRooms;
+
+
+    private boolean banned = false;
+
+
 }

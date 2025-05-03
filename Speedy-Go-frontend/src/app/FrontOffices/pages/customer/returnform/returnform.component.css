@@ -1,0 +1,125 @@
+/* Styles pour le datepicker (inchangé) */
+.mat-datepicker-content {
+  z-index: 10000 !important;
+}
+.cal-disabled-day {
+  background-color: #e0e0e0;
+  color: #999;
+  pointer-events: none;
+}
+
+/* Conteneur principal plus compact */
+.container.mt-4 {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1000px; /* Réduit de 1200px */
+  margin: 0 auto;
+  padding: 15px; /* Réduit de 20px */
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Titre plus compact */
+.container.mt-4 h2 {
+  color: #2c3e50;
+  font-size: 1.5rem; /* Réduit de 1.8rem */
+  margin-bottom: 1.2rem; /* Réduit de 1.8rem */
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.3rem; /* Réduit de 0.5rem */
+}
+
+.container.mt-4 h2::after {
+  height: 2px; /* Réduit de 3px */
+  width: 50px; /* Réduit de 60px */
+}
+
+/* Tableau plus compact */
+.table.table-striped {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Ombre plus légère */
+  border-radius: 6px; /* Réduit de 8px */
+}
+
+/* En-têtes plus compacts */
+.table.table-striped thead th {
+  padding: 10px 12px; /* Réduit de 14px 16px */
+  font-size: 0.7rem; /* Réduit de 0.75rem */
+}
+
+/* Cellules plus compactes */
+.table.table-striped tbody td {
+  padding: 10px 12px; /* Réduit de 14px 16px */
+  font-size: 0.85rem;
+}
+
+/* Priorités plus compactes */
+.priority {
+  padding: 4px 10px; /* Réduit de 5px 12px */
+  font-size: 0.7rem; /* Réduit de 0.8rem */
+  border-radius: 12px; /* Réduit de 14px */
+}
+
+/* Boutons d'action plus petits */
+.action-btn {
+  padding: 4px 8px; /* Réduit de 6px 12px */
+  font-size: 0.7rem; /* Réduit de 0.8rem */
+  margin-right: 3px; /* Réduit de 5px */
+}
+
+/* Message "Aucun rapport" plus compact */
+.container.mt-4 p {
+  padding: 15px; /* Réduit de 25px */
+  margin-top: 15px; /* Réduit de 20px */
+  font-size: 0.9rem;
+}
+
+/* Version mobile adaptée */
+@media (max-width: 768px) {
+  .container.mt-4 {
+    padding: 10px; /* Réduit de 15px */
+  }
+  
+  .table.table-striped tbody td {
+    padding: 8px 12px; /* Réduit de 10px 15px */
+  }
+  
+  .table.table-striped tbody td::before {
+    font-size: 0.65rem; /* Réduit de 0.75rem */
+    left: 12px; /* Réduit de 15px */
+    top: 8px; /* Réduit de 10px */
+  }
+}
+
+/* Animation des lignes légèrement plus rapide */
+@keyframes rowEntry {
+  from { opacity: 0; transform: translateX(-8px); } /* Réduit de -10px */
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.table.table-striped tbody tr {
+  animation-duration: 0.25s; /* Réduit de 0.3s */
+}
+
+/* Style pour le bouton Ajouter - version compacte */
+.btn-add {
+  padding: 5px 10px !important;        /* Taille réduite */
+  font-size: 0.75rem !important;       /* Texte plus petit */
+  border-radius: 4px !important;       /* Coins légèrement moins arrondis */
+  height: 28px !important;             /* Hauteur fixe */
+  min-width: 80px !important;          /* Largeur minimale réduite */
+  display: inline-flex !important;     /* Pour aligner l'icône et le texte */
+  align-items: center !important;     /* Centrage vertical */
+  justify-content: center !important; /* Centrage horizontal */
+}
+
+/* Style pour l'icône dans le bouton */
+.btn-add mat-icon {
+  font-size: 16px !important;          /* Taille d'icône réduite */
+  height: 16px !important;             /* Hauteur d'icône */
+  width: 16px !important;              /* Largeur d'icône */
+  margin-right: 4px !important;        /* Espacement réduit entre icône et texte */
+}
+
+/* Effet au survol */
+.btn-add:hover {
+  transform: translateY(-1px) scale(1.02); /* Animation subtile */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}

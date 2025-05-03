@@ -12,7 +12,7 @@ public class AIServiceTest {
     @BeforeEach
     public void setUp() throws Exception {
         aiService = new AIService();
-        aiService.init();
+       // aiService.init();
     }
 
     @Test

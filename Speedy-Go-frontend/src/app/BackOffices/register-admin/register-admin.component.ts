@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup ,Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/FrontOffices/services/user/auth.service';
 
@@ -14,7 +14,6 @@ export class RegisterAdminComponent {
   errorMessage = '';
   selectedFile: File | null = null;
 
-
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group({
       first_name: ['', Validators.required],
@@ -26,17 +25,15 @@ export class RegisterAdminComponent {
       address: ['', Validators.required],
       sexe: ['', Validators.required],
       newsletter: [false],
-      role:["ADMIN"]
+      role: ['ADMIN']
     });
   }
 
-  // Fix: Use explicit indexing
   get f() { return this.registerForm.controls as { [key: string]: any }; }
 
   onFileSelect(event: any) {
     if (event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
-      this.registerForm.patchValue({ profilePicture: this.selectedFile });
     }
   }
 
@@ -47,12 +44,25 @@ export class RegisterAdminComponent {
       return;
     }
 
-    this.authService.register(this.registerForm.value).subscribe({
+    const formData = new FormData();
+    // Ajouter tous les champs du formulaire au FormData
+    for (const key in this.registerForm.value) {
+      if (this.registerForm.value.hasOwnProperty(key)) {
+        formData.append(key, this.registerForm.value[key]);
+      }
+    }
+    // Ajouter le fichier s'il existe
+    if (this.selectedFile) {
+      formData.append('profilePicture', this.selectedFile);
+    }
+
+    this.authService.register(formData).subscribe({
       next: () => {
         alert('Registration successful!');
         this.router.navigate(['/loginAdmin']);
       },
       error: err => {
+        console.error(err);
         this.errorMessage = 'Registration failed. Try again.';
       }
     });

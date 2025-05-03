@@ -1,0 +1,10 @@
+<div class="fidelite-detail">
+  <img [src]="card.storeLogo" alt="{{ card.storeName }} logo" class="store-logo">
+  <h2>{{ card.storeName }}</h2>
+  <p>Points: {{ card.points }}</p>
+  <p>Status: {{ card.status }}</p>
+  <p>Last Used: {{ card.lastUsed }}</p>
+  <div class="progress-bar">
+    <div class="progress" [style.width.%]="card.progress"></div>
+  </div>
+</div>

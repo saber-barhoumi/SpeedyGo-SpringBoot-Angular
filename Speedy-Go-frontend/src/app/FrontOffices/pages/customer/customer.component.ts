@@ -88,7 +88,7 @@ export class CustomerComponent implements OnInit {
     console.log('Carpooling ID:', carpoolingId);
     if (this.userId !== null) {
       const seatsToReserve = this.selectedSeats[carpoolingId] || 1;
-      
+
       this.carpoolingService.reserveCarpooling(carpoolingId, this.userId, seatsToReserve)
         .subscribe({
           next: (response: any) => {
@@ -164,7 +164,7 @@ export class CustomerComponent implements OnInit {
   // Helper method to check if a carpooling trip is starting soon (within 1 hour)
   isStartingSoon(startTime: string | Date): boolean {
     if (!startTime) return false;
-    
+
     const tripStartTime = new Date(startTime);
     const oneHourFromNow = new Date(this.now.getTime() + 60 * 60 * 1000);
 
@@ -174,7 +174,7 @@ export class CustomerComponent implements OnInit {
   // Helper method to get time remaining until trip starts
   getTimeUntilStart(startTime: string | Date): string {
     if (!startTime) return '';
-    
+
     const tripStartTime = new Date(startTime);
     const diffMs = tripStartTime.getTime() - this.now.getTime();
 
@@ -203,11 +203,11 @@ export class CustomerComponent implements OnInit {
   // Method to update selected seats
   updateSelectedSeats(carpoolingId: number, seats: number): void {
     this.selectedSeats[carpoolingId] = seats;
-    
+
     // Find the carpooling and update total price
-    const carpooling = this.carpoolings.find(c => c.carpoolingId === carpoolingId) || 
+    const carpooling = this.carpoolings.find(c => c.carpoolingId === carpoolingId) ||
                       this.upcomingCarpoolings.find(c => c.carpoolingId === carpoolingId);
-    
+
     if (carpooling) {
       this.updateTotalPrice(carpooling);
     }
@@ -218,4 +218,5 @@ export class CustomerComponent implements OnInit {
     const seats = this.selectedSeats[carpooling.carpoolingId || 0] || 1;
     this.totalPrices[carpooling.carpoolingId || 0] = seats * (carpooling.pricePerSeat || 0);
   }
+
 }

@@ -45,6 +45,33 @@ import { MapPointsRelaisComponent } from './BackOffices/map-points-relais/map-po
 import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { AffichmapComponent } from './FrontOffices/pages/customer/affichmap/affichmap.component';
 import { CarbonFootprintComponent } from './BackOffices/carbonfootprint/carbonfootprint.component';
+
+
+
+
+
+
+import { TripListComponent } from './FrontOffices/modules/trips/trip-list/trip-list.component';
+import { TripDetailComponent } from './FrontOffices/modules/trips/trip-detail/trip-detail.component';
+import { TripFormComponent } from './FrontOffices/modules/trips/trip-form/trip-form.component';
+import { SpecificTripDetailComponent } from './FrontOffices/modules/trips/specific-trip-detail/specific-trip-detail.component';
+import { SpecificTripFormComponent } from './FrontOffices/modules/trips/specific-trip-form/specific-trip-form.component';
+
+import { AddOfferComponent } from './FrontOffices/modules/store/Component/add-offer/add-offer.component';
+import { StoreListComponent } from './FrontOffices/modules/store/store/store.component';
+import { DiscountOfferComponent } from './FrontOffices/modules/store/Component/discount/discount.component';
+import { OffresComponent } from './FrontOffices/modules/store/offres/offres.component';
+import { addstoreComponent } from './FrontOffices/modules/store/Component/add-store/add-store.component'; 
+
+
+import { TunisiaRouteAnalyzerComponent } from './FrontOffices/modules/tunisia-route/tunisia-route-analyzer.component';
+import { TrakingComponent } from './FrontOffices/modules/trips/traking/traking.component';
+
+
+
+
+
+
 const routes: Routes = [
   {
     path: '',
@@ -76,6 +103,11 @@ const routes: Routes = [
       { path: 'maprelais', component:MapPointsRelaisComponent},
       { path: 'returnlist', component:ListreturnsComponent},
       { path: 'carbon', component:CarbonFootprintComponent},
+      { path: 'statistique', loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule), canActivate: [BackofficeAuthGuard] },
+      { path: 'trip-dashboard', loadChildren: () => import('./FrontOffices/modules/dashboard/dashboard.module').then(m => m.DashboardModule) } // New Trip Dashboard route
+
+
+
       
 
     ]
@@ -156,11 +188,120 @@ const routes: Routes = [
       component: InternationalShippingComponent,
       // You can add canActivate guards here if needed
     },
+
+
+    {
+      path: 'tunisia-route',
+      component: TunisiaRouteAnalyzerComponent,
+     },
+     {
+      path: 'tracking',
+      component: TrakingComponent,
+     },
+
+
+
+
+
+
+
+
+    {
+      path: 'statistique',
+      loadChildren: () => import('./FrontOffices/modules/statistique/statistique/statistique.module').then(m => m.StatistiqueModule)
+     },
+
+    {
+      path: 'fidelite',
+      loadChildren: () => import('./FrontOffices/modules/cartes-fidelite/cartes-fidelite.module').then(m => m.CartesFideliteModule)
+     }, 
+
+
+
+
+
+
+
+
+
     {
       path: 'SpeedyChat',
       component: ChatbotComponent,
       // You can add canActivate guards here if needed
     },
+
+
+///////////////////////
+
+{
+  path: 'trips',
+  component: TripListComponent,
+ },
+
+ {
+  path: 'tripdetail/:id',
+  component: TripDetailComponent,
+ },
+ {
+  path: 'ajout_trip',
+  component: TripFormComponent,
+ },  
+
+ {
+  path: 'specific-trip-detail/:id',
+  component: SpecificTripDetailComponent,
+ }, 
+
+
+ {
+  path: 'spesific_trip',
+  component: SpecificTripFormComponent,
+ },
+
+
+ {
+  path: 'partner',
+  component: StoreListComponent,
+ },
+
+
+ {
+  path: 'storlist',
+  component: StoreListComponent,
+ },
+
+ {
+  path: 'offres/:id',
+  component: OffresComponent,
+ },
+
+{
+  path: 'add-offer',
+  component: AddOfferComponent,
+ },
+ {
+  path: 'add-store',
+  component: addstoreComponent,
+ },
+ {
+  path: 'edit-store/:id',
+  component: addstoreComponent,
+ },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ];
 
 @NgModule({

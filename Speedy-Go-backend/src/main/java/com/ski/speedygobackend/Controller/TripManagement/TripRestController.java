@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/trip")
+@RequestMapping("api/trips")
 public class TripRestController {
 
 
@@ -27,7 +27,7 @@ public class TripRestController {
 
     @GetMapping("/getTrip/{id}")
     public Trip getTrip(@PathVariable Long id) {
-        return tripService.getTripById(id).orElse(null); // Retourne null si le trip n'est pas trouvé
+        return tripService.getTripById(id).orElse(null);
     }
 
     @PostMapping("/add")
@@ -44,4 +44,6 @@ public class TripRestController {
     public void deleteTrip(@PathVariable Long id) {
         tripService.deleteTrip(id);
     }
+
+
 }

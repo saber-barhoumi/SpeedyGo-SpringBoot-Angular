@@ -1,0 +1,64 @@
+<div class="location-reports-container">
+  <div *ngIf="trips.length === 0" class="no-data-message">
+    <i class="bi bi-info-circle me-2"></i>
+    No trip data available.
+  </div>
+  
+  <div *ngIf="trips.length > 0" class="locations-container">
+    <div class="row">
+      <!-- Departure Locations -->
+      <div class="col-md-6">
+        <h4 class="locations-title">
+          <i class="bi bi-geo-alt me-2"></i>
+          Top Departure Locations
+        </h4>
+        
+        <div *ngIf="topDepartureLocations.length === 0" class="no-location-data">
+          No departure location data available
+        </div>
+        
+        <div *ngFor="let location of topDepartureLocations" class="location-item">
+          <div class="location-icon">
+            <i class="bi bi-signpost-split"></i>
+          </div>
+          <div class="location-bar-container">
+            <div class="location-name">
+              <span class="name">{{ location.name }}</span>
+              <span class="count">{{ location.count }}</span>
+            </div>
+            <div class="location-bar">
+              <div class="bar-fill" [style.width.%]="location.percentage"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Arrival Locations -->
+      <div class="col-md-6">
+        <h4 class="locations-title">
+          <i class="bi bi-geo-alt-fill me-2"></i>
+          Top Arrival Locations
+        </h4>
+        
+        <div *ngIf="topArrivalLocations.length === 0" class="no-location-data">
+          No arrival location data available
+        </div>
+        
+        <div *ngFor="let location of topArrivalLocations" class="location-item">
+          <div class="location-icon">
+            <i class="bi bi-signpost"></i>
+          </div>
+          <div class="location-bar-container">
+            <div class="location-name">
+              <span class="name">{{ location.name }}</span>
+              <span class="count">{{ location.count }}</span>
+            </div>
+            <div class="location-bar">
+              <div class="bar-fill" [style.width.%]="location.percentage"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

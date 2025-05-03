@@ -1,0 +1,185 @@
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="dashboard-title">
+      <h1>Trip Analytics Dashboard</h1>
+      <p class="dashboard-subtitle">Comprehensive view of your trip data</p>
+    </div>
+    <div class="dashboard-actions">
+      <button class="btn btn-primary btn-refresh" (click)="refreshData()">
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Refresh Data
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="dashboard-loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading dashboard data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && error" class="dashboard-error-container">
+    <div class="dashboard-error-icon">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <h3 class="dashboard-error-title">Something went wrong</h3>
+    <p class="dashboard-error-message">{{ error }}</p>
+    <button class="btn btn-primary" (click)="refreshData()">
+      <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+    </button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    
+    <!-- Time-Based Reports Section -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="bi bi-clock-history me-2"></i>
+          Time-Based Reports
+        </h2>
+        <div class="section-divider"></div>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Trips per Period (Month/Week/Day) -->
+        <div class="col-lg-8">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Trips per Period</h3>
+              <div class="card-actions">
+                <div class="btn-group" role="group">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    [class.btn-primary]="selectedTimeFrame === 'day'"
+                    [class.btn-outline-primary]="selectedTimeFrame !== 'day'"
+                    (click)="onTimeFrameChange('day')">
+                    Day
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    [class.btn-primary]="selectedTimeFrame === 'week'"
+                    [class.btn-outline-primary]="selectedTimeFrame !== 'week'"
+                    (click)="onTimeFrameChange('week')">
+                    Week
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    [class.btn-primary]="selectedTimeFrame === 'month'"
+                    [class.btn-outline-primary]="selectedTimeFrame !== 'month'"
+                    (click)="onTimeFrameChange('month')">
+                    Month
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <app-trips-per-period [trips]="trips" [timeFrame]="selectedTimeFrame"></app-trips-per-period>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Average Trip Duration -->
+        <div class="col-lg-4">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Average Trip Duration</h3>
+            </div>
+            <div class="card-body">
+              <app-average-trip-duration [trips]="trips"></app-average-trip-duration>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Peak Hours / Days -->
+        <div class="col-lg-12">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Peak Hours Analysis</h3>
+              <div class="card-actions">
+                <div class="btn-group" role="group">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    [class.btn-primary]="peakTimeType === 'departure'"
+                    [class.btn-outline-primary]="peakTimeType !== 'departure'"
+                    (click)="onPeakTimeTypeChange('departure')">
+                    Departure
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm" 
+                    [class.btn-primary]="peakTimeType === 'arrival'"
+                    [class.btn-outline-primary]="peakTimeType !== 'arrival'"
+                    (click)="onPeakTimeTypeChange('arrival')">
+                    Arrival
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <app-peak-hours-chart [trips]="trips" [timeType]="peakTimeType"></app-peak-hours-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Location-Based Reports Section -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="bi bi-geo-alt me-2"></i>
+          Location-Based Reports
+        </h2>
+        <div class="section-divider"></div>
+      </div>
+      
+      <div class="row g-4">
+        <!-- Top Departure & Arrival Locations -->
+        <div class="col-lg-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Top Locations</h3>
+            </div>
+            <div class="card-body">
+              <app-top-locations [trips]="trips"></app-top-locations>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Most Common Routes -->
+        <div class="col-lg-6">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Common Routes</h3>
+            </div>
+            <div class="card-body">
+              <app-common-routes [trips]="trips"></app-common-routes>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pass-Through Locations -->
+        <div class="col-lg-12">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h3 class="card-title">Pass-Through Locations</h3>
+            </div>
+            <div class="card-body">
+              <app-pass-through-locations [trips]="trips"></app-pass-through-locations>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

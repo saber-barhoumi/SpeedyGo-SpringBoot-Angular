@@ -1,12 +1,12 @@
 package com.ski.speedygobackend.Entity.OfferManagement;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.StoreStatus;
 import com.ski.speedygobackend.Enum.StoreType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.Set;
@@ -24,8 +24,8 @@ public class Store  implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long storeID;
     String name;
-    LocalTime openingTime;
-    LocalTime closingTime;
+    String opening;
+    String closing;
     String logo;
     String website;
     String image;
@@ -33,13 +33,17 @@ public class Store  implements Serializable {
     String city;
     String location;
     String description;
-    String phoneNumber;
+    String phone;
     String email;
 
     @Enumerated(EnumType.STRING)
-    StoreType storeType;
+    @JsonProperty("storeType")
+    private StoreType storeType;
+
     @Enumerated(EnumType.STRING)
-    StoreStatus storeStatus;
+    @JsonProperty("storeStatus")
+    private StoreStatus storeStatus;
+
 
     @ManyToOne
     private User user;

@@ -42,6 +42,18 @@
     width: 100%;
   }
 
+
+  
+/* Change hover color to green */
+.navbar-nav .nav-link:hover,
+.dropdown-menu .dropdown-item:hover {
+    color: green !important;
+}
+
+/* Change button hover effect */
+.btn-primary:hover {
+    background-color: green !important;
+    border-color: green !important;
   /* Style pour le lien avec un cadre stylé */
 .custom-frame {
   display: inline-block;
@@ -104,4 +116,5 @@
 /* Pour un petit effet d'ombre et de relief */
 .custom-frame:active {
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre lors du clic */
+}
 }

@@ -1,0 +1,78 @@
+<div class="time-reports-container">
+  <div *ngIf="trips.length === 0" class="no-data-message">
+    <i class="bi bi-info-circle me-2"></i>
+    No trip data available.
+  </div>
+  
+  <div *ngIf="trips.length > 0" class="duration-stats-container">
+    <!-- Circular Progress Display -->
+    <div class="progress-circle-container">
+      <div class="progress-circle">
+        <div class="outer-circle">
+          <div class="inner-circle">
+            <div class="duration-value">
+              {{ formattedAvgDuration }}
+            </div>
+            <div class="duration-label">
+              Avg. Trip Duration
+            </div>
+          </div>
+          <!-- SVG Circle for Progress -->
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle
+              cx="75"
+              cy="75"
+              r="65"
+              fill="none"
+              stroke="#e9ecef"
+              stroke-width="12"
+            />
+            <circle
+              cx="75"
+              cy="75"
+              r="65"
+              fill="none"
+              stroke="#4361ee"
+              stroke-width="12"
+              stroke-dasharray="409"
+              [attr.stroke-dashoffset]="409 - 409 * durationProgress / 100"
+              transform="rotate(-90, 75, 75)"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Min/Max Duration Stats -->
+    <div class="duration-stats">
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="bi bi-hourglass-bottom"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">
+            Shortest Trip
+          </div>
+          <div class="stat-value">
+            {{ formattedMinDuration }}
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-item">
+        <div class="stat-icon">
+          <i class="bi bi-hourglass-top"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-label">
+            Longest Trip
+          </div>
+          <div class="stat-value">
+            {{ formattedMaxDuration }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

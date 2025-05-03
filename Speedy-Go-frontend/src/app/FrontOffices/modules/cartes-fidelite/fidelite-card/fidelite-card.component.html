@@ -1,0 +1,8 @@
+<div class="fidelite-card">
+    <h3>{{ card.store_name }}</h3>
+    <p>Points: <strong>{{ card.points }}</strong></p>
+    <p>Last Used: {{ formatLastUsedDate() }}</p>
+    <div class="progress-bar">
+      <div class="progress" [style.width.%]="getProgressPercentage()"></div>
+    </div>
+  </div>

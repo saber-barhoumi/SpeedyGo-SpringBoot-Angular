@@ -40,11 +40,16 @@ export class AuthService {
       catchError(this.handleError)
     );
   }
+  
 
   // Save token in localStorage
   saveToken(token: string): void {
     localStorage.setItem('token', token);
-  }
+  } 
+
+
+
+
 
   // Get token from localStorage
   getToken(): string | null {

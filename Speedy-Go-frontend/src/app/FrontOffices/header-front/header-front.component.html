@@ -5,32 +5,36 @@
         <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-        <span class="fa fa-bars text-primary"></span>
-      </button>
 
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <div class="navbar-nav mx-auto">
-          <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
-          <a routerLink="/about" class="nav-item nav-link">About</a>
-          <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
-          <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
-          <a routerLink="/pricing" class="nav-item nav-link">Pricing</a>
-          <a routerLink="/contact" class="nav-item nav-link">Contact</a>
-          <a routerLink="/customer/report" class="nav-item nav-link">PostReport</a>
-          <a routerLink="/customer/returnform" class="nav-item nav-link">Demand an Exchange</a>
-          <a routerLink="/customer/affichmap" class="nav-item nav-link">View Map</a>
-          <li class="nav-item">
-            <a routerLink="/qrscanner" class="nav-link custom-frame">
-              <span class="pcoded-micon"><i class="feather icon-camera"></i></span>
-              <span class="pcoded-mtext">Confirm transfer with QR</span>
-            </a>
-          </li>
-          
-        </div>
-
-        <!-- Actions à droite -->
-        <div class="d-flex align-items-center ms-auto position-relative">
+        <!-- Navbar Toggle Button -->
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" class="navbar-toggler py-2 px-3">
+          <span class="fa fa-bars text-primary"></span>
+        </button>
+  
+        <!-- Navbar Links -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <div class="navbar-nav mx-auto">
+            <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
+            <a href="about.html" class="nav-item nav-link">About</a>
+            <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
+            <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a> 
+            <a (click)="ToStore()" class="nav-item nav-link"  routerLinkActive="active" >Store</a>
+            <a (click)="ToTrips()" class="nav-item nav-link">Trips</a>
+            <a href="pricing.html" class="nav-item nav-link">Pricing</a>
+            <div class="nav-item dropdown">
+              <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle">Pages</a>
+              <div class="dropdown-menu bg-light">
+                <a href="order.html" class="dropdown-item">Place Order</a>
+                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                <a href="team.html" class="dropdown-item">Our Team</a>
+                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                <a href="404.html" class="dropdown-item">404 Page</a>
+              </div>
+            </div>
+            <a href="contact.html" class="nav-item nav-link">Contact</a>
+          </div>
+  
+          <!-- Display Login/Register buttons if not logged in -->
           <ng-container *ngIf="!isLoggedIn">
             <a routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
               <i class="fas fa-user"></i>
@@ -39,9 +43,9 @@
 
           <ng-container *ngIf="isLoggedIn">
             <div class="profile-picture-container position-relative">
-              <img [src]="user?.profilePicture || 'assets/default-profile.png'" 
-                   alt="Profile Picture" 
-                   class="profile-picture rounded-circle" 
+              <img [src]="user?.profilePicture || 'assets/default-profile.png'"
+                   alt="Profile Picture"
+                   class="profile-picture rounded-circle"
                    (click)="toggleProfile()">
               <div *ngIf="showProfile" class="profile-dropdown">
                 <span class="me-3">Welcome, {{ user?.firstName }}</span>
@@ -52,9 +56,14 @@
 
           <a routerLink="/cart" class="btn btn-md btn-primary ms-2">
             <i class="fa fa-shopping-cart"></i>
+         
+         
+         
           </a>
+       
+       
         </div>
-      </div>
+  
     </nav>
   </div>
 </div>

@@ -1,0 +1,160 @@
+.modern-form {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: #f8f9fa;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .input-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #2d3436;
+    font-size: 0.9rem;
+  }
+  
+  input, textarea, select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+  }
+  
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+  }
+  
+  textarea {
+    min-height: 120px;
+  }
+  
+  .input-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  .input-row .input-group {
+    flex: 1;
+  }
+  
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+  
+  .checkbox-group input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+  }
+  
+  .checkmark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #adb5bd;
+    border-radius: 5px;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  input:checked ~ .checkmark {
+    background: #4dabf7;
+    border-color: #4dabf7;
+  }
+  
+  .checkmark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+  }
+  
+  input:checked ~ .checkmark::after {
+    opacity: 1;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .submit-btn {
+    background: linear-gradient(135deg, #4dabf7, #339af0);
+    color: white;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .submit-btn:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+  }
+  
+  .submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(51, 154, 240, 0.3);
+  }
+  
+  .cancel-btn {
+    background: none;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .cancel-btn:hover {
+    background: #f8f9fa;
+    border-color: #ced4da;
+  }
+  
+  .error-message {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .input-row {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }

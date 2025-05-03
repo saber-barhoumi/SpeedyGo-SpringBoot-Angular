@@ -1,9 +1,10 @@
 package com.ski.speedygobackend.Controller.EnvironmentalImpactManagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ski.speedygobackend.DTO.CarbonFootPrintDTO;
+import com.ski.speedygobackend.Entity.RecrutementManagement.DeliveryVehicle;
 import com.ski.speedygobackend.Service.EnvironmentalImpactManagement.CarbonFootprintServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.net.http.HttpRequest;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
@@ -26,8 +27,8 @@ public class CarbonFootprintRestController {
     private CarbonFootprintServicesImpl carbonFootprintServices;
 
     @GetMapping("/data")
-    public List<CarbonFootPrintDTO> getCarbonData() {
-        List<CarbonFootPrintDTO> carbonData = carbonFootprintServices.getAllAsDTO();
+    public List<DeliveryVehicle> getCarbonData() {
+        List<DeliveryVehicle> carbonData = carbonFootprintServices.getAllAsDTO();
         if (carbonData.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No data available");
         }
@@ -36,7 +37,7 @@ public class CarbonFootprintRestController {
 
     @PostMapping("/predict")
     public ResponseEntity<String> predictEmission() throws IOException, InterruptedException {
-        List<CarbonFootPrintDTO> data = carbonFootprintServices.getAllAsDTO();
+        List<DeliveryVehicle> data = carbonFootprintServices.getAllAsDTO();
         String json = new ObjectMapper().writeValueAsString(data);
 
         HttpRequest request = HttpRequest.newBuilder()

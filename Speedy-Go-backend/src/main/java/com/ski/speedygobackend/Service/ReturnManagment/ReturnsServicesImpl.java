@@ -5,6 +5,7 @@ import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.RetourStatus;
 import com.ski.speedygobackend.Repository.IReturnsRepository;
 import com.ski.speedygobackend.Repository.IUserRepository;
+import com.ski.speedygobackend.Service.SmsManagement.SmsService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ public class ReturnsServicesImpl implements IReturnsServices {
 
     private final IReturnsRepository returnRepository;
     private final IUserRepository userRepository;
+    private final SmsService smsService; // ✅ injection correcte
 
     @Override
     public List<Returns> getAllReturns() {
@@ -33,7 +35,6 @@ public class ReturnsServicesImpl implements IReturnsServices {
     @Override
     public Returns saveReturns(Returns returns) {
         if (returns.getReturnID() == null) {
-            // Nouveau Return : affecter l'utilisateur connecté
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getName();
 
@@ -42,16 +43,14 @@ public class ReturnsServicesImpl implements IReturnsServices {
             );
             returns.setUser(user);
         } else {
-            // Modification d'un retour existant : NE PAS toucher à l'utilisateur
             Returns existingReturn = returnRepository.findById(returns.getReturnID()).orElseThrow(() ->
                     new RuntimeException("Retour non trouvé avec ID: " + returns.getReturnID())
             );
-            returns.setUser(existingReturn.getUser()); // On garde l'ancien User
+            returns.setUser(existingReturn.getUser());
         }
 
         return returnRepository.save(returns);
     }
-
 
     @Override
     public void deleteReturns(Long id) {
@@ -60,33 +59,41 @@ public class ReturnsServicesImpl implements IReturnsServices {
 
     @Transactional
     public void checkAndBanUser(Long userId) {
-        // Vérifie si l'utilisateur existe
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             System.out.println("Utilisateur introuvable avec ID : " + userId);
-            return; // utilisateur introuvable
+            return;
         }
 
         System.out.println("Vérification de l'utilisateur : " + user.getUserId());
-
-        // Compter combien de returns de ce user sont en statut NOTDONE
         long countNotDone = returnRepository.countByUserIdAndRetourstatus(userId, RetourStatus.NOTDONE);
+        System.out.println("Nombre de NOTDONE: " + countNotDone);
 
-        System.out.println("Nombre de 'NOTDONE' pour l'utilisateur " + user.getUserId() + " : " + countNotDone);
-
-        // Si l'utilisateur a 3 NOTDONE, le bannir
         if (countNotDone >= 3) {
             user.setBanned(true);
             userRepository.save(user);
-            System.out.println("Utilisateur " + user.getUserId() + " a été banni.");
+            System.out.println("Utilisateur banni avec succès.");
+
+            if (user.getPhoneNumber() != null && !user.getPhoneNumber().isBlank()) {
+                System.out.println("Tentative d'envoi de SMS à : " + user.getPhoneNumber());
+                try {
+                    smsService.sendSms(
+                            user.getPhoneNumber(),
+                            "Bonjour, votre compte SpeedyGo a été temporairement suspendu en raison de plusieurs retours non terminés. Contactez-nous pour plus d'informations."
+                    );
+                    System.out.println("SMS envoyé avec succès.");
+                } catch (Exception e) {
+                    System.err.println("Erreur lors de l'envoi du SMS : " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Numéro de téléphone non défini pour l'utilisateur.");
+            }
+
         } else {
             user.setBanned(false);
             userRepository.save(user);
-            System.out.println("Utilisateur " + user.getUserId() + " reste non banni.");
+            System.out.println("Utilisateur non banni.");
         }
     }
-
-
-
-
 }

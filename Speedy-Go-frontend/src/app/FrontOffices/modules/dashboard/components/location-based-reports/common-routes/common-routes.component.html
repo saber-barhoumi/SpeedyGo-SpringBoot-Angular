@@ -1,0 +1,30 @@
+<div class="location-reports-container">
+  <div *ngIf="trips.length === 0" class="no-data-message">
+    <i class="bi bi-info-circle me-2"></i>
+    No trip data available.
+  </div>
+  
+  <div *ngIf="trips.length > 0" class="routes-container">
+    <div *ngIf="commonRoutes.length === 0" class="no-routes-data">
+      No common routes found
+    </div>
+    
+    <div *ngFor="let route of commonRoutes; let i = index" class="route-item" [class.route-highlight]="i === 0">
+      <div class="route-header">
+        <div class="route-title">
+          {{ route.departureLocation }}
+          <i class="bi bi-arrow-right"></i>
+          {{ route.arrivalLocation }}
+        </div>
+        <div class="route-badge">
+          {{ route.count }} trips
+        </div>
+      </div>
+      <div class="route-progress">
+        <div class="progress rounded-pill">
+          <div class="progress-bar bg-primary" role="progressbar" [style.width.%]="route.percentage" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

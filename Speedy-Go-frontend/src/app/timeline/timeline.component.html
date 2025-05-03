@@ -1,0 +1,47 @@
+<div class="speedygo-container">
+  <!-- HEADER identique à SmartRoute -->
+  <header class="speedygo-header">
+    <div class="logo">
+      <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="logo-img">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Delivery</a>
+      <a href="#">Pricing</a>
+      <a href="#">Pages</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <!-- TIMELINE -->
+  <div class="timeline-wrapper">
+    <h2 class="timeline-title">Suivi de Livraison</h2>
+
+    <div class="timeline-container">
+      <div class="step" *ngFor="let status of orderStatus; let i = index">
+        <div class="dot" [ngClass]="dotCss[i]"></div>
+        <div class="line" *ngIf="i < orderStatus.length - 1"></div>
+        <div class="label" [ngClass]="cssClass[i]">{{ getStatusLabel(status) }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="showDeliveredMessage" class="delivered-message">
+      <i class="fas fa-check-circle"></i> Livraison terminée avec succès !
+    </div>
+
+    <button class="status-btn" (click)="nextStatus()" [disabled]="deliveredFinalClickDone">
+      <span *ngIf="!deliveredFinalClickDone">Mettre à jour le statut</span>
+      <span *ngIf="deliveredFinalClickDone">Livraison complétée</span>
+    </button>
+  </div>
+
+  <!-- FOOTER identique à SmartRoute -->
+  <footer class="about-section">
+    <h3>À PROPOS DE SPEEDYGO</h3>
+    <div class="about-content">
+      <p>Votre partenaire de livraison rapide et fiable</p>
+    </div>
+  </footer>
+</div>

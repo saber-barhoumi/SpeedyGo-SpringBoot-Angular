@@ -1,0 +1,261 @@
+/* discount-offer.component.scss */
+
+:host {
+    display: block;
+    font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .discount-card-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .discount-card {
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06), 0 5px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    }
+  }
+  
+  .card-header {
+    height: 180px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+    }
+  }
+  
+  .discount-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #FF4757;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+    
+    span:first-child {
+      font-size: 20px;
+      line-height: 1;
+    }
+    
+    span:last-child {
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+  }
+  
+  .category-label {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  
+  .card-body {
+    padding: 24px;
+  }
+  
+  .offer-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2D3436;
+    margin: 0 0 8px 0;
+  }
+  
+  .offer-description {
+    color: #636E72;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  
+  .price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .price-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .original-price {
+    font-size: 16px;
+    color: #B2BEC3;
+    text-decoration: line-through;
+    margin-bottom: 4px;
+  }
+  
+  .final-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2D3436;
+  }
+  
+  .availability {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #FF6B6B;
+    color: white;
+    
+    &.available {
+      background-color: #1DD1A1;
+    }
+  }
+  
+  .offer-details {
+    background-color: #F8F9FA;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .detail-icon {
+      margin-right: 12px;
+      color: #636E72;
+      display: flex;
+      align-items: center;
+    }
+    
+    span {
+      font-size: 14px;
+      color: #636E72;
+      
+      strong {
+        color: #2D3436;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  .claim-button {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #5352ED;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: #3742FA;
+    }
+    
+    &:disabled {
+      background-color: #DFE6E9;
+      color: #B2BEC3;
+      cursor: not-allowed;
+    }
+  }
+  
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 16px;
+      border: 4px solid rgba(83, 82, 237, 0.1);
+      border-left-color: #5352ED;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    p {
+      color: #636E72;
+      font-size: 16px;
+    }
+  }
+  
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    
+    .error-icon {
+      color: #FF6B6B;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      color: #636E72;
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .retry-button {
+      padding: 10px 20px;
+      background-color: #FF6B6B;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #EE5253;
+      }
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

@@ -1,0 +1,134 @@
+<div class="container py-5">
+  <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-gradient py-3">
+      <h2 class="card-title m-0 text-primary fw-bold">{{ tripDescription }}</h2>
+    </div>
+    <div class="card-body p-4">
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="location-card">
+            <div class="location-icon start">
+              <i class="bi bi-geo-alt-fill"></i>
+            </div>
+            <div class="location-details">
+              <h5>Starting Point (A)</h5>
+              <p>Coordinates: {{ pointA[0] }}, {{ pointA[1] }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="location-card">
+            <div class="location-icon waypoint">
+              <i class="bi bi-pin-map-fill"></i>
+            </div>
+            <div class="location-details">
+              <h5>Waypoint (B)</h5>
+              <p>Coordinates: {{ pointB[0] }}, {{ pointB[1] }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="location-card">
+            <div class="location-icon end">
+              <i class="bi bi-signpost-fill"></i>
+            </div>
+            <div class="location-details">
+              <h5>Destination (C)</h5>
+              <p>Coordinates: {{ pointC[0] }}, {{ pointC[1] }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-section mb-4">
+        <h3 class="section-title">Route Map</h3>
+        
+        <!-- API Key Error Message -->
+        <div *ngIf="apiKeyError" class="alert alert-warning mb-3">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          There was an issue with the Google Maps API key. Using alternative map display.
+          <div class="mt-2">
+            <button class="btn btn-primary btn-sm" (click)="openInGoogleMaps()">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Open in Google Maps
+            </button>
+          </div>
+        </div>
+        
+        <div class="rounded-4 overflow-hidden">
+          <!-- First try the embedded interactive map -->
+          <iframe 
+            *ngIf="!mapError && !apiKeyError" 
+            width="100%" 
+            height="400" 
+            style="border:0" 
+            loading="lazy" 
+            allowfullscreen 
+            [src]="getMapUrl()" 
+            class="embedded-map">
+          </iframe>
+          
+          <!-- If interactive map fails, try static map -->
+          <div *ngIf="mapError || apiKeyError" class="static-map-container">
+            <img 
+              [src]="getStaticMapUrl()" 
+              alt="Map showing route from Tunis to Southern Tunisia" 
+              class="static-map img-fluid"
+              (error)="mapError = true"
+            />
+            
+            <!-- Fallback when all map options fail -->
+            <div *ngIf="mapError" class="map-fallback">
+              <div class="text-center py-5">
+                <i class="bi bi-map-fill display-1 text-muted"></i>
+                <h4 class="mt-3">Map could not be loaded</h4>
+                <p class="text-muted">There was an issue with the Google Maps API key or service.</p>
+                <div class="d-grid gap-2 col-md-6 mx-auto">
+                  <button class="btn btn-primary mt-2" (click)="openInGoogleMaps()">
+                    <i class="bi bi-box-arrow-up-right me-2"></i> Open Route in Google Maps
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="governorates-section">
+        <h3 class="section-title">Governorates Crossed</h3>
+        
+        <div *ngIf="loading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading governorates...</span>
+          </div>
+          <p class="mt-3 text-primary">Analyzing route through Tunisia...</p>
+        </div>
+        
+        <div *ngIf="error" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ error }}
+        </div>
+        
+        <div *ngIf="!loading" class="governorates-list">
+          <div *ngIf="governorates.length === 0" class="text-center py-4">
+            <p class="text-muted">No governorates information available for this route.</p>
+          </div>
+          
+          <div *ngIf="governorates.length > 0" class="route-display">
+            <div class="route-timeline">
+              <div *ngFor="let governorate of governorates; let i = index" class="governorate-step">
+                <div class="step-number">{{ i + 1 }}</div>
+                <div class="step-connection" *ngIf="i < governorates.length - 1"></div>
+                <div class="step-content">
+                  <div class="governorate-card">
+                    <h4>{{ governorate }}</h4>
+                    <div class="small text-muted">Governorate of Tunisia</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

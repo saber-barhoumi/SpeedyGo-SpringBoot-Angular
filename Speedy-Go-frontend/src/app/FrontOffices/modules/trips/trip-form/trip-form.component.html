@@ -1,0 +1,224 @@
+<app-header-front></app-header-front>
+
+<!-- Start Hero Section -->
+<div class="hero">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-5">
+        <div class="intro-excerpt">
+          <h1>Modern Interior <span class="d-block">Design Studio</span></h1>
+          <p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+          <p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="hero-img-wrap">
+          <img src="/assets/FrontOffice/img/globall.png" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- src/app/trips/create-trip/create-trip.component.html -->
+<div class="container py-4">
+    <div class="card shadow-sm border-0 rounded-lg">
+      <div class="card-body p-4">
+        <h2 class="card-title text-center mb-4 position-relative">
+          Create New Trip
+          <span class="d-block position-relative mx-auto mt-2 underline-accent"></span>
+        </h2>
+        
+        <form [formGroup]="tripForm" (ngSubmit)="onSubmit()" class="trip-form">
+          
+          <!-- Start Location -->
+          <div class="mb-3">
+            <label for="startLocation" class="form-label">Start Location *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-geo-alt"></i>
+              </span>
+              <input 
+                type="text" 
+                id="startLocation" 
+                formControlName="start_location" 
+                class="form-control"
+                [ngClass]="{'is-invalid': isFieldInvalid('start_location')}"
+                placeholder="Enter departure location">
+            </div>
+            <div *ngIf="isFieldInvalid('start_location')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('start_location')?.errors?.['required']">Start location is required</span>
+            </div>
+          </div>
+          
+          <!-- End Location -->
+          <div class="mb-3">
+            <label for="endLocation" class="form-label">End Location *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-pin-map"></i>
+              </span>
+              <input 
+                type="text" 
+                id="endLocation" 
+                formControlName="end_location" 
+                class="form-control"
+                [ngClass]="{'is-invalid': isFieldInvalid('end_location')}"
+                placeholder="Enter arrival location">
+            </div>
+            <div *ngIf="isFieldInvalid('end_location')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('end_location')?.errors?.['required']">End location is required</span>
+            </div>
+          </div>
+          
+          <!-- description -->
+          <div class="mb-3">
+            <label for="description" class="form-label">description *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-compass"></i>
+              </span>
+              <input 
+                type="text" 
+                id="description" 
+                formControlName="description" 
+                class="form-control"
+                [ngClass]="{'is-invalid': isFieldInvalid('description')}"
+                placeholder="Enter main description">
+            </div>
+            <div *ngIf="isFieldInvalid('description')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('description')?.errors?.['required']">description is required</span>
+            </div>
+          </div>
+          
+          <!-- Phone Number -->
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Phone Number *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-telephone"></i>
+              </span>
+              <input 
+                type="text" 
+                id="phoneNumber" 
+                formControlName="phone_number" 
+                class="form-control"
+                [ngClass]="{'is-invalid': isFieldInvalid('phone_number')}"
+                placeholder="Enter phone number">
+            </div>
+            <div *ngIf="isFieldInvalid('phone_number')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('phone_number')?.errors?.['required']">Phone number is required</span>
+            </div>
+          </div>
+          
+          <!-- Trip Date -->
+          <div class="mb-3">
+            <label for="tripDate" class="form-label">Trip Date *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-calendar-event"></i>
+              </span>
+              <input 
+                type="date" 
+                id="tripDate" 
+                formControlName="trip_date" 
+                class="form-control"
+                [ngClass]="{'is-invalid': isFieldInvalid('trip_date')}">
+            </div>
+            <div *ngIf="isFieldInvalid('trip_date')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('trip_date')?.errors?.['required']">Trip date is required</span>
+            </div>
+          </div>
+          
+          <!-- Trip Status -->
+          <div class="mb-3">
+            <label for="tripStatus" class="form-label">Trip Status *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-flag"></i>
+              </span>
+              <select 
+                id="tripStatus" 
+                formControlName="trip_status" 
+                class="form-select"
+                [ngClass]="{'is-invalid': isFieldInvalid('trip_status')}">
+                <option value="" disabled selected>Select status</option>
+                <option *ngFor="let status of tripStatusOptions" [value]="status">{{status}}</option>
+              </select>
+            </div>
+            <div *ngIf="isFieldInvalid('trip_status')" class="text-danger small mt-1">
+              <span *ngIf="tripForm.get('trip_status')?.errors?.['required']">Trip status is required</span>
+            </div>
+          </div>
+          
+          <!-- Form Actions -->
+          <div class="d-flex justify-content-between mt-4">
+            <button 
+              type="button" 
+              (click)="resetForm()" 
+              class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+            </button>
+            <button 
+              type="submit" 
+              [disabled]="isSubmitting || !tripForm.valid" 
+              class="btn btn-primary">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              {{ isSubmitting ? 'Saving...' : 'Create Trip' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> 
+
+
+
+
+
+
+
+
+
+  <!-- Bootstrap CSS -->
+<link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
+<link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
+
+<!-- Bootstrap JS -->
+<script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
+<script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
+<script src="/assets/FrontOffice/js2/custom.js"></script>
+
+
+
+
+
+
+
+
+<app-footer-front></app-footer-front>

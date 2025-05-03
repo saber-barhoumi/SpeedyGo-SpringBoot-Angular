@@ -1,0 +1,83 @@
+<app-header-front></app-header-front>
+<form [formGroup]="offerForm" (ngSubmit)="onSubmit()" class="modern-form">
+    <div class="form-grid">
+      <!-- Left Column -->
+      <div class="form-column">
+        <div class="input-group">
+          <label for="title">Title</label>
+          <input id="title" formControlName="title" placeholder="Enter offer title">
+          <div class="error-message" *ngIf="isFieldInvalid('title')">
+            ⚠️ Title is required (3-50 characters)
+          </div>
+        </div>
+  
+        <div class="input-group">
+          <label for="description">Description</label>
+          <textarea id="description" formControlName="description" 
+                   placeholder="Describe the offer in details" rows="4"></textarea>
+          <div class="error-message" *ngIf="isFieldInvalid('description')">
+            ⚠️ Description required (10-500 characters)
+          </div>
+        </div>
+  
+        <div class="input-group">
+          <label for="image">Image URL</label>
+          <input id="image" formControlName="image" placeholder="https://example.com/image.jpg">
+        </div>
+      </div>
+  
+      <!-- Right Column -->
+      <div class="form-column">
+        <div class="input-group">
+          <label for="category">Category</label>
+          <input id="category" formControlName="category" placeholder="Select category">
+          <div class="error-message" *ngIf="isFieldInvalid('category')">⚠️ Category is required</div>
+        </div>
+  
+        <div class="input-row">
+          <div class="input-group">
+            <label for="price">Price ($)</label>
+            <input id="price" type="number" formControlName="price" placeholder="0.00">
+            <div class="error-message" *ngIf="isFieldInvalid('price')">⚠️ Must be positive</div>
+          </div>
+  
+          <div class="input-group">
+            <label for="discount">Discount (%)</label>
+            <input id="discount" type="number" formControlName="discount" placeholder="0-100">
+            <div class="error-message" *ngIf="isFieldInvalid('discount')">⚠️ 0-100% only</div>
+          </div>
+        </div>
+  
+        <div class="input-row">
+          <div class="input-group">
+            <label for="date_start">Start Date</label>
+            <input id="date_start" type="date" formControlName="date_start">
+          </div>
+  
+          <div class="input-group checkbox-group">
+            <label for="available">
+              <input id="available" type="checkbox" formControlName="available">
+              <span class="checkmark"></span>
+              Available
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Create Offer' }}
+      </button>
+    </div>
+  </form>
+
+
+
+
+
+
+
+
+  <app-footer-front></app-footer-front>

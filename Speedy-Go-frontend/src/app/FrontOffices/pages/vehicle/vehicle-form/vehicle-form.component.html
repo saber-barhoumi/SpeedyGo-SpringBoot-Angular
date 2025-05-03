@@ -1,0 +1,244 @@
+<div class="container py-5">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <div class="card border-0 shadow rounded-lg">
+          <div class="card-body p-5">
+            <h2 class="text-center mb-4">
+              {{ isEditMode ? 'Edit Vehicle' : 'Add New Vehicle' }}
+            </h2>
+            <p class="text-muted text-center mb-4">
+              {{ isEditMode ? 'Update your vehicle information below.' : 'Please provide details about your delivery vehicle.' }}
+            </p>
+  
+            <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()">
+              <!-- Basic Information -->
+              <div class="mb-4">
+                <h4 class="mb-3">Basic Information</h4>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="brand" class="form-label">Brand/Make*</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="brand" 
+                      formControlName="brand"
+                      [ngClass]="{'is-invalid': vehicleForm.get('brand')?.invalid && vehicleForm.get('brand')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Brand/Make is required.
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="model" class="form-label">Model*</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="model" 
+                      formControlName="model"
+                      [ngClass]="{'is-invalid': vehicleForm.get('model')?.invalid && vehicleForm.get('model')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Model is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="yearOfManufacture" class="form-label">Year of Manufacture*</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="yearOfManufacture" 
+                      formControlName="yearOfManufacture"
+                      [ngClass]="{'is-invalid': vehicleForm.get('yearOfManufacture')?.invalid && vehicleForm.get('yearOfManufacture')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Please enter a valid year (1950-{{ currentYear + 1 }}).
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="licensePlate" class="form-label">License Plate*</label>
+                    <div class="input-group">
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="licensePlate" 
+                        formControlName="licensePlate"
+                        [ngClass]="{'is-invalid': (vehicleForm.get('licensePlate')?.invalid && vehicleForm.get('licensePlate')?.touched) || licensePlateExists}"
+                      >
+                      <span class="input-group-text" *ngIf="checkingLicensePlate">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </span>
+                    </div>
+                    <div class="invalid-feedback" *ngIf="vehicleForm.get('licensePlate')?.hasError('required')">
+                      License plate is required.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="vehicleForm.get('licensePlate')?.hasError('pattern')">
+                      Invalid format. Use only letters, numbers, spaces and hyphens.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="vehicleForm.get('licensePlate')?.hasError('alreadyRegistered')">
+                      This license plate is already registered.
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="registrationNumber" class="form-label">Registration Number*</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="registrationNumber" 
+                      formControlName="registrationNumber"
+                      [ngClass]="{'is-invalid': vehicleForm.get('registrationNumber')?.invalid && vehicleForm.get('registrationNumber')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Registration number is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Vehicle Details -->
+              <div class="mb-4">
+                <h4 class="mb-3">Vehicle Details</h4>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="vehicleType" class="form-label">Vehicle Type*</label>
+                    <select 
+                      class="form-select" 
+                      id="vehicleType" 
+                      formControlName="vehicleType"
+                      [ngClass]="{'is-invalid': vehicleForm.get('vehicleType')?.invalid && vehicleForm.get('vehicleType')?.touched}"
+                    >
+                      <option value="" disabled>Select vehicle type</option>
+                      <option *ngFor="let type of vehicleTypes" [value]="type">
+                        {{ type.replace('_', ' ') }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select a vehicle type.
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="maxLoadCapacity" class="form-label">Max Load Capacity (kg)*</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="maxLoadCapacity" 
+                      formControlName="maxLoadCapacity"
+                      [ngClass]="{'is-invalid': vehicleForm.get('maxLoadCapacity')?.invalid && vehicleForm.get('maxLoadCapacity')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Please enter a valid load capacity.
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input" 
+                        id="hasRefrigeration" 
+                        formControlName="hasRefrigeration"
+                      >
+                      <label class="form-check-label" for="hasRefrigeration">
+                        Has Refrigeration
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Insurance Information -->
+              <div class="mb-4">
+                <h4 class="mb-3">Insurance Information</h4>
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <div class="form-check">
+                      <input 
+                        type="checkbox" 
+                        class="form-check-input" 
+                        id="isInsured" 
+                        formControlName="isInsured"
+                      >
+                      <label class="form-check-label" for="isInsured">
+                        This vehicle is insured
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="vehicleForm.get('isInsured')?.value">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="insuranceProvider" class="form-label">Insurance Provider*</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="insuranceProvider" 
+                        formControlName="insuranceProvider"
+                        [ngClass]="{'is-invalid': vehicleForm.get('insuranceProvider')?.invalid && vehicleForm.get('insuranceProvider')?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        Insurance provider is required when vehicle is insured.
+                      </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="insurancePolicyNumber" class="form-label">Insurance Policy Number*</label>
+                      <input 
+                        type="text" 
+                        class="form-control" 
+                        id="insurancePolicyNumber" 
+                        formControlName="insurancePolicyNumber"
+                        [ngClass]="{'is-invalid': vehicleForm.get('insurancePolicyNumber')?.invalid && vehicleForm.get('insurancePolicyNumber')?.touched}"
+                      >
+                      <div class="invalid-feedback">
+                        Policy number is required when vehicle is insured.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Vehicle Photo - In a production app, you'd add file upload functionality here -->
+              <div class="mb-4">
+                <h4 class="mb-3">Vehicle Photo</h4>
+                <div class="mb-3">
+                  <label for="vehiclePhotoPath" class="form-label">Photo URL</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="vehiclePhotoPath" 
+                    formControlName="vehiclePhotoPath"
+                  >
+                  <div class="form-text text-muted">
+                    Enter a URL to your vehicle photo. For a complete solution, implement file upload.
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Form Buttons -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary me-md-2" 
+                  routerLink="/vehicles"
+                  [disabled]="isSubmitting"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary" 
+                  [disabled]="isSubmitting"
+                >
+                  <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                  {{ isEditMode ? 'Update Vehicle' : 'Add Vehicle' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

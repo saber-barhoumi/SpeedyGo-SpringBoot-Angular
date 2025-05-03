@@ -1,0 +1,445 @@
+<app-header-front></app-header-front>
+<!-- Start Hero Section -->
+<div class="hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-5 text-start">
+        <div class="intro-excerpt">
+          <h1>Welcome to <span class="d-block">SpecificTrip</span></h1>
+          <p class="mb-4">
+            SpecificTrip ensures that your delivery request is handled with care and precision. 
+            We focus on your specific needs and guarantee a secure and reliable shipping experience. 
+            Your satisfaction is our mission.
+          </p>
+          <p>
+            <a href="#" class="btn btn-secondary me-2">Send Now</a>
+            <a href="#" class="btn btn-white-outline">Learn More</a>
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="hero-img-wrap">
+          <img src="/assets/FrontOffice/img/globall.png" class="img-fluid" alt="SpecificTrip Delivery">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container py-4">
+  <div class="card shadow-sm border-0 rounded-lg">
+    <div class="card-body p-4">
+      <h2 class="card-title text-center mb-4 position-relative">
+        Trip Details
+        <span class="d-block position-relative mx-auto mt-2 underline-accent"></span>
+      </h2>
+      
+      <form #tripForm="ngForm" (ngSubmit)="onSubmit(tripForm)" class="trip-form">
+        
+        <!-- Trip Details -->
+        <div class="mb-3">
+          <label for="tripDetails" class="form-label">Trip Details *</label>
+          <input 
+            type="text" 
+            id="tripDetails" 
+            name="tripDetails" 
+            ngModel
+            required
+            class="form-control"
+            #tripDetails="ngModel"
+            [ngClass]="{'is-invalid': tripDetails.invalid && tripDetails.touched}"
+            placeholder="Detailed description of the trip">
+          <div *ngIf="tripDetails.invalid && tripDetails.touched" class="text-danger small mt-1">
+            <span *ngIf="tripDetails.errors?.['required']">Trip details are required</span>
+          </div>
+        </div>
+        
+        <!-- Departure Location -->
+        <div class="mb-3">
+          <label for="departureLocation" class="form-label">Departure Location *</label>
+          <input 
+            type="text" 
+            id="departureLocation" 
+            name="departureLocation" 
+            ngModel
+            required
+            class="form-control location-input"
+            #departureLocation="ngModel"
+            #departureLocationInput
+            [ngClass]="{'is-invalid': departureLocation.invalid && departureLocation.touched}"
+            placeholder="Enter departure location">
+          <div *ngIf="departureLocation.invalid && departureLocation.touched" class="text-danger small mt-1">
+            <span *ngIf="departureLocation.errors?.['required']">Departure location is required</span>
+          </div>
+        </div>
+        
+        <!-- Pass Through Location (New Field) -->
+        <div class="mb-3">
+          <label for="passThroughLocation" class="form-label">
+            Passe par cette place (Pass through this place)
+            <span class="small text-muted">(Optional)</span>
+          </label>
+          <input 
+            type="text" 
+            id="passThroughLocation" 
+            name="passThroughLocation" 
+            ngModel
+            class="form-control location-input"
+            #passThroughLocation="ngModel"
+            #passThroughLocationInput
+            placeholder="Enter intermediate location (optional)">
+          <small class="form-text text-muted">
+            Add a location you want the trip to pass through on its route
+          </small>
+        </div>
+        
+        <!-- Arrival Location -->
+        <div class="mb-3">
+          <label for="arrivalLocation" class="form-label">Arrival Location *</label>
+          <input 
+            type="text" 
+            id="arrivalLocation" 
+            name="arrivalLocation" 
+            ngModel
+            required
+            class="form-control location-input"
+            #arrivalLocation="ngModel"
+            #arrivalLocationInput
+            [ngClass]="{'is-invalid': arrivalLocation.invalid && arrivalLocation.touched}"
+            placeholder="Enter arrival location">
+          <div *ngIf="arrivalLocation.invalid && arrivalLocation.touched" class="text-danger small mt-1">
+            <span *ngIf="arrivalLocation.errors?.['required']">Arrival location is required</span>
+          </div>
+        </div>
+        
+        <!-- description -->
+        <div class="mb-3">
+          <label for="description" class="form-label">description</label>
+          <input 
+            type="text" 
+            id="description" 
+            name="description" 
+            ngModel
+            required
+            class="form-control"
+            #description="ngModel"
+            [ngClass]="{'is-invalid': description.invalid && description.touched}"
+            placeholder="Enter description">
+          <div *ngIf="description.invalid && description.touched" class="text-danger small mt-1">
+            <span *ngIf="description.errors?.['required']">description is required</span>
+          </div>
+        </div>
+        
+        <!-- Departure Date -->
+        <div class="mb-3">
+          <label for="departureDate" class="form-label">Departure Date *</label>
+          <input 
+            type="date" 
+            id="departureDate" 
+            name="departureDate" 
+            ngModel
+            required
+            class="form-control"
+            #departureDate="ngModel"
+            [ngClass]="{'is-invalid': departureDate.invalid && departureDate.touched}">
+          <div *ngIf="departureDate.invalid && departureDate.touched" class="text-danger small mt-1">
+            <span *ngIf="departureDate.errors?.['required']">Departure date is required</span>
+          </div>
+        </div>
+        
+        <!-- Arrival Date -->
+        <div class="mb-3">
+          <label for="arrivalDate" class="form-label">Arrival Date *</label>
+          <input 
+            type="date" 
+            id="arrivalDate" 
+            name="arrivalDate" 
+            ngModel
+            required
+            class="form-control"
+            #arrivalDate="ngModel"
+            [ngClass]="{'is-invalid': arrivalDate.invalid && arrivalDate.touched}">
+          <div *ngIf="arrivalDate.invalid && arrivalDate.touched" class="text-danger small mt-1">
+            <span *ngIf="arrivalDate.errors?.['required']">Arrival date is required</span>
+          </div>
+        </div>
+        
+        <!-- Departure Time -->
+        <div class="mb-3">
+          <label for="departureTime" class="form-label">Departure Time *</label>
+          <input 
+            type="time" 
+            id="departureTime" 
+            name="departureTime" 
+            ngModel
+            required
+            class="form-control"
+            #departureTime="ngModel"
+            [ngClass]="{'is-invalid': departureTime.invalid && departureTime.touched}">
+          <div *ngIf="departureTime.invalid && departureTime.touched" class="text-danger small mt-1">
+            <span *ngIf="departureTime.errors?.['required']">Departure time is required</span>
+          </div>
+        </div>
+        
+        <!-- Arrival Time -->
+        <div class="mb-3">
+          <label for="arrivalTime" class="form-label">Arrival Time *</label>
+          <input 
+            type="time" 
+            id="arrivalTime" 
+            name="arrivalTime" 
+            ngModel
+            required
+            class="form-control"
+            #arrivalTime="ngModel"
+            [ngClass]="{'is-invalid': arrivalTime.invalid && arrivalTime.touched}">
+          <div *ngIf="arrivalTime.invalid && arrivalTime.touched" class="text-danger small mt-1">
+            <span *ngIf="arrivalTime.errors?.['required']">Arrival time is required</span>
+          </div>
+        </div>
+        
+        <!-- Vehicle Type -->
+        
+        
+        <!-- Trip Status -->
+        
+        
+        <!-- Parcel Details Section -->
+        <h4 class="mt-4 mb-3">Parcel Details</h4>
+        
+        <!-- Size -->
+        <div class="mb-3">
+          <label for="size" class="form-label">Size (kg) *</label>
+          <input 
+            type="number" 
+            id="size" 
+            name="size" 
+            ngModel
+            required
+            class="form-control"
+            #size="ngModel"
+            [ngClass]="{'is-invalid': size.invalid && size.touched}"
+            placeholder="Enter parcel weight in kg">
+          <div *ngIf="size.invalid && size.touched" class="text-danger small mt-1">
+            <span *ngIf="size.errors?.['required']">Size is required</span>
+          </div>
+        </div>
+        
+        <!-- Parcel Type -->
+        <div class="mb-3">
+          <label for="parcelType" class="form-label">Parcel Type *</label>
+          <select 
+            id="parcelType" 
+            name="parcelType" 
+            ngModel
+            required
+            class="form-select"
+            #parcelType="ngModel"
+            [ngClass]="{'is-invalid': parcelType.invalid && parcelType.touched}">
+            <option value="" disabled selected>Select parcel type</option>
+            <option value="PACKED">PACKED</option>
+            <option value="BULKY">BULKY</option>
+            <option value="FRAGILE">FRAGILE</option>
+            <option value="HEAVY">HEAVY</option>
+          </select>
+          <div *ngIf="parcelType.invalid && parcelType.touched" class="text-danger small mt-1">
+            <span *ngIf="parcelType.errors?.['required']">Parcel type is required</span>
+          </div>
+        </div>
+        
+        <!-- Parcel description -->
+        <div class="mb-3">
+          <label for="parcelDescription" class="form-label">Parcel description *</label>
+          <textarea 
+            id="parcelDescription" 
+            name="parcelDescription" 
+            ngModel
+            required
+            class="form-control"
+            rows="3"
+            #parcelDescription="ngModel"
+            [ngClass]="{'is-invalid': parcelDescription.invalid && parcelDescription.touched}"
+            placeholder="Describe the parcel contents"></textarea>
+          <div *ngIf="parcelDescription.invalid && parcelDescription.touched" class="text-danger small mt-1">
+            <span *ngIf="parcelDescription.errors?.['required']">Parcel description is required</span>
+          </div>
+        </div>
+        
+        <!-- Parcel Dimensions -->
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="parcelLength" class="form-label">Length (cm) *</label>
+            <input 
+              type="number" 
+              id="parcelLength" 
+              name="parcelLength" 
+              ngModel
+              required
+              class="form-control"
+              #parcelLength="ngModel"
+              [ngClass]="{'is-invalid': parcelLength.invalid && parcelLength.touched}">
+            <div *ngIf="parcelLength.invalid && parcelLength.touched" class="text-danger small mt-1">
+              <span *ngIf="parcelLength.errors?.['required']">Length is required</span>
+            </div>
+          </div>
+          
+          <div class="col-md-4 mb-3">
+            <label for="parcelWidth" class="form-label">Width (cm) *</label>
+            <input 
+              type="number" 
+              id="parcelWidth" 
+              name="parcelWidth" 
+              ngModel
+              required
+              class="form-control"
+              #parcelWidth="ngModel"
+              [ngClass]="{'is-invalid': parcelWidth.invalid && parcelWidth.touched}">
+            <div *ngIf="parcelWidth.invalid && parcelWidth.touched" class="text-danger small mt-1">
+              <span *ngIf="parcelWidth.errors?.['required']">Width is required</span>
+            </div>
+          </div>
+          
+          <div class="col-md-4 mb-3">
+            <label for="parcelHeight" class="form-label">Height (cm) *</label>
+            <input 
+              type="number" 
+              id="parcelHeight" 
+              name="parcelHeight" 
+              ngModel
+              required
+              class="form-control"
+              #parcelHeight="ngModel"
+              [ngClass]="{'is-invalid': parcelHeight.invalid && parcelHeight.touched}">
+            <div *ngIf="parcelHeight.invalid && parcelHeight.touched" class="text-danger small mt-1">
+              <span *ngIf="parcelHeight.errors?.['required']">Height is required</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Receiver Details -->
+        <h4 class="mt-4 mb-3">Receiver Details</h4>
+        
+        <!-- Receiver Full Name -->
+        <div class="mb-3">
+          <label for="receiverFullName" class="form-label">Receiver's Full Name *</label>
+          <input 
+            type="text" 
+            id="receiverFullName" 
+            name="receiverFullName" 
+            ngModel
+            required
+            class="form-control"
+            #receiverFullName="ngModel"
+            [ngClass]="{'is-invalid': receiverFullName.invalid && receiverFullName.touched}"
+            placeholder="Enter receiver's full name">
+          <div *ngIf="receiverFullName.invalid && receiverFullName.touched" class="text-danger small mt-1">
+            <span *ngIf="receiverFullName.errors?.['required']">Receiver's name is required</span>
+          </div>
+        </div>
+        
+        <!-- Receiver Phone Number -->
+        <div class="mb-3">
+          <label for="receiverPhoneNumber" class="form-label">Receiver's Phone Number *</label>
+          <input 
+            type="tel" 
+            id="receiverPhoneNumber" 
+            name="receiverPhoneNumber" 
+            ngModel
+            required
+            class="form-control"
+            #receiverPhoneNumber="ngModel"
+            [ngClass]="{'is-invalid': receiverPhoneNumber.invalid && receiverPhoneNumber.touched}"
+            placeholder="Enter receiver's phone number">
+          <div *ngIf="receiverPhoneNumber.invalid && receiverPhoneNumber.touched" class="text-danger small mt-1">
+            <span *ngIf="receiverPhoneNumber.errors?.['required']">Receiver's phone number is required</span>
+          </div>
+        </div>
+        
+        <!-- Photo Upload -->
+        <div class="mb-3">
+          <label for="photo" class="form-label">Parcel Photo</label>
+          <input 
+            type="file" 
+            id="photo" 
+            name="photo" 
+            ngModel
+            class="form-control"
+            #photo="ngModel"
+            accept="image/*">
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-between mt-4">
+          <button 
+            type="button" 
+            (click)="tripForm.resetForm()" 
+            class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+          </button>
+          <button 
+            type="submit" 
+            [disabled]="tripForm.invalid" 
+            class="btn btn-primary">
+            <i class="bi bi-save me-1"></i> Save Trip
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  <!-- Bootstrap CSS -->
+  <link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
+  
+  <!-- Bootstrap JS -->
+  <script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
+  <script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
+  <script src="/assets/FrontOffice/js2/custom.js"></script>
+
+
+
+
+
+
+
+  <app-footer-front></app-footer-front> 

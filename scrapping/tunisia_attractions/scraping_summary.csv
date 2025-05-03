@@ -1,0 +1,25 @@
+governorate,attractions_count,db_records_inserted,status,backup_csv
+Sousse,6,6,Success,tunisia_attractions\sousse_attractions.csv
+Tunis,6,6,Success,tunisia_attractions\tunis_attractions.csv
+Bizerte,6,6,Success,tunisia_attractions\bizerte_attractions.csv
+Sfax,6,6,Success,tunisia_attractions\sfax_attractions.csv
+Ariana,1,1,Success,tunisia_attractions\ariana_attractions.csv
+Ben Arous,0,0,No data found,
+Gafsa,4,4,Success,tunisia_attractions\gafsa_attractions.csv
+Jendouba,0,0,No data found,
+Kairouan,6,6,Success,tunisia_attractions\kairouan_attractions.csv
+Kasserine,0,0,No data found,
+Kebili,0,0,No data found,
+Mahdia,6,6,Success,tunisia_attractions\mahdia_attractions.csv
+Medenine,12,12,Success,tunisia_attractions\medenine_attractions.csv
+Nabeul,12,12,Success,tunisia_attractions\nabeul_attractions.csv
+Sidi Bouzid,0,0,No data found,
+Siliana,0,0,No data found,
+Tozeur,6,6,Success,tunisia_attractions\tozeur_attractions.csv
+Zaghouan,3,3,Success,tunisia_attractions\zaghouan_attractions.csv
+Tataouine,5,5,Success,tunisia_attractions\tataouine_attractions.csv
+Le Kef,2,2,Success,tunisia_attractions\le_kef_attractions.csv
+Gabes,5,5,Success,tunisia_attractions\gabes_attractions.csv
+Beja,4,4,Success,tunisia_attractions\beja_attractions.csv
+Manouba,1,1,Success,tunisia_attractions\manouba_attractions.csv
+Monastir,6,6,Success,tunisia_attractions\monastir_attractions.csv

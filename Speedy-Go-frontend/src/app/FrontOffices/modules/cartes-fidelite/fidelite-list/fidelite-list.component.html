@@ -1,0 +1,24 @@
+<div class="fidelite-list-container">
+  <h2 class="page-title">My Loyalty Cards</h2>
+  
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading your loyalty cards...</p>
+  </div>
+  
+  <div *ngIf="error" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p>An error occurred while fetching your loyalty cards.</p>
+    <button class="retry-button" (click)="loadFidelityCards()">Try Again</button>
+  </div>
+  
+  <div *ngIf="!loading && !error && loyaltyCards.length === 0" class="no-cards-container">
+    <div class="empty-icon">💳</div>
+    <p>You don't have any loyalty cards yet.</p>
+    <p class="subtitle">Visit our partner stores and start earning rewards!</p>
+  </div>
+  
+  <div *ngIf="!loading && !error && loyaltyCards.length > 0" class="cards-grid">
+    <app-fidelite-card *ngFor="let card of loyaltyCards" [card]="card"></app-fidelite-card>
+  </div>
+</div>

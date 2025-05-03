@@ -1,0 +1,73 @@
+.location-reports-container {
+  .no-data-message, .no-routes-data {
+    padding: 2rem;
+    text-align: center;
+    color: #718096;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    i {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #cbd5e0;
+    }
+  }
+  
+  .routes-container {
+    .route-item {
+      background-color: #f8f9fa;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      }
+      
+      &.route-highlight {
+        border-left: 4px solid #4361ee;
+      }
+      
+      .route-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        
+        .route-title {
+          font-weight: 500;
+          color: #2d3748;
+          font-size: 0.875rem;
+          display: flex;
+          align-items: center;
+          
+          i {
+            margin: 0 0.5rem;
+            color: #4361ee;
+          }
+        }
+        
+        .route-badge {
+          background: rgba(67, 97, 238, 0.1);
+          color: #4361ee;
+          border-radius: 1rem;
+          padding: 0.25rem 0.75rem;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+      }
+      
+      .route-progress {
+        .progress {
+          height: 8px;
+          
+          .progress-bar {
+            background: linear-gradient(90deg, #4361ee 0%, #3f8cff 100%);
+            transition: width 0.5s ease;
+          }
+        }
+      }
+    }
+  }
+}

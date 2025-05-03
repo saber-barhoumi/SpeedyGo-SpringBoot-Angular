@@ -1,0 +1,260 @@
+:host {
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #c026d3 100%);
+  --card-radius: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.card {
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.card-header.bg-gradient {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  background-size: 200% auto;
+  transition: background-position 0.5s ease;
+  position: relative;
+}
+
+.card-header.bg-gradient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 30%);
+}
+
+.card-title {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #6366f1;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 1rem;
+  border-left: 4px solid #6366f1;
+  padding-left: 12px;
+}
+
+/* Location cards */
+.location-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  height: 100%;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.location-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  margin-right: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.location-icon.start {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.location-icon.waypoint {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.location-icon.end {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.location-icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+}
+
+.location-icon i {
+  font-size: 1.25rem;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.location-details h5 {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #1f2937;
+}
+
+.location-details p {
+  margin-bottom: 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Map section */
+.map-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.embedded-map {
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.embedded-map:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Map Fallback */
+.map-fallback {
+  background: rgba(243, 244, 246, 0.5);
+  height: 400px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(99, 102, 241, 0.3);
+}
+
+.map-fallback i.display-1 {
+  font-size: 4rem;
+  color: rgba(99, 102, 241, 0.3);
+}
+
+/* Static Map Container */
+.static-map-container {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(243, 244, 246, 0.5);
+  border-radius: 8px;
+}
+
+.static-map {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.static-map:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.alert-warning {
+  background-color: rgba(255, 237, 213, 0.5);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  color: #9a3412;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Governorates section */
+.governorates-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.governorates-list {
+  margin-top: 1.5rem;
+}
+
+.route-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.governorate-step {
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.governorate-step:last-child {
+  padding-bottom: 0;
+}
+
+.step-number {
+  position: absolute;
+  left: -2rem;
+  width: 2rem;
+  height: 2rem;
+  background: #6366f1;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.step-connection {
+  position: absolute;
+  left: -1.05rem;
+  top: 2rem;
+  width: 2px;
+  height: calc(100% - 2rem);
+  background: rgba(99, 102, 241, 0.3);
+  z-index: 1;
+}
+
+.governorate-card {
+  background: rgba(249, 250, 251, 0.5);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  transition: var(--transition);
+}
+
+.governorate-card:hover {
+  transform: translateX(5px);
+  background: rgba(243, 244, 246, 0.8);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.governorate-card h4 {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .location-card {
+    margin-bottom: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.125rem;
+  }
+}

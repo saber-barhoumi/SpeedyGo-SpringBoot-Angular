@@ -1,0 +1,95 @@
+<div class="speedygo-container">
+  <!-- Header comme dans l'image -->
+  <header class="speedygo-header">
+    <div class="logo">
+      <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="logo-img">
+    </div>
+    <nav class="main-nav">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Delivery</a>
+      <a href="#">Pricing</a>
+      <a href="#">Pages</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+ 
+
+  <!-- Section carte et formulaire -->
+  <section class="map-section">
+    <div class="map-container">
+      <div id="map"></div>
+      
+      <div class="route-form">
+        <h3>Calculate Your Smart Route</h3>
+
+        
+        
+        
+        <div class="input-group">
+          <label>From:</label>
+          <input type="text" placeholder="Departure address" [(ngModel)]="fromQuery" (input)="searchFrom()" />
+          <ul *ngIf="fromResults.length" class="suggestions">
+            <li *ngFor="let result of fromResults" (click)="selectFrom(result)">
+              {{ result.display_name }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="input-group">
+          <label>To:</label>
+          <input type="text" placeholder="Destination address" [(ngModel)]="toQuery" (input)="searchTo()" />
+          <ul *ngIf="toResults.length" class="suggestions">
+            <li *ngFor="let result of toResults" (click)="selectTo(result)">
+              {{ result.display_name }}
+            </li>
+          </ul>
+        </div>
+
+        <button class="calculate-btn" [disabled]="isLoading" (click)="calculateSmartRoute()">
+          <span *ngIf="!isLoading">Calculate Route</span>
+          <span *ngIf="isLoading">Calculating...</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Résultats d'itinéraire -->
+  <section class="route-results" *ngIf="routes?.length">
+    <h3>Available Routes</h3>
+    
+    <div class="route-options">
+      <div class="route-card" *ngFor="let route of routes; let i = index" (click)="selectRoute(route)">
+        <div class="route-number">Option {{ i + 1 }}</div>
+        <div class="route-details">
+          <p><i class="fas fa-road" style="color: #084b24;"></i>
+            {{ route.properties.summary.distance / 1000 | number:'1.1-1' }} km</p>
+          <p><i class="fas fa-clock" style="color: #084b24;"></i>
+            {{ convertMinutes(route.properties.predicted_duration) }}</p>
+          <p><i class="fas fa-traffic-light" style="color: #084b24;"></i>
+            {{ route.properties.traffic | titlecase }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="best-route" *ngIf="bestRoute">
+      <div class="best-tag">BEST OPTION</div>
+      <div class="best-details">
+        <h4><i class="fas fa-crown" style="color: #084b24;"></i>
+          Recommended Route</h4>
+        <p><i class="fas fa-road" style="color: #084b24;"></i>{{ bestRoute.properties.summary.distance / 1000 | number:'1.1-1' }} km</p>
+        <p><i class="fas fa-clock" style="color: #084b24;"></i> {{ convertMinutes(bestRoute.properties.predicted_duration) }}</p>
+        <p><i class="fas fa-traffic-light" style="color: #084b24;"></i> {{ bestRoute.properties.traffic | titlecase }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About section comme dans l'image -->
+  <section class="about-section">
+    <h3>ABOUT SPEEDYGO</h3>
+    <p>SpeedyGo is your reliable delivery partner, providing fast and efficient shipping solutions.</p>
+    <!-- Contenu about ici -->
+  </section>
+</div>

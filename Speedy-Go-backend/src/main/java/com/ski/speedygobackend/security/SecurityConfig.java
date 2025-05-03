@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/ws/**",
                                 "/parcel/**",
+                                "/payment/**",
                                 "/route/**",
                                 "/public/**",
                                 "/api/auth/**",

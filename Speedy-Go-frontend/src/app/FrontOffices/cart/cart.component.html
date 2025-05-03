@@ -76,9 +76,19 @@
           <option *ngFor="let currency of availableCurrencies" [value]="currency">{{currency}}</option>
         </select>
       </div>
-      <button class="pay-button" [disabled]="loading" (click)="payCart()">
-        <span *ngIf="!loading">Payer le panier</span>
-        <span *ngIf="loading" class="spinner"></span>
+      <button class="pay-button" [disabled]="loading || paymentLoading" (click)="initializePaymentForm()">
+        <span *ngIf="!loading && !paymentLoading">Payer le panier</span>
+        <span *ngIf="loading || paymentLoading" class="spinner"></span>
+      </button>
+    </div>
+
+    <div *ngIf="showPaymentForm" class="payment-form">
+      <h2>Paiement</h2>
+      <div id="card-element" class="card-element"></div>
+      <div *ngIf="paymentError" class="payment-error">{{paymentError}}</div>
+      <button class="confirm-payment-button" [disabled]="loading || paymentLoading" (click)="payCart()">
+        <span *ngIf="!paymentLoading">Confirmer le paiement</span>
+        <span *ngIf="paymentLoading" class="spinner"></span>
       </button>
     </div>
   </div>

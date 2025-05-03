@@ -1,32 +1,48 @@
-import { Component, OnInit } from '@angular/core';
-import { CartService } from 'src/app/services/cart/cart.service'; // Adjust path as needed
-import { Offer } from 'src/app/FrontOffices/services/offres/offre.service'; // Adjust path as needed
+import { Component, OnInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { CartService } from 'src/app/services/cart/cart.service';
+import { Offer } from 'src/app/FrontOffices/services/offres/offre.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css']
+  styleUrls: ['./cart.component.css'],
+  providers: [CurrencyPipe]
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, AfterViewChecked {
   cartItems: { offer: Offer; quantity: number }[] = [];
   totalPrice: number = 0;
   userId: number | null = null;
+  userName: string = '';
   loading = true;
   error = false;
   isDarkMode: boolean = false;
   availableCurrencies: string[] = [];
   selectedCurrency: string = 'USD';
   currencySymbol: string = '$';
+  stripe: Stripe | null = null;
+  elements: StripeElements | null = null;
+  card: StripeCardElement | null = null;
+  paymentError: string | null = null;
+  paymentLoading = false;
+  showPaymentForm = false;
+  private shouldMountCard = false;
 
   constructor(
     private cartService: CartService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private currencyPipe: CurrencyPipe
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadUserData();
     this.loadCurrencies();
     const savedDarkMode = localStorage.getItem('darkMode');
@@ -37,6 +53,34 @@ export class CartComponent implements OnInit {
     if (savedCurrency) {
       this.selectedCurrency = savedCurrency;
     }
+    // Initialize Stripe
+    this.stripe = await loadStripe('pk_test_51RKl0bRM6425ZGFPxxjxrSqkccmWcPVUgFAqWIUcQY4aghl07Gg6ZmtpYJ8iavzKFwHo0ASG5B2CKqR3PSng12OR00lA8EB9X3');
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.shouldMountCard && this.stripe && this.elements && !this.card) {
+      const cardElement = document.getElementById('card-element');
+      if (cardElement) {
+        console.log('Mounting card element');
+        this.card = this.elements.create('card', {
+          style: {
+            base: {
+              color: this.isDarkMode ? '#f5f6fa' : '#2c3e50',
+              fontFamily: '"Poppins", sans-serif',
+              fontSize: '16px',
+              '::placeholder': {
+                color: this.isDarkMode ? '#bdc3c7' : '#7f8c8d'
+              }
+            }
+          }
+        });
+        this.card.mount('#card-element');
+        this.shouldMountCard = false;
+        this.cdr.detectChanges();
+      } else {
+        console.error('Card element not found in DOM');
+      }
+    }
   }
 
   loadUserData(): void {
@@ -45,6 +89,7 @@ export class CartComponent implements OnInit {
       try {
         const userData = JSON.parse(userDataString);
         this.userId = userData.userId;
+        this.userName = `${userData.firstName} ${userData.lastName}`;
         this.loadCart();
       } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
@@ -84,7 +129,10 @@ export class CartComponent implements OnInit {
       this.loading = true;
       this.cartService.getCartItems(this.userId).subscribe({
         next: (items) => {
-          this.cartItems = items;
+          this.cartItems = items.map(item => ({
+            offer: { ...item.offer, offre_id: item.offer.offre_id || item.offer.offre_id },
+            quantity: item.quantity
+          }));
           this.updateTotalPrice();
         },
         error: (err) => {
@@ -119,7 +167,7 @@ export class CartComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error fetching currency symbol', err);
-        this.currencySymbol = '$'; // Fallback
+        this.currencySymbol = '$';
       }
     });
   }
@@ -152,32 +200,88 @@ export class CartComponent implements OnInit {
     }
   }
 
-  payCart(): void {
-    if (this.userId !== null && this.cartItems.length > 0) {
-      this.loading = true;
-      setTimeout(() => {
-        this.cartService.clearCart(this.userId!).subscribe({
+  async initializePaymentForm(): Promise<void> {
+    if (!this.stripe) {
+      this.snackBar.open('Stripe not initialized', 'Close', { duration: 3000 });
+      return;
+    }
+    this.showPaymentForm = true;
+    this.elements = this.stripe.elements();
+    this.shouldMountCard = true;
+    this.cdr.detectChanges();
+  }
+
+  async payCart(): Promise<void> {
+    if (this.userId === null || this.cartItems.length === 0) {
+      this.snackBar.open('Cart is empty or user not logged in', 'Close', { duration: 3000 });
+      return;
+    }
+    if (!this.stripe || !this.elements || !this.card) {
+      this.snackBar.open('Payment system not initialized', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.paymentLoading = true;
+    this.paymentError = null;
+
+    try {
+      // Create Payment Intent
+      const response = await firstValueFrom(
+        this.http.post<{ clientSecret: string }>(
+          'http://localhost:8084/payment/create-payment-intent',
+          {
+            items: this.cartItems,
+            userId: this.userId,
+            currency: this.selectedCurrency
+          }
+        )
+      );
+
+      if (!response || !response.clientSecret) {
+        throw new Error('Failed to retrieve payment intent');
+      }
+
+      const { clientSecret } = response;
+
+      // Confirm payment
+      const result = await this.stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: this.card,
+          billing_details: {
+            name: this.userName || 'Customer Name'
+          }
+        }
+      });
+
+      if (result.error) {
+        this.paymentError = result.error.message || 'Payment failed';
+        this.snackBar.open(this.paymentError || 'Payment failed', 'Close', { duration: 5000 });
+      } else if (result.paymentIntent.status === 'succeeded') {
+        // Clear cart
+        this.cartService.clearCart(this.userId).subscribe({
           next: () => {
             this.snackBar.open('Payment successful! Cart cleared.', 'Close', {
               duration: 3000,
               horizontalPosition: 'center',
               verticalPosition: 'top'
             });
+            this.showPaymentForm = false;
             this.loadCart();
           },
           error: (err) => {
             console.error('Error clearing cart', err);
-            this.snackBar.open('Payment failed. Please try again.', 'Close', {
+            this.snackBar.open('Payment succeeded but failed to clear cart', 'Close', {
               duration: 3000
             });
-            this.loading = false;
           }
         });
-      }, 1500);
-    } else {
-      this.snackBar.open('Cart is empty or user not logged in', 'Close', {
-        duration: 3000
-      });
+      }
+    } catch (error: any) {
+      console.error('Payment error:', error);
+      this.paymentError = error.message || 'An error occurred during payment';
+      this.snackBar.open(this.paymentError || 'An error occurred during payment', 'Close', { duration: 5000 });
+    } finally {
+      this.paymentLoading = false;
     }
   }
 
@@ -187,8 +291,24 @@ export class CartComponent implements OnInit {
     return baseFinalPrice * exchangeRate;
   }
 
+  formatCurrency(amount: number): string {
+    return this.currencyPipe.transform(amount, this.selectedCurrency, 'symbol', '1.2-2') || `${this.currencySymbol}${amount.toFixed(2)}`;
+  }
+
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
     localStorage.setItem('darkMode', this.isDarkMode.toString());
+    if (this.card) {
+      this.card.update({
+        style: {
+          base: {
+            color: this.isDarkMode ? '#f5f6fa' : '#2c3e50',
+            '::placeholder': {
+              color: this.isDarkMode ? '#bdc3c7' : '#7f8c8d'
+            }
+          }
+        }
+      });
+    }
   }
 }

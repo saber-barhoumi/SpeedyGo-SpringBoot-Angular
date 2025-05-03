@@ -1,6 +1,7 @@
 // src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CartComponent } from 'src/app/FrontOffices/cart/cart.component'; // Adjust path
 
 // Import Components
 import { LoginComponent } from './BackOffices/login/login.component';
@@ -293,7 +294,8 @@ const routes: Routes = [
 
 
  { path: 'tracking/:parcelId', component: TrackingComponent },
-  { path: 'smart-route', loadChildren: () => import('./pages/smart-route/smart-route.module').then(m => m.SmartRouteModule) }
+  { path: 'smart-route', loadChildren: () => import('./pages/smart-route/smart-route.module').then(m => m.SmartRouteModule) },
+  { path: 'cart', component: CartComponent },
 
 
 

@@ -1428,3 +1428,55 @@ label {
     min-height: 80px;
   }
 }
+/* Add to Cart Button */
+/* Modifier le bouton Ajouter au panier pour qu'il ressemble au bouton Réclamer l'offre */
+.add-to-cart-button {
+  width: 100%;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #6c5ce7, #8e44ad); /* Même dégradé que le bouton Réclamer */
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); /* Même ombre que Réclamer */
+}
+
+.add-to-cart-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+  background: linear-gradient(135deg, #8e44ad, #6c5ce7); /* Inverser le dégradé au survol */
+}
+
+.add-to-cart-button:disabled {
+  background: linear-gradient(135deg, #b2bec3, #dfe6e9);
+  color: #7f8c8d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.add-to-cart-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: all 0.8s ease;
+}
+
+.add-to-cart-button:hover:before {
+  left: 100%;
+}

@@ -1,0 +1,87 @@
+<app-header-front></app-header-front>
+
+<div class="cart-container" [ngClass]="{'dark-mode': isDarkMode}">
+  <div class="theme-toggle" (click)="toggleDarkMode()">
+    <svg *ngIf="!isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+    <svg *ngIf="isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </div>
+
+  <h1 class="cart-title">Votre Panier</h1>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement du panier...</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="error-message">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <p>Échec du chargement du panier. Veuillez réessayer plus tard.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && cartItems.length === 0" class="no-results">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <p>Votre panier est vide.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && cartItems.length > 0" class="cart-items">
+    <div class="cart-item" *ngFor="let item of cartItems">
+      <div class="cart-item-image" [ngStyle]="{'background-image': 'url(' + item.offer.image + ')'}"></div>
+      <div class="cart-item-details">
+        <h2 class="item-title">{{item.offer.title}}</h2>
+        <p class="item-description">{{item.offer.description}}</p>
+        <div class="item-price">
+          <span class="original-price">{{currencySymbol}}{{item.offer.price.toFixed(2)}}</span>
+          <span class="final-price">{{currencySymbol}}{{calculateFinalPrice(item.offer).toFixed(2)}}</span>
+        </div>
+        <div class="item-quantity">Quantité: {{item.quantity}}</div>
+        <button class="remove-button" (click)="removeFromCart(item.offer.offre_id)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          Supprimer
+        </button>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="total-price">
+        Total: <span>{{currencySymbol}}{{totalPrice.toFixed(2)}}</span>
+      </div>
+      <div class="currency-selector">
+        <label for="currency">Devise:</label>
+        <select id="currency" [(ngModel)]="selectedCurrency" (change)="changeCurrency(selectedCurrency)">
+          <option *ngFor="let currency of availableCurrencies" [value]="currency">{{currency}}</option>
+        </select>
+      </div>
+      <button class="pay-button" [disabled]="loading" (click)="payCart()">
+        <span *ngIf="!loading">Payer le panier</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer-front></app-footer-front>

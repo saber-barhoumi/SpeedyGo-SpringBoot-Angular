@@ -117,6 +117,7 @@ import { QrScannerComponent } from './qrscanner/qrscanner.component';
 import { TimelineAllModule } from '@syncfusion/ej2-angular-layouts';
 import { TimelineComponent } from './timeline/timeline.component';
 import { TrackingComponent } from './pages/tracking/tracking.component';
+import { CartComponent } from './FrontOffices/cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -178,7 +179,8 @@ import { TrackingComponent } from './pages/tracking/tracking.component';
     ChatButtonComponent,
     ChatDialogComponent,
     ChatComponent,
-    PriceFormatterPipe
+    PriceFormatterPipe,
+    CartComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,103 @@
+<div class="livraison-list-container">
+    <div class="header">
+      <h1>Livraison Management</h1>
+      <button class="btn btn-primary" (click)="addNewLivraison()">
+        <i class="fas fa-plus"></i> Add New Livraison
+      </button>
+    </div>
+  
+    <div class="filter-container">
+      <div class="filter-group">
+        <label for="search">Filter</label>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="search" 
+            class="form-control" 
+            placeholder="Search by title, origin, or destination" 
+            (keyup)="onFilterChange($event)">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <label for="statusFilter">Status</label>
+        <select id="statusFilter" class="form-select" (change)="onStatusFilterChange($event)">
+          <option value="">All Statuses</option>
+          <option *ngFor="let status of statuses" [value]="status">
+            {{ getStatusLabel(status) }}
+          </option>
+        </select>
+      </div>
+  
+      <button class="btn btn-secondary" (click)="loadLivraisons()">
+        <i class="fas fa-sync"></i> Refresh
+      </button>
+    </div>
+  
+    <div class="loading-container" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading livraisons...</p>
+    </div>
+  
+    <div class="no-data-container" *ngIf="!loading && filteredLivraisons.length === 0">
+      <i class="fas fa-info-circle"></i>
+      <p>No livraisons found</p>
+    </div>
+  
+    <div class="table-responsive" *ngIf="!loading && filteredLivraisons.length > 0">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Weight (kg)</th>
+            <th>Pickup Time</th>
+            <th>Status</th>
+            <th>Assigned Vehicle</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let livraison of filteredLivraisons">
+            <td>{{ livraison.livraisonId }}</td>
+            <td>{{ livraison.title }}</td>
+            <td>{{ livraison.originAddress }}</td>
+            <td>{{ livraison.destinationAddress }}</td>
+            <td>{{ livraison.packageWeightKg || '-' }}</td>
+            <td>{{ livraison.scheduledPickupTime | date:'medium' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(livraison.status)">
+                {{ getStatusLabel(livraison.status) }}
+              </span>
+            </td>
+            <td>
+              <div *ngIf="livraison.assignedVehicle; else noVehicle">
+                {{ livraison.assignedVehicle.brand }} {{ livraison.assignedVehicle.model }}
+              </div>
+              <ng-template #noVehicle>
+                <span class="no-vehicle">Not assigned</span>
+              </ng-template>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-info" title="View Details" (click)="viewLivraisonDetails(livraison)">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-warning" title="Edit Livraison" (click)="editLivraison(livraison)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" title="Delete Livraison" (click)="deleteLivraison(livraison)">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

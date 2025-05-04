@@ -1,0 +1,84 @@
+.badge-light-success {
+    color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  }
+  
+  .badge-light-warning {
+    color: #f1c40f;
+    background-color: rgba(241, 196, 15, 0.15);
+    border: 1px solid rgba(241, 196, 15, 0.3);
+  }
+  
+  .badge-light-danger {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.15);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+  }
+  
+  .badge-light-info {
+    color: #3498db;
+    background-color: rgba(52, 152, 219, 0.15);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+  }
+  
+  .badge-light-primary {
+    color: #4099ff;
+    background-color: rgba(64, 153, 255, 0.15);
+    border: 1px solid rgba(64, 153, 255, 0.3);
+  }
+  
+  .badge-light-secondary {
+    color: #777;
+    background-color: rgba(119, 119, 119, 0.15);
+    border: 1px solid rgba(119, 119, 119, 0.3);
+  }
+  
+  .bg-light-danger {
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+  }
+  
+  /* Fix for pagination alignment */
+  .pagination {
+    margin-bottom: 0;
+  }
+  
+  /* Modal shadows */
+  .modal-content {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Status badge styling */
+  .badge {
+    padding: 0.4rem 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  
+  /* Table hover effect */
+  .table-hover tbody tr:hover {
+    background-color: rgba(64, 153, 255, 0.05);
+  }
+  
+  /* Fix button group spacing */
+  .btn-group .btn {
+    margin: 0 2px;
+  }
+  
+  /* Add animation to modal */
+  .modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+  }
+  
+  .modal.fade.show .modal-dialog {
+    transform: none;
+  }
+  :host ::ng-deep .spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

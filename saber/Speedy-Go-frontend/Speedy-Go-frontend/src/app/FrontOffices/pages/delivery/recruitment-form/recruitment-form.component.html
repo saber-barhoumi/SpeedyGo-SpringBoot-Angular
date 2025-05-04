@@ -1,0 +1,193 @@
+<div class="container py-5">
+    <div class="row">
+      <div class="col-lg-10 mx-auto">
+        <div class="card border-0 shadow rounded-lg">
+          <div class="card-body p-5">
+            <h2 class="text-center mb-4">
+              {{ isEditMode ? 'Update Your Application' : 'Delivery Driver Application' }}
+            </h2>
+            <p class="text-muted text-center mb-4">
+              Join our team of professional drivers and enjoy flexible hours and competitive pay.
+            </p>
+  
+            <form [formGroup]="recruitmentForm" (ngSubmit)="onSubmit()">
+              <!-- Experience Information -->
+              <div class="mb-4">
+                <h4 class="mb-3">Experience Information</h4>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="yearsOfExperience" class="form-label">Years of Experience*</label>
+                    <input 
+                      type="number" 
+                      class="form-control" 
+                      id="yearsOfExperience" 
+                      formControlName="yearsOfExperience"
+                      [ngClass]="{'is-invalid': recruitmentForm.get('yearsOfExperience')?.invalid && recruitmentForm.get('yearsOfExperience')?.touched}"
+                    >
+                    <div class="invalid-feedback" *ngIf="recruitmentForm.get('yearsOfExperience')?.errors?.['required']">
+                      Years of experience is required.
+                    </div>
+                    <div class="invalid-feedback" *ngIf="recruitmentForm.get('yearsOfExperience')?.errors?.['min']">
+                      Years of experience cannot be negative.
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="previousEmployer" class="form-label">Previous Employer*</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="previousEmployer" 
+                      formControlName="previousEmployer"
+                      [ngClass]="{'is-invalid': recruitmentForm.get('previousEmployer')?.invalid && recruitmentForm.get('previousEmployer')?.touched}"
+                    >
+                    <div class="invalid-feedback">
+                      Previous employer is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- License Information -->
+              <div class="mb-4">
+                <h4 class="mb-3">Driver's License Information</h4>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="drivingLicenseNumber" class="form-label">License Number*</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="drivingLicenseNumber" 
+                      formControlName="drivingLicenseNumber"
+                      [ngClass]="{'is-invalid': recruitmentForm.get('drivingLicenseNumber')?.invalid && recruitmentForm.get('drivingLicenseNumber')?.touched}"
+                    >
+                    <div class="mb-3">
+                      <button type="button" class="btn btn-outline-primary mb-2" (click)="showWebcam = !showWebcam">
+                        {{ showWebcam ? 'Cancel Webcam' : 'Scan License Number from Camera' }}
+                      </button>
+                    
+                      <div *ngIf="showWebcam" style="transform: scaleX(-1);">
+                        <webcam [height]="240" [width]="320"
+                                [trigger]="triggerObservable"
+                                (imageCapture)="handleImage($event)">
+                        </webcam>
+                      </div>
+                        <button type="button" class="btn btn-sm btn-success mt-2" (click)="triggerSnapshot()">Take Snapshot</button>
+                      
+                      
+                    </div>
+                    <div class="invalid-feedback">
+                      License number is required (minimum 5 characters).
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="drivingLicenseCategory" class="form-label">License Category*</label>
+                    <select 
+                      class="form-select" 
+                      id="drivingLicenseCategory" 
+                      formControlName="drivingLicenseCategory"
+                      [ngClass]="{'is-invalid': recruitmentForm.get('drivingLicenseCategory')?.invalid && recruitmentForm.get('drivingLicenseCategory')?.touched}"
+                    >
+                      <option value="">Select Category</option>
+                      <option value="A">A - Motorcycles</option>
+                      <option value="B">B - Regular cars</option>
+                      <option value="C">C - Commercial vehicles</option>
+                      <option value="D">D - Buses</option>
+                      <option value="BE">BE - Cars with trailers</option>
+                      <option value="CE">CE - Commercial vehicles with trailers</option>
+                    </select>
+                    <div class="invalid-feedback">
+                      License category is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="drivingLicenseIssueDate" class="form-label">Issue Date</label>
+                    <input 
+                      type="date" 
+                      class="form-control" 
+                      id="drivingLicenseIssueDate" 
+                      formControlName="drivingLicenseIssueDate"
+                    >
+                  </div>
+                </div>
+              </div>
+  
+              <div class="mb-4">
+                <h4 class="mb-3">Delivery Vehicle (Optional)</h4>
+                <p class="text-muted">If you have your own delivery vehicle, please select it from the list.</p>
+                
+                <div class="mb-3" *ngIf="isLoadingVehicles">
+                  <div class="spinner-border spinner-border-sm text-secondary" role="status">
+                    <span class="visually-hidden">Loading vehicles...</span>
+                  </div>
+                  <span class="ms-2 text-muted">Loading vehicles...</span>
+                </div>
+                
+                <div class="mb-3" *ngIf="!isLoadingVehicles">
+                  <label for="vehicleId" class="form-label">Select Your Vehicle</label>
+                  <div *ngIf="vehicles.length === 0" class="alert alert-info">
+                    <p class="mb-1">You don't have any vehicles registered yet.</p>
+                    <a routerLink="/vehicles/add" class="btn btn-sm btn-primary mt-2">
+                      Register a Vehicle
+                    </a>
+                  </div>
+                  <select 
+                    *ngIf="vehicles.length > 0"
+                    class="form-select" 
+                    id="vehicleId" 
+                    formControlName="vehicleId"
+                  >
+                    <option value="">-- No vehicle selected --</option>
+                    <option *ngFor="let vehicle of vehicles" [value]="vehicle.vehicleId">
+                      {{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.licensePlate }})
+                    </option>
+                  </select>
+                  <div class="form-text text-muted">
+                    Selecting a vehicle is optional. You can add a vehicle later if needed.
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Cover Letter -->
+              <div class="mb-4">
+                <h4 class="mb-3">Cover Letter*</h4>
+                <div class="form-group">
+                  <textarea 
+                    class="form-control" 
+                    id="coverLetter" 
+                    rows="5" 
+                    formControlName="coverLetter"
+                    placeholder="Tell us about yourself and why you'd like to join our delivery team..."
+                    [ngClass]="{'is-invalid': recruitmentForm.get('coverLetter')?.invalid && recruitmentForm.get('coverLetter')?.touched}"
+                  ></textarea>
+                  <div class="invalid-feedback">
+                    Cover letter is required (minimum 100 characters).
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Submit Button -->
+              <div class="d-grid gap-2 mt-4">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary btn-lg" 
+                  [disabled]="isSubmitting"
+                >
+                  <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  {{ isEditMode ? 'Update Application' : 'Submit Application' }}
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-outline-secondary" 
+                  [routerLink]="['/recruitment/my-applications']"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SpeedyGo - Signin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Fond avec image de livraison */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1608198093002-ad4e005484c6?auto=format&fit=crop&w=1740&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    /* Overlay flou pour meilleure lisibilité */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 128, 0, 0.6); /* vert semi-transparent */
+      backdrop-filter: blur(3px);
+      z-index: 1;
+    }
+
+    .auth-wrapper {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .auth-content {
+      background: white;
+      border-radius: 16px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .auth-content img {
+      max-width: 100px;
+      margin-bottom: 20px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #388e3c;
+    }
+
+    .text-danger {
+      color: #e53935;
+      font-size: 14px;
+    }
+
+    .text-muted {
+      color: #777;
+      font-size: 14px;
+    }
+
+    a {
+      color: #2e7d32;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    hr {
+      margin: 20px 0;
+      border-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <img src="assets/BackOffice/images/logo.png" alt="SpeedyGo Logo">
+    <h4 class="mb-3">Sign in to SpeedyGo</h4>
+    <hr>
+    <div class="form-group mb-3">
+      <input type="text" class="form-control" [(ngModel)]="email" placeholder="Email address">
+    </div>
+    <div class="form-group mb-4">
+      <input type="password" class="form-control" [(ngModel)]="password" placeholder="Password">
+    </div>
+    <button (click)="login()" class="btn-primary">Signin</button>
+    <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <hr>
+    <p class="text-muted">Forgot password? <a href="#">Reset</a></p>
+    <p class="text-muted">Don’t have an account? <a routerLink="/registerAdmin">Signup</a></p>
+  </div>
+</div>
+
+</body>
+</html>

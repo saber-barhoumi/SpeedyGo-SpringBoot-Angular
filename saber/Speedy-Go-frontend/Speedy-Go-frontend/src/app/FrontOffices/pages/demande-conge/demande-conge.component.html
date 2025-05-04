@@ -1,0 +1,29 @@
+
+<div>
+    <h2>Gestion des demandes de congé</h2>
+  
+    <!-- Formulaire pour créer une nouvelle demande de congé -->
+    <div>
+      <h3>Créer une demande de congé</h3>
+      <label for="dateDebut">Date de début</label>
+      <input type="date" [(ngModel)]="dateDebut" id="dateDebut" name="dateDebut">
+      <label for="dateFin">Date de fin</label>
+      <input type="date" [(ngModel)]="dateFin" id="dateFin" name="dateFin">
+      <button (click)="createDemande()">Créer demande</button>
+    </div>
+  
+    <hr>
+  
+    <!-- Liste des demandes de congé -->
+    <div *ngIf="demandes.length > 0">
+      <h3>Liste des demandes</h3>
+      <ul>
+        <li *ngFor="let demande of demandes">
+          <p>ID: {{demande.id}}, Dates: {{demande.dateDebut}} - {{demande.dateFin}}, Statut: {{demande.status}}</p>
+          <button (click)="updateStatus(demande.id, 'APPROVED')">Approuver</button>
+          <button (click)="updateStatus(demande.id, 'REJECTED')">Rejeter</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  

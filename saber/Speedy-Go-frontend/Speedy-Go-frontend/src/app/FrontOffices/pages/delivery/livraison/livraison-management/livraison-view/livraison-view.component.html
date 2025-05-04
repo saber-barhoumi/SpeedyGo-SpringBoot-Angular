@@ -1,0 +1,200 @@
+<div class="livraison-view-container">
+    <div class="header">
+      <div class="title-section">
+        <button class="btn btn-link" [routerLink]="['/livraison-management']">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1>Livraison Details</h1>
+      </div>
+  
+      <div class="actions">
+        <button class="btn btn-warning" (click)="editLivraison()" [disabled]="loading">
+          <i class="fas fa-edit"></i> Edit
+        </button>
+        
+        <button class="btn btn-danger" (click)="deleteLivraison()" [disabled]="loading">
+          <i class="fas fa-trash-alt"></i> Delete
+        </button>
+      </div>
+    </div>
+  
+    <div class="loading-container" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading livraison details...</p>
+    </div>
+  
+    <div class="livraison-details" *ngIf="!loading && livraison">
+      <div class="status-bar">
+        <div class="status-display">
+          <span class="status-label">Status:</span>
+          <span class="status-badge" [ngClass]="getStatusClass(livraison.status)">
+            {{ livraison.status?.replace('_', ' ') || 'PENDING' }}
+          </span>
+        </div>
+        
+        <div class="status-actions">
+          <div class="form-group">
+            <label for="updateStatus">Update Status:</label>
+            <select 
+              id="updateStatus" 
+              class="form-control" 
+              [disabled]="processingAction"
+              (change)="updateStatus($event)"
+              [value]="livraison.status">
+              <option *ngFor="let status of statusOptions" [value]="status">
+                {{ status.replace('_', ' ') }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+  
+      <div class="details-card">
+        <h2>Basic Information</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">ID:</span>
+            <span class="value">{{ livraison.livraisonId }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Title:</span>
+            <span class="value">{{ livraison.title }}</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="label">Description:</span>
+            <span class="value">{{ livraison.description || 'No description provided' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Created:</span>
+            <span class="value">{{ livraison.createdAt | date: 'medium' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Last Updated:</span>
+            <span class="value">{{ livraison.updatedAt | date: 'medium' }}</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="two-columns">
+        <div class="details-card">
+          <h2>Location & Route</h2>
+          <div class="info-grid">
+            <div class="info-item full-width">
+              <span class="label">Origin:</span>
+              <span class="value">{{ livraison.originAddress }}</span>
+            </div>
+            <div class="info-item full-width">
+              <span class="label">Destination:</span>
+              <span class="value">{{ livraison.destinationAddress }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Distance:</span>
+              <span class="value">{{ livraison.distanceInKm }} km</span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="details-card">
+          <h2>Package Details</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Weight:</span>
+              <span class="value">{{ livraison.packageWeightKg }} kg</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Dimensions:</span>
+              <span class="value">{{ livraison.packageDimensions || 'Not specified' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Refrigeration:</span>
+              <span class="value">{{ livraison.requiresRefrigeration ? 'Required' : 'Not required' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="two-columns">
+        <div class="details-card">
+          <h2>Schedule</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Pickup:</span>
+              <span class="value">{{ livraison.scheduledPickupTime | date: 'medium' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Scheduled Delivery:</span>
+              <span class="value">{{ livraison.scheduledDeliveryTime | date: 'medium' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Actual Delivery:</span>
+              <span class="value">{{ livraison.actualDeliveryTime ? (livraison.actualDeliveryTime | date: 'medium') : 'Not delivered yet' }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <div class="details-card">
+          <div class="card-header-with-actions">
+            <h2>Vehicle Assignment</h2>
+            <button 
+              class="btn btn-primary btn-circle" 
+              (click)="suggestVehicle()" 
+              [disabled]="processingAction"
+              title="Get AI vehicle suggestion">
+              <i class="fas fa-magic"></i>
+            </button>
+          </div>
+          
+          <div *ngIf="livraison.assignedVehicle; else noVehicle" class="assigned-vehicle">
+            <div class="vehicle-info">
+              <div class="vehicle-name">
+                {{ livraison.assignedVehicle.brand }} {{ livraison.assignedVehicle.model }}
+              </div>
+              <div class="vehicle-details">
+                <div>License Plate: {{ livraison.assignedVehicle.licensePlate }}</div>
+                <div>Type: {{ livraison.assignedVehicle.vehicleType }}</div>
+                <div>Max Load: {{ livraison.assignedVehicle.maxLoadCapacity }} kg</div>
+                <div>Refrigeration: {{ livraison.assignedVehicle.hasRefrigeration ? 'Yes' : 'No' }}</div>
+              </div>
+            </div>
+            
+            <div class="vehicle-image" *ngIf="livraison.assignedVehicle.vehiclePhotoPath">
+              <img 
+                [src]="livraison.assignedVehicle.vehiclePhotoPath" 
+                [alt]="livraison.assignedVehicle.brand + ' ' + livraison.assignedVehicle.model">
+            </div>
+          </div>
+          
+          <ng-template #noVehicle>
+            <div class="no-vehicle">
+              <p>No vehicle assigned to this livraison</p>
+              
+              <div class="form-group">
+                <label for="assignVehicle">Assign Vehicle:</label>
+                <select 
+                  id="assignVehicle" 
+                  class="form-control" 
+                  [disabled]="processingAction"
+                  (change)="assignVehicle($event)">
+                  <option value="">-- Select a vehicle --</option>
+                  <option *ngFor="let vehicle of availableVehicles" [value]="vehicle.vehicleId">
+                    {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
+                    <span *ngIf="vehicle.hasRefrigeration"> (Refrigerated)</span>
+                  </option>
+                </select>
+              </div>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+    
+    <div class="progress" *ngIf="processingAction">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+    </div>
+    
+    <app-ai-vehicle-suggestion-dialog
+      [suggestion]="aiSuggestion"
+      [visible]="showAiSuggestionDialog"
+      (close)="onAiSuggestionDialogClose()">
+    </app-ai-vehicle-suggestion-dialog>
+  </div>

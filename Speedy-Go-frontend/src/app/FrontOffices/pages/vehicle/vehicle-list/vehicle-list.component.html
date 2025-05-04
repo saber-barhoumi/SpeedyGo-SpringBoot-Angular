@@ -1,0 +1,165 @@
+<div class="container py-5">
+    <div class="row mb-4">
+      <div class="col-lg-8">
+        <h2 class="mb-1">Delivery Vehicles</h2>
+        <p class="text-muted">Manage your fleet of delivery vehicles</p>
+      </div>
+      <div class="col-lg-4 text-end">
+        <button class="btn btn-primary" routerLink="/vehicles/add">
+          <i class="fas fa-plus me-1"></i> Add New Vehicle
+        </button>
+      </div>
+    </div>
+  
+    <!-- Search and Filter -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="fas fa-search text-muted"></i>
+          </span>
+          <input 
+            type="text" 
+            class="form-control border-start-0" 
+            placeholder="Search by brand, model, or license plate" 
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()"
+          >
+        </div>
+      </div>
+      <div class="col-md-4">
+        <select 
+          class="form-select" 
+          [(ngModel)]="selectedType"
+          (change)="onTypeChange()"
+        >
+          <option value="ALL">All Vehicle Types</option>
+          <option *ngFor="let type of vehicleTypes" [value]="type">
+            {{ getVehicleTypeName(type) }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-outline-secondary w-100" (click)="loadVehicles()">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+    </div>
+  
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="isLoading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading vehicles...</p>
+    </div>
+  
+    <!-- No Results -->
+    <div class="alert alert-info" *ngIf="!isLoading && filteredVehicles.length === 0">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-info-circle me-3 fs-4"></i>
+        <div>
+          <h5 class="mb-1">No vehicles found</h5>
+          <p class="mb-0" *ngIf="searchTerm || selectedType !== 'ALL'">
+            Try adjusting your search or filter criteria.
+          </p>
+          <p class="mb-0" *ngIf="!searchTerm && selectedType === 'ALL'">
+            You haven't added any delivery vehicles yet. 
+            <a routerLink="/vehicles/add" class="link-primary fw-bold">Add your first vehicle</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Vehicles List -->
+    <div class="row" *ngIf="!isLoading && filteredVehicles.length > 0">
+      <div class="col-12">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" width="80">Photo</th>
+                <th scope="col">Vehicle</th>
+                <th scope="col">License Plate</th>
+                <th scope="col">Type</th>
+                <th scope="col">Year</th>
+                <th scope="col">Capacity</th>
+                <th scope="col">Features</th>
+                <th scope="col" width="100">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vehicle of filteredVehicles">
+                <td>
+                  <div class="vehicle-thumbnail">
+                    <img 
+                      [src]="vehicle.vehiclePhotoPath || 'assets/images/vehicle-placeholder.png'" 
+                      alt="Vehicle Photo" 
+                      class="img-thumbnail"
+                    >
+                  </div>
+                </td>
+                <td>
+                  <div class="fw-bold">{{ vehicle.brand }} {{ vehicle.model }}</div>
+                  <div class="small text-muted">Reg: {{ vehicle.registrationNumber }}</div>
+                </td>
+                <td>{{ vehicle.licensePlate }}</td>
+                <td>
+                  <span class="badge rounded-pill text-bg-info">
+                    {{ getVehicleTypeName(vehicle.vehicleType) }}
+                  </span>
+                </td>
+                <td>{{ vehicle.yearOfManufacture }}</td>
+                <td>{{ vehicle.maxLoadCapacity }} kg</td>
+                <td>
+                  <span *ngIf="vehicle.hasRefrigeration" class="badge text-bg-success me-1">
+                    <i class="fas fa-snowflake me-1"></i> Refrigerated
+                  </span>
+                  <span *ngIf="vehicle.isInsured" class="badge text-bg-primary me-1">
+                    <i class="fas fa-shield-alt me-1"></i> Insured
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button 
+                      class="btn btn-sm btn-outline-secondary" 
+                      [routerLink]="['/vehicles/edit', vehicle.vehicleId]"
+                      title="Edit"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button 
+                    class="btn btn-sm btn-outline-danger" 
+                    (click)="deleteVehicle(vehicle.vehicleId!)"
+                    title="Delete"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <button 
+  class="btn btn-sm btn-outline-success"
+  (click)="showCarbonFootprint(vehicle)"
+  title="View Carbon Footprint"
+>
+  <i class="fas fa-leaf"></i>
+</button>
+
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Carbon Footprint -->
+<div *ngIf="showModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h4 class="text-success mb-3">Bilan carbone du véhicule</h4>
+    <p><strong>Émissions estimées :</strong> {{ predictedEmission }} kg CO₂</p>
+    <p><strong>Conseil :</strong> {{ predictionAdvice }}</p>
+    <button class="btn btn-secondary mt-3" (click)="closeModal()">
+      <i class="fas fa-times me-1"></i> Fermer
+    </button>
+  </div>
+</div>

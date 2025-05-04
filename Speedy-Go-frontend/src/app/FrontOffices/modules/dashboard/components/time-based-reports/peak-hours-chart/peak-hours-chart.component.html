@@ -1,0 +1,59 @@
+<div class="time-reports-container">
+  <div *ngIf="trips.length === 0" class="no-data-message">
+    <i class="bi bi-info-circle me-2"></i>
+    No trip data available.
+  </div>
+  
+  <div *ngIf="trips.length > 0">
+    <!-- Chart Container -->
+    <div class="chart-container">
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [results]="chartData"
+        [gradient]="gradient"
+        [xAxis]="showXAxis"
+        [yAxis]="showYAxis"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [legend]="showLegend"
+        [legendPosition]="legendPosition"
+        [autoScale]="true"
+        [roundDomains]="true">
+      </ngx-charts-line-chart>
+    </div>
+    
+    <!-- Peak Hour Insights -->
+    <div class="peak-hour-insights mt-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="insight-card peak">
+            <div class="insight-icon">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="insight-content">
+              <div class="insight-title">Peak {{ timeType === 'departure' ? 'Departure' : 'Arrival' }} Time</div>
+              <div class="insight-value">{{ formatHourRange(peakHour) }}</div>
+              <div class="insight-count">{{ peakHourCount }} trips</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="insight-card quiet">
+            <div class="insight-icon">
+              <i class="bi bi-graph-down-arrow"></i>
+            </div>
+            <div class="insight-content">
+              <div class="insight-title">Quietest {{ timeType === 'departure' ? 'Departure' : 'Arrival' }} Time</div>
+              <div class="insight-value">{{ formatHourRange(quietHour) }}</div>
+              <div class="insight-count">{{ quietHourCount }} trips</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

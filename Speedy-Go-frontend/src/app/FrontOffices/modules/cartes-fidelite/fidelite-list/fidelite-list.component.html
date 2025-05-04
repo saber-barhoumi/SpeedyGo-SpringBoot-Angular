@@ -1,0 +1,56 @@
+
+<!-- Start Hero Section -->
+<div class="hero">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-5">
+        <div class="intro-excerpt">
+          <h1>Modern Interior Delivery Studio <span class="d-block"></span></h1>
+          <p class="mb-4">Discover top offers delivered straight to your door.
+            A curated selection of stylish and practical items to elevate your living space.</p>
+          <p><a href="" class="btn btn-secondary me-2">Shop Now</a><a href="#" class="btn btn-white-outline">Explore</a></p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="hero-img-wrap">
+          <img src="/assets/FrontOffice/img/partnaire.png" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+  <!-- Bootstrap CSS -->
+  <link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/tiny-slider.css" rel="stylesheet">
+  <link href="/assets/FrontOffice/css2/style.css" rel="stylesheet">
+  
+  <!-- Bootstrap JS -->
+  <script src="/assets/FrontOffice/js2/bootstrap.bundle.min.js"></script>
+  <script src="/assets/FrontOffice/js2/tiny-slider.js"></script>
+  <script src="/assets/FrontOffice/js2/custom.js"></script>
+
+<div class="fidelite-list-container">
+  <h2 class="page-title">My Loyalty Cards</h2>
+  
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading your loyalty cards...</p>
+  </div>
+  
+  <div *ngIf="error" class="error-container">
+    <div class="error-icon">⚠️</div>
+    <p>An error occurred while fetching your loyalty cards.</p>
+    <button class="retry-button" (click)="loadFidelityCards()">Try Again</button>
+  </div>
+  
+  <div *ngIf="!loading && !error && loyaltyCards.length === 0" class="no-cards-container">
+    <div class="empty-icon">💳</div>
+    <p>You don't have any loyalty cards yet.</p>
+    <p class="subtitle">Visit our partner stores and start earning rewards!</p>
+  </div>
+  
+  <div *ngIf="!loading && !error && loyaltyCards.length > 0" class="cards-grid">
+    <app-fidelite-card *ngFor="let card of loyaltyCards" [card]="card"></app-fidelite-card>
+  </div>
+</div>

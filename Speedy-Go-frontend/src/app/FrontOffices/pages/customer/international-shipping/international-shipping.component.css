@@ -1,0 +1,45 @@
+.container {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .form-container {
+    background: #f4f4f4;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  input, select, button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+    padding: 10px;
+  }
+  
+  button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #218838;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  

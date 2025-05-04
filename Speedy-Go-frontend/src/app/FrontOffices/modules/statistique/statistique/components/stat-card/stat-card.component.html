@@ -1,0 +1,15 @@
+<div class="stat-card">
+  <div class="icon-container">
+    <span class="material-icons">{{icon}}</span>
+  </div>
+  <div class="stat-content">
+    <div class="stat-title">{{title}}</div>
+    <div class="stat-value">{{value | number}}</div>
+    <div class="stat-trend" [ngClass]="{'trend-up': trend === 'up', 'trend-down': trend === 'down', 'trend-neutral': trend === 'neutral'}">
+      <span class="material-icons">
+        {{trend === 'up' ? 'trending_up' : trend === 'down' ? 'trending_down' : 'trending_flat'}}
+      </span>
+      <span class="trend-value">{{trendValue}} from last month</span>
+    </div>
+  </div>
+</div>

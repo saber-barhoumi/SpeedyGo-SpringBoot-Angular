@@ -1,0 +1,7 @@
+.large-title {
+    font-size: 30px; /* Increase the font size */
+    font-weight: bold; /* Make the title bold */
+    text-align: center; /* Ensure the title is centered */
+    margin: 0 auto; /* Center the text within the header */
+  }
+  

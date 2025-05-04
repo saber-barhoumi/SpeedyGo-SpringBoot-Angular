@@ -1,7 +1,10 @@
 package com.ski.speedygobackend.Enum;
 
 public enum VehicleType {
-    STANDARD,
-    LUXURY,
-    ECONOMY
+    CAR,
+    MOTORCYCLE,
+    VAN,
+    TRUCK,
+    BICYCLE,
+    ELECTRIC_SCOOTER
 }

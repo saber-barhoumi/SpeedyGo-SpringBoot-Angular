@@ -1,0 +1,48 @@
+.ngx-charts {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  
+  .chart {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .chart-wrapper {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  ::ng-deep .ngx-charts {
+    float: none;
+  }
+  
+  ::ng-deep .ngx-charts .grid-line-path {
+    stroke: rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  ::ng-deep .ngx-charts text {
+    fill: #666 !important;
+    font-size: 12px !important;
+  }
+  
+  ::ng-deep .ngx-charts .tick text {
+    font-weight: 500 !important;
+  }
+  
+  ::ng-deep .bar {
+    transition: opacity 0.3s ease;
+  }
+  
+  ::ng-deep .bar:hover {
+    opacity: 0.8;
+  }
+  
+  /* Add smooth animations to bar chart */
+  ::ng-deep .bar {
+    transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1) !important;
+  }

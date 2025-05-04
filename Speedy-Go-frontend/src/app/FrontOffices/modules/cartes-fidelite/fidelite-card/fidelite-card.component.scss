@@ -1,0 +1,120 @@
+.fidelite-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 3%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    aspect-ratio: 16/9;
+    color: white;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+    
+    .card-content {
+      position: relative;
+      padding: 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding-top: 20px;
+    }
+    
+    .store-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .points {
+      font-size: 16px;
+      opacity: 0.9;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    
+    .last-used {
+      font-size: 14px;
+      opacity: 0.7;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .progress-container {
+      width: 100%;
+      padding: 0 10px;
+    }
+    
+    .progress-bar {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      height: 10px;
+      position: relative;
+      width: 100%;
+  
+      .progress {
+        background: white;
+        height: 100%;
+        width: 65%; /* Adjust based on points */
+        border-radius: 10px;
+        transition: width 0.8s ease;
+      }
+    }
+    
+    .card-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding-top: 20px;
+    }
+    
+    .card-number {
+      font-size: 12px;
+      letter-spacing: 2px;
+      opacity: 0.7;
+    }
+    
+    .chip {
+      width: 40px;
+      height: 30px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #ffcc33 0%, #ffb347 100%);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+  h3{
+    padding-left:30%;
+  }

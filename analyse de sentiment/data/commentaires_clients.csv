@@ -1,0 +1,21 @@
+text,sentiment
+"J'adore absolument ce produit ! Il a dépassé toutes mes attentes.",positif
+"C'est le pire achat que j'ai jamais fait. Un gaspillage complet d'argent.",négatif
+"Le service était correct, rien de spécial mais il a fait le travail.",neutre
+"Support client incroyable, ils ont fait tout leur possible pour m'aider.",positif
+"Très déçu par la qualité, il s'est cassé après une semaine.",négatif
+"Le produit est arrivé à temps et fonctionne comme décrit.",neutre
+"Expérience fantastique ! Je le recommanderais définitivement à mes amis.",positif
+"Service client terrible, ils n'ont jamais répondu à mes emails.",négatif
+"C'est un produit moyen pour le prix, exactement ce à quoi je m'attendais.",neutre
+"Je suis extrêmement satisfait de mon achat, excellent rapport qualité-prix !",positif
+"Le produit est défectueux et l'entreprise refuse d'aider.",négatif
+"Produit correct, ni impressionné ni déçu.",neutre
+"La meilleure décision que j'ai jamais prise ! Ce produit a changé ma vie.",positif
+"Expérience horrible du début à la fin. Restez loin !",négatif
+"Le produit fonctionne assez bien, mais manque de certaines fonctionnalités.",neutre
+"Performance et design incroyables, ça vaut chaque centime !",positif
+"Complètement inutile et une arnaque totale.",négatif
+"C'est bien. Fait ce qu'il dit mais rien de spécial.",neutre
+"Qualité et durabilité exceptionnelles, a dépassé les attentes !",positif
+"Je regrette cet achat, c'est mal fabriqué et trop cher.",négatif

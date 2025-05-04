@@ -1,0 +1,50 @@
+<div class="pcoded-main-container">
+    <div class="pcoded-content">
+      <div class="col-xl-12 col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h5>Update User</h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="updateUser()" [formGroup]="updateForm">
+              <!-- First Name -->
+              <div class="form-group mb-3">
+                <input type="text" class="form-control" formControlName="firstName" placeholder="First Name" />
+              </div>
+  
+              <!-- Last Name -->
+              <div class="form-group mb-3">
+                <input type="text" class="form-control" formControlName="lastName" placeholder="Last Name" />
+              </div>
+  
+              <!-- Email -->
+              <div class="form-group mb-3">
+                <input type="email" class="form-control" formControlName="email" placeholder="Email" />
+              </div>
+  
+              <!-- Phone Number -->
+              <div class="form-group mb-3">
+                <input type="text" class="form-control" formControlName="phoneNumber" placeholder="Phone Number" />
+              </div>
+  
+              <!-- Address -->
+              <div class="form-group mb-3">
+                <input type="text" class="form-control" formControlName="address" placeholder="Address" />
+              </div>
+  
+              <!-- Gender -->
+              <div class="form-group mb-3">
+                <select class="form-control" formControlName="sexe">
+                  <option value="MEN">Male</option>
+                  <option value="WOMEN">Female</option>
+                </select>
+              </div>
+  
+              <button type="submit" class="btn btn-primary">Update User</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

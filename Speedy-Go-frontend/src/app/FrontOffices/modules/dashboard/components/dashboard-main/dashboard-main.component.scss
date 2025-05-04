@@ -1,0 +1,360 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.dashboard-container {
+  padding: 1.5rem;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+// Dashboard Header
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  margin-left: 15%;
+  
+  .dashboard-title {
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #3a416f 0%, #4361ee 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .dashboard-subtitle {
+      color: #718096;
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+  }
+  
+  .dashboard-actions {
+    .btn-refresh {
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(67, 97, 238, 0.15);
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(67, 97, 238, 0.2);
+      }
+    }
+  }
+}
+
+// Loading and Error States
+.dashboard-loading-container, 
+.dashboard-error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+  
+  p {
+    margin-top: 1rem;
+    color: #718096;
+  }
+}
+
+.dashboard-error-container {
+  .dashboard-error-icon {
+    font-size: 3rem;
+    color: #f56565;
+    margin-bottom: 1rem;
+  }
+  
+  .dashboard-error-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2d3748;
+  }
+  
+  .dashboard-error-message {
+    color: #718096;
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Dashboard Sections
+.dashboard-section {
+  margin-bottom: 3rem;
+  margin-left: 13%;
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0;
+      color: #2d3748;
+      display: flex;
+      align-items: center;
+      
+      i {
+        margin-right: 0.5rem;
+        opacity: 0.8;
+      }
+    }
+    
+    .section-divider {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, 
+        rgba(226, 232, 240, 0.5) 0%, 
+        rgba(226, 232, 240, 1) 50%, 
+        rgba(226, 232, 240, 0.5) 100%
+      );
+      margin-left: 1rem;
+    }
+  }
+}
+
+// Dashboard Cards
+.dashboard-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    background: white;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0;
+      color: #2d3748;
+    }
+    
+    .card-actions {
+      .btn-group {
+        .btn {
+          font-size: 0.85rem;
+          padding: 0.25rem 0.75rem;
+          border-radius: 0.5rem;
+          
+          &:focus {
+            box-shadow: none;
+          }
+          
+          &:not(:last-child) {
+            margin-right: 0.25rem;
+          }
+        }
+      }
+    }
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Time-Based Reports Section
+:host ::ng-deep {
+  .time-reports-container {
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+    
+    .summary-box {
+      text-align: center;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      background: rgba(67, 97, 238, 0.05);
+      
+      .summary-title {
+        font-size: 0.875rem;
+        color: #718096;
+        margin-bottom: 0.75rem;
+      }
+      
+      .summary-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4361ee;
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  // Location-Based Reports Section
+  .location-reports-container {
+    .location-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      
+      .location-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(67, 97, 238, 0.1);
+        color: #4361ee;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+      }
+      
+      .location-bar-container {
+        flex: 1;
+        
+        .location-name {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.5rem;
+          
+          .name {
+            font-weight: 500;
+            color: #2d3748;
+          }
+          
+          .count {
+            font-weight: 600;
+            color: #4361ee;
+          }
+        }
+        
+        .location-bar {
+          height: 8px;
+          border-radius: 4px;
+          background: rgba(226, 232, 240, 0.6);
+          overflow: hidden;
+          
+          .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4361ee 0%, #3f8cff 100%);
+            border-radius: 4px;
+          }
+        }
+      }
+    }
+    
+    .route-item {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: rgba(226, 232, 240, 0.3);
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(226, 232, 240, 0.5);
+      }
+      
+      .route-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        
+        .route-title {
+          font-weight: 500;
+          color: #2d3748;
+          display: flex;
+          align-items: center;
+          
+          i {
+            margin: 0 0.5rem;
+            color: #718096;
+          }
+        }
+        
+        .route-badge {
+          background: rgba(67, 97, 238, 0.1);
+          color: #4361ee;
+          border-radius: 1rem;
+          padding: 0.25rem 0.75rem;
+          font-size: 0.85rem;
+          font-weight: 600;
+        }
+      }
+    }
+    
+    .pass-through-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      
+      .location-tag {
+        background: rgba(67, 97, 238, 0.1);
+        color: #4361ee;
+        border-radius: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        
+        i {
+          margin-right: 0.5rem;
+        }
+        
+        .tag-count {
+          background: #4361ee;
+          color: white;
+          border-radius: 1rem;
+          padding: 0.15rem 0.5rem;
+          font-size: 0.75rem;
+          margin-left: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@include media-breakpoint-down(lg) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .dashboard-actions {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .dashboard-card {
+    .card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      
+      .card-actions {
+        margin-top: 0.75rem;
+      }
+    }
+  }
+}

@@ -28,7 +28,10 @@ public class Trip implements Serializable {
     private Long id;
 
     private String tripDate;
-    private String destination;
+    private String description;
+    private String startLocation;
+    private String endLocation;
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     TripStatus  tripStatus;
 
@@ -37,11 +40,9 @@ public class Trip implements Serializable {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<Parcel> parcels;
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
-    private List<Carpooling> carpoolings;
 
-    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
-    private List<CarbonFootPrint> carbonFootprints;
+
+
 
     @OneToOne(mappedBy = "trip", cascade = CascadeType.ALL)
     private FeedbackAnalysis feedbackAnalysis;
@@ -52,7 +53,5 @@ public class Trip implements Serializable {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<Vehicle> vehicles;
 
+
 }
-
-
-

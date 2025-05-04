@@ -9,5 +9,7 @@ public interface IParcelServices {
     Parcel retrieveParcel(Long parcelId);
     List<Parcel> retrieveAll();
     void deleteParcel(Long parcelId);
+    Parcel updateParcel(Long parcelId, Parcel parcel);
+
     Parcel updateParcel(Parcel parcel);
 }

@@ -1,3 +1,49 @@
+.profile-picture-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .profile-picture {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border: 2px solid #007bff;
+    border-radius: 50%; /* Make it circular */
+  }
+  
+  .profile-card {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    z-index: 1000;
+    min-width: 200px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-card .card-body {
+    padding: 15px;
+  }
+  
+  .profile-card .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .profile-card .card-text {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  
+  .profile-card .btn-danger {
+    width: 100%;
+  }
+
+
+  
 /* Change hover color to green */
 .navbar-nav .nav-link:hover,
 .dropdown-menu .dropdown-item:hover {
@@ -8,4 +54,67 @@
 .btn-primary:hover {
     background-color: green !important;
     border-color: green !important;
+  /* Style pour le lien avec un cadre stylé */
+.custom-frame {
+  display: inline-block;
+  padding: 10px 15px;
+  border: 2px solid transparent; /* Bordure initiale transparente */
+  border-radius: 5px;
+  transition: all 0.3s ease; /* Transition fluide pour les effets */
+  text-decoration: none;
+  color: #333; /* Couleur du texte */
+  position: relative;
+  background-color: #fff; /* Fond blanc par défaut */
+}
+
+/* Ajouter un effet de survol avec un cadre coloré */
+.custom-frame:hover {
+  border-color: #4caf50; /* Couleur du cadre au survol */
+  color: #4caf50; /* Changer la couleur du texte */
+}
+
+/* Ajouter un effet de cadre animé */
+.custom-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  background-color: rgba(76, 175, 80, 0.2); /* Fond avec transparence pour l'animation */
+  z-index: -1; /* Placer l'élément avant le texte */
+}
+
+/* Effet d'animation pour le cadre */
+.custom-frame:hover::before {
+  border-color: #4caf50; /* Couleur de la bordure de l'animation */
+  background-color: rgba(76, 175, 80, 0.1); /* Couleur du fond animé */
+}
+/* Style pour le lien avec un cadre fixe et une couleur assortie */
+.custom-frame {
+  display: inline-block;
+  padding: 10px 15px;
+  border: 2px solid #4caf50; /* Couleur du cadre (vert ici) */
+  border-radius: 5px; /* Coins arrondis */
+  background-color: #e8f5e9; /* Fond avec une couleur assortie claire */
+  color: #388e3c; /* Texte assorti à la couleur du cadre */
+  text-decoration: none;
+  font-weight: bold; /* Mettre en gras le texte */
+  transition: all 0.3s ease;
+}
+
+/* Style pour la couleur du texte au survol */
+.custom-frame:hover {
+  background-color: #c8e6c9; /* Fond plus foncé au survol */
+  color: #1b5e20; /* Texte plus foncé au survol */
+  border-color: #1b5e20; /* Bordure devient plus foncée au survol */
+}
+
+/* Pour un petit effet d'ombre et de relief */
+.custom-frame:active {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Ombre lors du clic */
+}
 }

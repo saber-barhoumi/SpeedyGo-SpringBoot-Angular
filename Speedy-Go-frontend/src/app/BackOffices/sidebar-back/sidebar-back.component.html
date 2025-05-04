@@ -7,8 +7,8 @@
                 <div class="main-menu-header">
                     <img class="img-radius" src="assets/BackOffice/images/user/avatar-2.jpg" alt="User-Profile-Image">
                     <div class="user-details">
-                        <span>John Doe</span>
-                        <div id="more-details">UX Designer<i class="fa fa-chevron-down m-l-5"></i></div>
+                        <span>{{ user.firstName }}{{ user.lastName }}</span>
+                        <div id="more-details">{{ user.role }}<i class="fa fa-chevron-down m-l-5"></i></div>
                     </div>
                 </div>
                 <div class="collapse" id="nav-user-link">
@@ -25,7 +25,7 @@
                     <label>Navigation</label>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                    <a routerLink="/admin/home" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                 </li>
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-layout"></i></span><span class="pcoded-mtext">Page layouts</span></a>
@@ -34,7 +34,37 @@
                         <li><a href="layout-horizontal.html" target="_blank">Horizontal</a></li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a routerLink="/admin/reportlist" class="nav-link">
+                      <span class="pcoded-micon"><i class="feather icon-file-text"></i></span>
+                      <span class="pcoded-mtext">Liste des Rapports</span>
+                    </a>
+                  </li>
+                  
+                  <li class="nav-item">
+                    <a routerLink="/admin/maprelais" class="nav-link">
+                      <span class="pcoded-micon"><i class="feather icon-map-pin"></i></span>
+                      <span class="pcoded-mtext">Carte Points Relais</span>
+                    </a>
+                  </li>
+                  
+                  <li class="nav-item">
+                    <a routerLink="/admin/returnlist" class="nav-link">
+                      <span class="pcoded-micon"><i class="feather icon-refresh-ccw"></i></span>
+                      <span class="pcoded-mtext">Liste des Retours</span>
+                    </a>
+                  </li>
+                  
+                  <li class="nav-item">
+                    <a routerLink="/admin/carbon" class="nav-link">
+                      <span class="pcoded-micon"><i class="feather icon-activity"></i></span>
+                      <span class="pcoded-mtext">Empreinte Carbone</span>
+                    </a>
+                  </li>
+                  
                 <li class="nav-item pcoded-menu-caption">
+                    
                     <label>UI Element</label>
                 </li>
                 <li class="nav-item pcoded-hasmenu">
@@ -62,7 +92,7 @@
                     <label>Forms &amp; table</label>
                 </li>
                 <li class="nav-item">
-                    <a href="form_elements.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Forms</span></a>
+                    <a routerLink="/admin/users" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Gestion Utilisateur</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="tbl_bootstrap.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-align-justify"></i></span><span class="pcoded-mtext">Bootstrap table</span></a>
@@ -73,12 +103,29 @@
                 <li class="nav-item">
                     <a href="chart-apex.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Chart</span></a>
                 </li>
+
+
                 <li class="nav-item">
                     <a href="map-google.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Maps</span></a>
                 </li>
+
+
+
+
+                <li class="nav-item">
+                    <a routerLink="/admin/statistique" class="nav-link "><span class="pcoded-micon"><i class="feather icon-bar-chart-2"></i></span><span class="pcoded-mtext">Statistiques</span></a>
+                </li>
+                <!-- Trip Dashboard Link -->
+                <li class="nav-item">
+                    <a routerLink="/admin/trip-dashboard" class="nav-link "><span class="pcoded-micon"><i class="feather icon-activity"></i></span><span class="pcoded-mtext">Trip Analytics</span></a>
+                </li>
+
+
+
+
                 <li class="nav-item pcoded-menu-caption">
                     <label>Pages</label>
-                </li>
+                </li> 
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Authentication</span></a>
                     <ul class="pcoded-submenu">

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SpeedyGo-SpringBoot-Angular.iml" filepath="$PROJECT_DIR$/.idea/SpeedyGo-SpringBoot-Angular.iml" />
+      <module fileurl="file://$PROJECT_DIR$/co2iamodel/untitled/untitled.iml" filepath="$PROJECT_DIR$/co2iamodel/untitled/untitled.iml" />
     </modules>
   </component>
 </project>

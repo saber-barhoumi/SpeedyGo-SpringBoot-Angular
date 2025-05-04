@@ -6,14 +6,14 @@
 
         <div class="card mb-3">
           <div class="card-body">
-            <label for="reason_description" class="form-label">Raison</label>
+            <label for="reason_description" class="form-label">Raison of Demand</label>
             <input type="text" class="form-control" formControlName="reason_description" required />
           </div>
         </div>
 
         <div class="card mb-3">
           <div class="card-body">
-            <label for="retourtype" class="form-label">Type de retour</label>
+            <label for="retourtype" class="form-label">Type of Demand </label>
             <select class="form-control" formControlName="retourtype" required>
               <option value="RETURN">RETURN</option>
               <option value="EXCHANGE">EXCHANGE</option>
@@ -24,7 +24,7 @@
 
         <div class="card mb-3">
           <div class="card-body">
-            <label class="form-label">Date du retour</label>
+            <label class="form-label">Date</label>
             <mwl-calendar-month-view
               [viewDate]="viewDate"
               [events]="[]"
@@ -33,9 +33,9 @@
             </mwl-calendar-month-view>
 
             <div class="d-flex justify-content-between align-items-center mt-3">
-              <button class="btn btn-outline-primary" type="button" (click)="prevMonth()">⬅ Mois précédent</button>
+              <button class="btn btn-outline-primary" type="button" (click)="prevMonth()">⬅ previous Month</button>
               <h5 class="mb-0">{{ viewDate | date:'MMMM yyyy' }}</h5>
-              <button class="btn btn-outline-primary" type="button" (click)="nextMonth()">Mois suivant ➡</button>
+              <button class="btn btn-outline-primary" type="button" (click)="nextMonth()">next Month ➡</button>
             </div>
 
             <div *ngIf="selectedDate" class="mt-3">

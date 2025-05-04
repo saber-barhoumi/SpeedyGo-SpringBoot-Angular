@@ -79,7 +79,7 @@ public class ReturnsServicesImpl implements IReturnsServices {
                 try {
                     smsService.sendSms(
                             user.getPhoneNumber(),
-                            "Bonjour, votre compte SpeedyGo a été temporairement suspendu en raison de plusieurs retours non terminés. Contactez-nous pour plus d'informations."
+                            "Hello, your SpeedyGo account has been temporarily suspended due to multiple incomplete exchange demands. Please contact us for more information."
                     );
                     System.out.println("SMS envoyé avec succès.");
                 } catch (Exception e) {

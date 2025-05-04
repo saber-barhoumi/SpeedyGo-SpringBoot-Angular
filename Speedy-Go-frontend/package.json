@@ -45,6 +45,7 @@
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
+    "sweetalert2": "^11.20.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },

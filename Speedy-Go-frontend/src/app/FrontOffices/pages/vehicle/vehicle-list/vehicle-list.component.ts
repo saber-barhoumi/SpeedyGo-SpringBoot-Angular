@@ -4,6 +4,8 @@ import { DeliveryVehicle, VehicleType } from '../../../../models/vehicle.model';
 import { VehicleService } from '../../../../services/recrutement/vehicle.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/user/auth.service';
+import { CarbonFootprintService } from 'src/app/services/carbon-footprint.service'; // adapte le chemin si nécessaire
+
 
 @Component({
   selector: 'app-vehicle-list',
@@ -22,7 +24,9 @@ export class VehicleListComponent implements OnInit {
     private vehicleService: VehicleService,
     private toastr: ToastrService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private carbonFootprintService: CarbonFootprintService
+
   ) { }
 
   ngOnInit(): void {
@@ -105,4 +109,35 @@ export class VehicleListComponent implements OnInit {
   getVehicleTypeName(type: VehicleType): string {
     return type.replace('_', ' ');
   }
+
+  showModal = false;
+  predictedEmission = '';
+  predictionAdvice = '';
+  
+  showCarbonFootprint(vehicle: any) {
+    const vehicleData = {
+      vehicleType: vehicle.vehicleType,
+      maxLoadCapacity: vehicle.maxLoadCapacity,
+      hasRefrigeration: vehicle.hasRefrigeration,
+      isInsured: vehicle.isInsured,
+      yearOfManufacture: vehicle.yearOfManufacture,
+      brand: vehicle.brand,
+      model: vehicle.model
+    };
+  
+    this.carbonFootprintService.getPredictionForVehicle(vehicleData).subscribe({
+      next: (res: any) => {
+        this.predictedEmission = res.prediction?.[0]?.toFixed(2) || 'N/A';
+        this.predictionAdvice = res.advice?.[0] || 'Aucun conseil disponible.';
+        this.showModal = true;
+      },
+      error: err => console.error('Erreur de prédiction:', err)
+    });
+  }
+  
+  closeModal() {
+    this.showModal = false;
+  }
+  
+  
 }

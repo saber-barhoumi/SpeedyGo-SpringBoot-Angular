@@ -15,4 +15,9 @@ export class CarbonFootprintService {
   getPrediction(): Observable<any> {
     return this.http.post<any>(this.apiUrl, {});  // Envoie une requête POST sans corps pour récupérer les prédictions
   }
+
+  getPredictionForVehicle(vehicleData: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, vehicleData);
+  }
+  
 }

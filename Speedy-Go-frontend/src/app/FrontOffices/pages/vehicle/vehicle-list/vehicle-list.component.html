@@ -135,6 +135,14 @@
                   >
                     <i class="fas fa-trash"></i>
                   </button>
+                  <button 
+  class="btn btn-sm btn-outline-success"
+  (click)="showCarbonFootprint(vehicle)"
+  title="View Carbon Footprint"
+>
+  <i class="fas fa-leaf"></i>
+</button>
+
                   </div>
                 </td>
               </tr>
@@ -144,3 +152,14 @@
       </div>
     </div>
   </div>
+  <!-- Modal Carbon Footprint -->
+<div *ngIf="showModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h4 class="text-success mb-3">Bilan carbone du véhicule</h4>
+    <p><strong>Émissions estimées :</strong> {{ predictedEmission }} kg CO₂</p>
+    <p><strong>Conseil :</strong> {{ predictionAdvice }}</p>
+    <button class="btn btn-secondary mt-3" (click)="closeModal()">
+      <i class="fas fa-times me-1"></i> Fermer
+    </button>
+  </div>
+</div>

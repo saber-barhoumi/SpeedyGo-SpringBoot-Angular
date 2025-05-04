@@ -11,6 +11,7 @@ import Point from 'ol/geom/Point';
 import { Icon, Style } from 'ol/style';
 import { PointsRelaisService } from 'src/app/services/points-relais.service';
 import { PointRelais } from 'src/app/models/points-relais.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-map-points-relais',
@@ -50,29 +51,27 @@ export class MapPointsRelaisComponent implements OnInit {
     // Sélectionner une position au clic
     this.map.on('click', (event) => {
       const coords = toLonLat(event.coordinate);
-      
-      // Supprimer l'ancien marqueur temporaire s'il existe
+
       if (this.temporaryFeature) {
         this.vectorSource.removeFeature(this.temporaryFeature);
       }
-      
-      // Créer un nouveau marqueur temporaire
+
       this.selectedPosition = {
         capacite: 0,
         longitude: coords[0],
         latitude: coords[1],
       };
-      
+
       this.temporaryFeature = new Feature({
         geometry: new Point(fromLonLat([this.selectedPosition.longitude, this.selectedPosition.latitude]))
       });
 
       this.temporaryFeature.setStyle(new Style({
         image: new Icon({
-          src: 'assets/marker-temp.png', // Utilisez une icône différente pour le temporaire
+          src: 'assets/marker-temp.png',
           scale: 0.2,
-            }),
-          }));
+        }),
+      }));
 
       this.vectorSource.addFeature(this.temporaryFeature);
     });
@@ -80,15 +79,34 @@ export class MapPointsRelaisComponent implements OnInit {
 
   confirmAddPoint(): void {
     if (this.selectedPosition) {
-      this.addMarker(this.selectedPosition);
-      this.savePointRelais(this.selectedPosition);
-      
-      // Réinitialiser la sélection
-      if (this.temporaryFeature) {
-        this.vectorSource.removeFeature(this.temporaryFeature);
-      }
-      this.selectedPosition = null;
-      this.temporaryFeature = null;
+      const point = this.selectedPosition;
+
+      this.pointRelaisService.add(point).subscribe(() => {
+        // Ajout dans la carte (définitif)
+        this.addMarker(point);
+
+        // Suppression du marqueur temporaire
+        if (this.temporaryFeature) {
+          this.vectorSource.removeFeature(this.temporaryFeature);
+        }
+
+        this.selectedPosition = null;
+        this.temporaryFeature = null;
+
+        // Affichage du message de succès
+        Swal.fire({
+          icon: 'success',
+          title: 'Succès',
+          text: 'Le point relais a été ajouté avec succès !',
+          confirmButtonText: 'OK'
+        });
+      }, error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l’ajout du point relais.',
+        });
+      });
     }
   }
 
@@ -110,12 +128,6 @@ export class MapPointsRelaisComponent implements OnInit {
   loadPointsRelais(): void {
     this.pointRelaisService.getAll().subscribe(points => {
       points.forEach(p => this.addMarker(p));
-    });
-  }
-
-  savePointRelais(point: PointRelais): void {
-    this.pointRelaisService.add(point).subscribe(() => {
-      console.log("Point ajouté !");
     });
   }
 }

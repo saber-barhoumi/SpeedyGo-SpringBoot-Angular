@@ -2,7 +2,7 @@
     <h2>Post a new report</h2>
     <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="report_name">Nom du Rapport</label>
+        <label for="report_name">Report subject</label>
         <input type="text" id="report_name" formControlName="report_name" class="form-control" />
         <div *ngIf="reportForm.controls['report_name'].invalid && reportForm.controls['report_name'].touched" class="text-danger">
           Le nom du rapport est requis.
@@ -10,15 +10,15 @@
       </div>
   
       <div class="form-group">
-        <label for="report_description">Description</label>
+        <label for="report_description">Detailed description</label>
         <textarea id="report_description" formControlName="report_description" class="form-control"></textarea>
         <div *ngIf="reportForm.controls['report_description'].invalid && reportForm.controls['report_description'].touched" class="text-danger">
-          La description est requise.
+         Detailled description required.
         </div>
       </div>
   
       
-      <button type="submit" [disabled]="reportForm.invalid" class="btn btn-primary">Ajouter</button>
+      <button type="submit" [disabled]="reportForm.invalid" class="btn btn-primary">Send Report</button>
     </form>
   </div>
   

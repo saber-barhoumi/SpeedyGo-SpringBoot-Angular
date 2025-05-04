@@ -386,3 +386,6 @@ export class OffresComponent implements OnInit {
     return comment.username || comment.userName || 'Anonymous';
   }
 }
+
+/* Ce composant gère l'affichage des offres d'un store, le paiement avec ou sans points de fidélité, 
+   les commentaires des utilisateurs, les favoris, ainsi que le thème (sombre/clair). */

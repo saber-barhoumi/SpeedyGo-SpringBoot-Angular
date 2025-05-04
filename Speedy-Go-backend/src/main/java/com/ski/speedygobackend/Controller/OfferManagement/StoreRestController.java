@@ -190,3 +190,9 @@ public class StoreRestController {
                 .body(e.getMessage());
     }
 }
+
+/**
+ * REST controller responsible for managing store-related operations in the SpeedyGo platform.
+ * This includes creating, retrieving, updating, deleting stores, and serving store images.
+ * It also handles image uploads and dynamically generates accessible image URLs.
+ */

@@ -90,6 +90,7 @@
         <span *ngIf="!paymentLoading">Confirmer le paiement</span>
         <span *ngIf="paymentLoading" class="spinner"></span>
       </button>
+      <br><br>
       <button class="cancel-button" [disabled]="paymentLoading" (click)="showPaymentForm = false" aria-label="Cancel payment">
         Annuler
       </button>

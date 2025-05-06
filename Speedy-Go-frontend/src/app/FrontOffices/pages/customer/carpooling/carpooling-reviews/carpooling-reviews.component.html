@@ -1,0 +1,160 @@
+<div class="container mt-4">
+    <h1 class="mb-4">My Carpooling Reviews</h1>
+  
+    <!-- Statistics Dashboard -->
+    <div class="row mb-5">
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Overall Rating</h5>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+              <div class="h1 me-2">{{ getAverageRating().toFixed(1) }}</div>
+              <div class="stars">
+                <i *ngFor="let star of getStarsArray(getAverageRating())" 
+                   class="fas fa-star" 
+                   [ngClass]="{'text-warning': star === 1, 'text-muted': star === 0}"></i>
+              </div>
+            </div>
+            <p class="card-text mt-2">Based on {{ userReviews.length }} ratings</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Trips Rated</h5>
+            <p class="display-4 mt-3">{{ statistics.totalRatings || 0 }}</p>
+            <p class="card-text mt-2">Out of {{ statistics.totalTrips || 0 }} completed trips</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Reviews Written</h5>
+            <p class="display-4 mt-3">{{ statistics.totalTextReviews || 0 }}</p>
+            <p class="card-text mt-2">{{ statistics.avgReviewLength || 0 }} avg. words per review</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rating Distribution Chart -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>Rating Distribution</h4>
+      </div>
+      <div class="card-body">
+        <div class="rating-distribution">
+          <div class="row mb-2" *ngFor="let i of [5,4,3,2,1]">
+            <div class="col-1 text-end">
+              {{ i }}
+              <i class="fas fa-star text-warning"></i>
+            </div>
+            <div class="col-11">
+              <div class="progress">
+                <div class="progress-bar bg-warning" 
+                     [style.width]="((statistics['rating_' + i] || 0) / (statistics.totalRatings || 1)) * 100 + '%'">
+                  {{ statistics['rating_' + i] || 0 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Reviews Filter -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <a class="nav-link" 
+               [ngClass]="{'active': reviewFilter === 'all'}" 
+               (click)="filterReviews('all')"
+               href="javascript:void(0)">
+              All Ratings
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" 
+               [ngClass]="{'active': reviewFilter === 'given'}" 
+               (click)="filterReviews('given')"
+               href="javascript:void(0)">
+              Reviews Given
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" 
+               [ngClass]="{'active': reviewFilter === 'received'}" 
+               (click)="filterReviews('received')"
+               href="javascript:void(0)">
+              Reviews Received
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body">
+        <!-- Loading spinner -->
+        <div *ngIf="isLoading" class="text-center my-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        
+        <!-- Reviews list -->
+        <div *ngIf="!isLoading">
+          <div *ngIf="getFilteredReviews().length === 0" class="alert alert-info">
+            No reviews to display.
+          </div>
+          
+          <div *ngFor="let review of getFilteredReviews()" class="review-item mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                  <div>
+                    <h5 class="mb-1">Trip from {{ review.carpoolingId ? 'Location to Destination' : 'Unknown' }}</h5>
+                    <div class="text-muted">{{ formatDate(review.createdAt) }}</div>
+                  </div>
+                  <div class="rating">
+                    <i *ngFor="let star of getStarsArray(review.rating || 0)" 
+                       class="fas fa-star" 
+                       [ngClass]="{'text-warning': star === 1, 'text-muted': star === 0}"></i>
+                  </div>
+                </div>
+                
+                <p *ngIf="review.reviewText" class="review-text">
+                  {{ review.reviewText }}
+                </p>
+                <p *ngIf="!review.reviewText" class="text-muted">
+                  No detailed review was provided.
+                </p>
+                
+                <div class="review-metadata mt-3 text-muted small">
+                  <div>
+                    Reservation ID: {{ review.reservationId }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .review-text {
+      white-space: pre-line;
+    }
+    .progress {
+      height: 25px;
+    }
+    .progress-bar {
+      text-align: left;
+      padding-left: 10px;
+    }
+    .nav-link {
+      cursor: pointer;
+    }
+  </style>

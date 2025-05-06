@@ -386,17 +386,35 @@
           </div>
         </div>
         
-        <!-- Photo Upload -->
+        <!-- Photo Upload with Auto Generate Button -->
         <div class="mb-3">
           <label for="photo" class="form-label">Parcel Photo</label>
-          <input 
-            type="file" 
-            id="photo" 
-            name="photo" 
-            ngModel
-            class="form-control"
-            #photo="ngModel"
-            accept="image/*">
+          <div class="input-group">
+            <input 
+              type="file" 
+              id="photo" 
+              name="photo" 
+              ngModel
+              class="form-control"
+              #photo="ngModel"
+              accept="image/*">
+            <button 
+              type="button" 
+              class="btn btn-info" 
+              (click)="analyzeParcelImage()" 
+              [disabled]="isAnalyzing">
+              <i class="bi bi-magic" *ngIf="!isAnalyzing"></i>
+              <span class="spinner-border spinner-border-sm" *ngIf="isAnalyzing" role="status" aria-hidden="true"></span>
+              {{ isAnalyzing ? 'Analyzing...' : 'Auto Generate' }}
+            </button>
+          </div>
+          <small class="form-text text-muted">
+            Upload a photo of your parcel and click "Auto Generate" to automatically fill in the dimensions and description using the Visual Language Model LLaVA.
+          </small>
+          <!-- Analysis Error Message -->
+          <div *ngIf="apiError" class="text-danger small mt-1">
+            {{ apiError }}
+          </div>
         </div>
         
         <!-- Form Actions -->
@@ -407,12 +425,25 @@
             class="btn btn-outline-secondary">
             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
           </button>
-          <button 
-            type="submit" 
-            [disabled]="tripForm.invalid" 
-            class="btn btn-primary">
-            <i class="bi bi-save me-1"></i> Save Trip
-          </button>
+          
+          <!-- PDF and Save Button -->
+          <div>
+            <button 
+              type="button" 
+              (click)="generatePDF()"
+              [disabled]="tripForm.invalid || isGeneratingPDF" 
+              class="btn btn-outline-info me-2">
+              <span *ngIf="isGeneratingPDF" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              <i *ngIf="!isGeneratingPDF" class="bi bi-file-pdf me-1"></i> {{ isGeneratingPDF ? 'Generating...' : 'Download PDF' }}
+            </button>
+            <button 
+              type="submit" 
+              [disabled]="tripForm.invalid || isSubmitting" 
+              class="btn btn-primary">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              <i *ngIf="!isSubmitting" class="bi bi-save me-1"></i> {{ isSubmitting ? 'Saving...' : 'Save Trip' }}
+            </button>
+          </div>
         </div>
 
       </form>
@@ -442,4 +473,4 @@
 
 
 
-  <app-footer-front></app-footer-front> 
+  <app-footer-front></app-footer-front>

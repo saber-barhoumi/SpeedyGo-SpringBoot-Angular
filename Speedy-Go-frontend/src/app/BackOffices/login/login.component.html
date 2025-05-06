@@ -1,37 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-
-
-<!-- [ auth-signin ] start -->
-<div class="auth-wrapper">
-	<div class="auth-content text-center">
-	  <img src="assets/BackOffice/images/logo.png" alt="" class="img-fluid mb-4">
-	  <div class="card borderless">
-		<div class="row align-items-center">
-		  <div class="col-md-12">
-			<div class="card-body">
-			  <h4 class="mb-3 f-w-400">Signin</h4>
-			  <hr>
-			  <div class="form-group mb-3">
-				<input type="text" class="form-control" [(ngModel)]="email" placeholder="Email address">
-			  </div>
-			  <div class="form-group mb-4">
-				<input type="password" class="form-control" [(ngModel)]="password" placeholder="Password">
-			  </div>
-			  <button (click)="login()" class="btn btn-block btn-primary mb-4">Signin</button>
-			  <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
-			  <hr>
-			  <p class="mb-2 text-muted">Forgot password? <a href="#" class="f-w-400">Reset</a></p>
-			  <p class="mb-0 text-muted">Don’t have an account? <a routerLink="/registerAdmin"class="f-w-400">Signup</a></p>
-			</div>
+<section class="login-section">
+	<div class="login-container">
+	  <div class="login-box">
+		<form (ngSubmit)="login(loginForm)" #loginForm="ngForm" class="login-form">
+		  <h2 class="login-title">Sign In</h2>
+  
+		  <!-- Error Message -->
+		  <div *ngIf="errorMessage" class="error-message">
+			{{ errorMessage }}
 		  </div>
-		</div>
+  
+		  <!-- Email Input -->
+		  <div class="input-box">
+			<span class="icon"><i class="fas fa-envelope"></i></span>
+			<input 
+			  type="email" 
+			  [(ngModel)]="email" 
+			  name="email" 
+			  required 
+			  placeholder="Email Address"
+			  autocomplete="email"
+			  list="emailSuggestions"
+			>
+			<datalist id="emailSuggestions">
+			  <option *ngFor="let email of savedEmails" [value]="email">{{email}}</option>
+			</datalist>
+			<label>Email</label>
+		  </div>
+  
+		  <!-- Password Input -->
+		  <div class="input-box">
+			<span class="icon"><i class="fas fa-lock"></i></span>
+			<input 
+			  type="password" 
+			  [(ngModel)]="password" 
+			  name="password" 
+			  required 
+			  placeholder="Password"
+			  autocomplete="current-password"
+			>
+			<label>Password</label>
+		  </div>
+  
+		  <!-- Remember Me Checkbox -->
+		  <div class="checkbox-container">
+			<input 
+			  type="checkbox" 
+			  id="rememberMe"
+			  [(ngModel)]="rememberMe"
+			  name="rememberMe"
+			>
+			<label for="rememberMe">Remember me</label>
+		  </div>
+  
+		  <!-- Submit Button -->
+		  <button 
+			type="submit" 
+			[disabled]="!loginForm.valid"
+		  >
+			Sign In
+		  </button>
+  
+		  <!-- Links -->
+		  <div class="links-container">
+			<a (click)="navigateToPasswordReset()" class="forgot-link">Forgot password?</a>
+			<p class="signup-link">
+			  Don't have an account? 
+			  <a routerLink="/registerAdmin">Sign up</a>
+			</p>
+		  </div>
+		</form>
 	  </div>
 	</div>
-  </div>
-  
-<!-- [ auth-signin ] end -->
-
-
-
-</html>
+  </section>

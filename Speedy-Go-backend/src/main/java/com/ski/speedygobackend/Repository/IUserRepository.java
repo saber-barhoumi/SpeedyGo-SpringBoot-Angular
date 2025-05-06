@@ -8,11 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@PersistenceContext(unitName = "mysqlPersistenceUnit")
 public interface IUserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByPasswordResetToken(String token);
-
 
     String email(String email);
 }

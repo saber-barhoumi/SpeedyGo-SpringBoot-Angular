@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
@@ -35,29 +35,25 @@ export class RegisterComponent implements OnInit {
   }
 
   ageValidator(control: any) {
-        if (!control.value) {
-            return { required: true };
-        }
-
-        const birthDate = new Date(control.value);
-        const today = new Date();
-
-        // La date de naissance ne doit pas être dans le futur
-        if (birthDate >= today) {
-            return { invalidDate: true };
-        }
-
-        // L'utilisateur doit avoir au moins 18 ans
-        const minAgeDate = new Date();
-        minAgeDate.setFullYear(today.getFullYear() - 18);
-
-        if (birthDate > minAgeDate) {
-            return { underage: true };
-        }
-
-        return null; // Date valide
+    if (!control.value) {
+      return { required: true };
     }
-
+    const birthDate = new Date(control.value);
+    const today = new Date();
+    
+    // Birth date should not be in the future
+    if (birthDate >= today) {
+      return { invalidDate: true };
+    }
+    
+    // User must be at least 18 years old
+    const minAgeDate = new Date();
+    minAgeDate.setFullYear(today.getFullYear() - 18);
+    if (birthDate > minAgeDate) {
+      return { underage: true };
+    }
+    return null; // Valid date
+  }
 
   passwordMatchValidator(group: FormGroup) {
     const password = group.get('password')?.value;
@@ -67,6 +63,10 @@ export class RegisterComponent implements OnInit {
 
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0];
+    this.registerForm.patchValue({
+      profile_picture: this.selectedFile
+    });
+    this.registerForm.get('profile_picture')?.updateValueAndValidity();
   }
 
   onSubmit(): void {
@@ -74,34 +74,46 @@ export class RegisterComponent implements OnInit {
       this.markFormGroupTouched(this.registerForm);
       return;
     }
-
+    
+    this.isLoading = true;
     const formData = new FormData();
-    Object.keys(this.registerForm.value).forEach(key => {
-      if (key === 'profile_picture') {
-        if (this.selectedFile) {
-          formData.append('profile_picture', this.selectedFile, this.selectedFile.name);
-        }
-      } else {
-        formData.append(key, this.registerForm.get(key)?.value);
-      }
-    });
+    
+    // Make sure to use "birthDate" instead of "birth_date"
+    formData.append('firstName', this.registerForm.get('firstName')?.value);
+    formData.append('lastName', this.registerForm.get('lastName')?.value);
+    formData.append('email', this.registerForm.get('email')?.value);
+    formData.append('password', this.registerForm.get('password')?.value);
+    formData.append('birthDate', this.registerForm.get('birthDate')?.value); // Use "birthDate"
+    formData.append('phoneNumber', this.registerForm.get('phoneNumber')?.value);
+    formData.append('address', this.registerForm.get('address')?.value);
+    formData.append('sexe', this.registerForm.get('sexe')?.value);
+    formData.append('role', this.registerForm.get('role')?.value);
+    
+    if (this.selectedFile) {
+      formData.append('profile_picture', this.selectedFile, this.selectedFile.name);
+    }
+    
     this.authService.register(formData).subscribe({
       next: (response) => {
+        this.isLoading = false;
+        console.log('Registration successful:', response);
         alert('Registration successful!');
-        this.router.navigate(['/login']); // Navigate to login after successful registration
+        this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.errorMessage = err.message || 'Registration failed'; // Display error message
+        this.isLoading = false;
+        console.error('Registration error:', err);
+        this.errorMessage = err.message || 'Registration failed';
       }
     });
   }
+  
   private markFormGroupTouched(formGroup: FormGroup): void {
-        Object.values(formGroup.controls).forEach(control => {
-            control.markAsTouched();
-
-            if (control instanceof FormGroup) {
-                this.markFormGroupTouched(control);
-            }
-        });
-    }
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
 }

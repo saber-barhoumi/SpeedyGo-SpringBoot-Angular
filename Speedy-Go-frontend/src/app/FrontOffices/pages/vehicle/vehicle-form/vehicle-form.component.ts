@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DeliveryVehicle, VehicleType } from '../../../../models/vehicle.model';
-import { VehicleService } from '../../../../services/recrutement/vehicle.service';
+import { VehicleService } from 'src/app/services/vehicle/vehicle.service';
 import { AuthService } from '../../../services/user/auth.service';
 
 @Component({

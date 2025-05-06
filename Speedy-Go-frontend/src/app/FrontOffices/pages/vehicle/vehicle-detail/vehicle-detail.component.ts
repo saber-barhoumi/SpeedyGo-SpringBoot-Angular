@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
 import { DeliveryVehicle } from '../../../../models/vehicle.model';
-import { VehicleService } from '../../../../services/recrutement/vehicle.service';
+import { VehicleService } from 'src/app/services/vehicle/vehicle.service';
 
 @Component({
   selector: 'app-vehicle-detail',

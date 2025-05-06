@@ -1,0 +1,128 @@
+// Statistics cards styling
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 1rem 1.25rem;
+    
+    h4 {
+      margin-bottom: 0;
+      font-weight: 600;
+    }
+  }
+  
+  .card-title {
+    font-weight: 600;
+    color: #495057;
+  }
+}
+
+// Rating stars
+.stars {
+  .fas {
+    font-size: 1.2rem;
+    margin-right: 3px;
+    
+    &.text-warning {
+      color: #ffc107 !important;
+    }
+    
+    &.text-muted {
+      color: #dee2e6 !important;
+    }
+  }
+}
+
+// Rating distribution chart
+.rating-distribution {
+  margin: 20px 0;
+  
+  .progress {
+    height: 25px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    
+    .progress-bar {
+      font-weight: 500;
+      text-align: left;
+      padding-left: 10px;
+      line-height: 25px;
+      background-color: #ffc107;
+      color: #212529;
+    }
+  }
+}
+
+// Review items
+.review-item {
+  margin-bottom: 20px;
+  
+  .card {
+    border-left: 4px solid #ffc107;
+  }
+  
+  .review-text {
+    white-space: pre-line;
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-style: italic;
+  }
+  
+  .review-metadata {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+}
+
+// Filter tabs
+.nav-tabs {
+  .nav-link {
+    color: #495057;
+    cursor: pointer;
+    
+    &.active {
+      font-weight: 600;
+      color: #0d6efd;
+      border-bottom: 2px solid #0d6efd;
+    }
+    
+    &:hover:not(.active) {
+      background-color: #f8f9fa;
+    }
+  }
+}
+
+// Loading spinner
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  .nav-tabs {
+    .nav-link {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+  }
+}

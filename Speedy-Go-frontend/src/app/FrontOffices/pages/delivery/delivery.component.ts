@@ -33,4 +33,12 @@ export class DeliveryComponent implements OnInit {
   goToCarpooling(): void {
     this.router.navigate(['/carpooling']);
   }
+
+  goToSmartRoute(): void {
+    this.router.navigate(['/smart-route']);
+  }
+
+  goToAllPaidParcels(): void {
+    this.router.navigate(['/all-paid-parcels']);
+  }
 }

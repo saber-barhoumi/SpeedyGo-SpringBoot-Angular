@@ -1,0 +1,657 @@
+<div class="container-fluid shipping-dashboard py-4">
+  <!-- Header Section -->
+  <div class="dashboard-header mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h1 class="dashboard-title">Delivery Provider Dashboard</h1>
+        <p class="text-muted" *ngIf="userName">Welcome back, {{userName || 'User'}}!</p>
+      </div>
+      <div class="col-auto">
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bolt"></i> Quick Actions
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="quickActionsDropdown">
+            <li><a class="dropdown-item" (click)="startCreateService()"><i class="fas fa-plus-circle"></i> Create New Service</a></li>
+            <li><a class="dropdown-item" (click)="setActiveTab('orders')"><i class="fas fa-clipboard-list"></i> View Orders</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line"></i> View Analytics</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row stats-cards mb-4">
+    <div class="col-md-4">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="stat-icon bg-primary">
+                <i class="fas fa-shipping-fast"></i>
+              </div>
+            </div>
+            <div class="col">
+              <h6 class="stat-title">Total Deliveries</h6>
+              <h3 class="stat-value">{{totalDeliveries || 0}}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="stat-icon bg-success">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="col">
+              <h6 class="stat-title">Total Earnings</h6>
+              <h3 class="stat-value">{{totalEarnings || 0 | currency}}</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card stat-card">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <div class="stat-icon bg-warning">
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <div class="col">
+              <h6 class="stat-title">Average Rating</h6>
+              <h3 class="stat-value">
+                <span *ngIf="averageRating > 0">{{averageRating | number:'1.1-1'}}/5</span>
+                <span *ngIf="averageRating === 0 || !averageRating">No ratings yet</span>
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'services'" (click)="setActiveTab('services')">
+        <i class="fas fa-truck me-2"></i>My Services
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'orders'" (click)="setActiveTab('orders')">
+        <i class="fas fa-box me-2"></i>Orders
+        <span class="badge bg-danger ms-1" *ngIf="pendingOrders.length > 0">{{pendingOrders.length}}</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'analytics'" (click)="setActiveTab('analytics')">
+        <i class="fas fa-chart-bar me-2"></i>Analytics
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'settings'" (click)="setActiveTab('settings')">
+        <i class="fas fa-cog me-2"></i>Settings
+      </a>
+    </li>
+  </ul>
+
+  <!-- Error Alert -->
+  <div class="alert alert-danger" *ngIf="error">{{error}}</div>
+
+  <!-- Loading Indicator -->
+  <div class="text-center my-5" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading data...</p>
+  </div>
+
+  <!-- Services Tab -->
+  <div class="tab-content mb-4" *ngIf="activeTab === 'services' && !loading">
+    <!-- Service Creation/Editing Form -->
+    <div class="card mb-4" *ngIf="isCreatingService">
+      <div class="card-header bg-light">
+        <h5 class="mb-0">{{editingServiceId ? 'Edit' : 'Create'}} Delivery Service</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="serviceForm" (ngSubmit)="submitServiceForm()">
+          <!-- Service Type -->
+          <div class="mb-3">
+            <label class="form-label">Delivery Type</label>
+            <div class="btn-group w-100" role="group">
+              <input type="radio" class="btn-check" id="typeInternational" formControlName="deliveryType" [value]="deliveryTypes.INTERNATIONAL">
+              <label class="btn btn-outline-primary" for="typeInternational">
+                <i class="fas fa-globe-americas me-2"></i>International
+              </label>
+              
+              <input type="radio" class="btn-check" id="typeLocal" formControlName="deliveryType" [value]="deliveryTypes.LOCAL">
+              <label class="btn btn-outline-primary" for="typeLocal">
+                <i class="fas fa-map-marker-alt me-2"></i>Local (Tunisia)
+              </label>
+            </div>
+          </div>
+          
+          <!-- Countries Served (for International) -->
+          <div class="mb-3" *ngIf="serviceForm.get('deliveryType')?.value === deliveryTypes.INTERNATIONAL">
+            <label class="form-label">Countries Served</label>
+            <div class="card">
+              <div class="card-body p-3">
+                <div formArrayName="countriesServed">
+                  <div class="d-flex mb-2 align-items-center" *ngFor="let country of countriesFormArray.controls; let i = index">
+                    <div class="flex-grow-1 me-2">
+                      <input type="text" class="form-control" [formControlName]="i" list="countriesList" placeholder="Enter country name">
+                      <div class="invalid-feedback" *ngIf="countriesFormArray.controls[i].invalid && formSubmitted">
+                        Country name is required
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCountry(i)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="addCountry()">
+                    <i class="fas fa-plus-circle me-2"></i>Add Country
+                  </button>
+                </div>
+                
+                <datalist id="countriesList">
+                  <option *ngFor="let country of countriesList" [value]="country"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="countriesFormArray.invalid && formSubmitted">
+              Please add at least one country
+            </div>
+          </div>
+          
+          <!-- Accepted Good Types -->
+          <div class="mb-3">
+            <label class="form-label">Accepted Good Types</label>
+            <div class="card">
+              <div class="card-body p-3">
+                <div formArrayName="acceptedGoodTypes">
+                  <div class="d-flex mb-2 align-items-center" *ngFor="let goodType of goodTypesFormArray.controls; let i = index">
+                    <div class="flex-grow-1 me-2">
+                      <input type="text" class="form-control" [formControlName]="i" list="goodTypesList" placeholder="Enter good type">
+                      <div class="invalid-feedback" *ngIf="goodTypesFormArray.controls[i].invalid && formSubmitted">
+                        Good type is required
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeGoodType(i)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  
+                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="addGoodType()">
+                    <i class="fas fa-plus-circle me-2"></i>Add Good Type
+                  </button>
+                </div>
+                
+                <datalist id="goodTypesList">
+                  <option *ngFor="let goodType of goodTypesList" [value]="goodType"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="goodTypesFormArray.invalid && formSubmitted">
+              Please add at least one good type
+            </div>
+          </div>
+          
+          <!-- Service Conditions -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Max Weight Per Order (kg)</label>
+              <input type="number" class="form-control" formControlName="maxWeightPerOrder">
+              <div class="invalid-feedback" *ngIf="serviceForm.get('maxWeightPerOrder')?.invalid && formSubmitted">
+                Please enter a valid weight (0.1 - 500 kg)
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Max Orders Per Day</label>
+              <input type="number" class="form-control" formControlName="maxOrdersPerDay">
+              <div class="invalid-feedback" *ngIf="serviceForm.get('maxOrdersPerDay')?.invalid && formSubmitted">
+                Please enter a valid number (1 - 100)
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pricing -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label">Base Price</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" formControlName="basePrice">
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="serviceForm.get('basePrice')?.invalid && formSubmitted">
+                Please enter a valid base price (min $1)
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Price Per Kg</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" formControlName="pricePerKg">
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="serviceForm.get('pricePerKg')?.invalid && formSubmitted">
+                Please enter a valid price per kg (min $0.1)
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Est. Delivery Days</label>
+              <input type="number" class="form-control" formControlName="estimatedDeliveryDays">
+              <div class="invalid-feedback" *ngIf="serviceForm.get('estimatedDeliveryDays')?.invalid && formSubmitted">
+                Please enter a valid number (1 - 60 days)
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-outline-secondary me-2" (click)="cancelCreateService()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{editingServiceId ? 'Update' : 'Create'}} Service
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Services List -->
+    <div *ngIf="!isCreatingService">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">My Delivery Services</h4>
+        <button class="btn btn-primary" (click)="startCreateService()">
+          <i class="fas fa-plus-circle me-2"></i>Create New Service
+        </button>
+      </div>
+      
+      <div class="alert alert-info" *ngIf="myServices.length === 0">
+        <i class="fas fa-info-circle me-2"></i>You haven't created any delivery services yet. Click the button above to get started.
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let service of myServices">
+          <div class="card service-card h-100">
+            <div class="card-header">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-primary">
+                  {{service.deliveryType === deliveryTypes.INTERNATIONAL ? 'International' : 'Local'}}
+                </span>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" [checked]="service.isActive" (change)="toggleServiceAvailability(service)">
+                  <label class="form-check-label">{{service.isActive ? 'Active' : 'Inactive'}}</label>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-truck me-2 text-primary"></i>
+                {{service.deliveryType === deliveryTypes.INTERNATIONAL ? 'International Shipping' : 'Local Delivery'}}
+              </h5>
+              
+              <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="icon-circle bg-light-blue me-2">
+                    <i class="fas fa-globe"></i>
+                  </div>
+                  <strong>Countries:</strong>
+                </div>
+                <div class="service-countries">
+                  <span class="badge bg-light text-dark me-1 mb-1" *ngFor="let country of service.countriesServed || []">
+                    {{country}}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="icon-circle bg-light-green me-2">
+                    <i class="fas fa-box"></i>
+                  </div>
+                  <strong>Accepted Goods:</strong>
+                </div>
+                <div>
+                  <span class="badge bg-light text-dark me-1 mb-1" *ngFor="let goodType of service.acceptedGoodTypes || []">
+                    {{goodType}}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="service-details">
+                <div class="detail-item">
+                  <i class="fas fa-weight me-2"></i>
+                  <span>Max Weight: <strong>{{service.maxWeightPerOrder || 0}} kg</strong></span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-calendar-day me-2"></i>
+                  <span>Max Orders/Day: <strong>{{service.maxOrdersPerDay || 0}}</strong></span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-dollar-sign me-2"></i>
+                  <span>Base Price: <strong>{{service.basePrice || 0 | currency}}</strong></span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-balance-scale me-2"></i>
+                  <span>Per Kg: <strong>{{service.pricePerKg || 0 | currency}}</strong></span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-clock me-2"></i>
+                  <span>Delivery Time: <strong>{{service.estimatedDeliveryDays || 0}} days</strong></span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-star me-2"></i>
+                  <span>Rating: <strong>
+                    <span *ngIf="service.averageRating">{{service.averageRating | number:'1.1-1'}}/5</span>
+                    <span *ngIf="!service.averageRating">No ratings yet</span>
+                  </strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between">
+                <button class="btn btn-sm btn-outline-primary" (click)="startEditingService(service)">
+                  <i class="fas fa-edit me-1"></i>Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteService(service.serviceId ?? undefined)">
+                  <i class="fas fa-trash-alt me-1"></i>Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'orders' && !loading">
+    <!-- Order Detail Modal -->
+    <div class="order-detail-overlay" *ngIf="selectedOrder" (click)="closeOrderDetails()">
+      <div class="order-detail-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h5 class="modal-title">Order #{{selectedOrder.orderId}}</h5>
+          <button type="button" class="btn-close" (click)="closeOrderDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="order-status">
+            <span class="badge" [ngClass]="getOrderStatusBadgeClass(selectedOrder.status)">
+              {{selectedOrder.status}}
+            </span>
+            <p class="text-muted mt-2" *ngIf="selectedOrder.statusReason">
+              Reason: {{selectedOrder.statusReason}}
+            </p>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">Shipment Details</h6>
+              <div class="detail-item">
+                <strong>Weight:</strong> {{selectedOrder.packageWeight || 0}} kg
+              </div>
+              <div class="detail-item">
+                <strong>Description:</strong> {{selectedOrder.packageDescription || 'N/A'}}
+              </div>
+              <div class="detail-item" *ngIf="selectedOrder.packageValue">
+                <strong>Declared Value:</strong> {{selectedOrder.packageValue | currency}}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">Customer Details</h6>
+              <div class="detail-item">
+                <strong>Recipient:</strong> {{selectedOrder.recipientName || 'N/A'}}
+              </div>
+              <div class="detail-item">
+                <strong>Phone:</strong> {{selectedOrder.recipientPhone || 'N/A'}}
+              </div>
+              <div class="detail-item" *ngIf="selectedOrder.recipientEmail">
+                <strong>Email:</strong> {{selectedOrder.recipientEmail}}
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">From</h6>
+              <div class="detail-item">{{selectedOrder.sourceAddress || 'N/A'}}</div>
+              <div class="detail-item">
+                {{selectedOrder.sourceCity || 'N/A'}}, {{selectedOrder.sourcePostalCode || 'N/A'}}
+              </div>
+              <div class="detail-item">{{selectedOrder.sourceCountry || 'N/A'}}</div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">To</h6>
+              <div class="detail-item">{{selectedOrder.destinationAddress || 'N/A'}}</div>
+              <div class="detail-item">
+                {{selectedOrder.destinationCity || 'N/A'}}, {{selectedOrder.destinationPostalCode || 'N/A'}}
+              </div>
+              <div class="detail-item">{{selectedOrder.destinationCountry || 'N/A'}}</div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">Tracking & Payment</h6>
+              <div class="detail-item" *ngIf="selectedOrder.trackingNumber">
+                <strong>Tracking:</strong> {{selectedOrder.trackingNumber}}
+              </div>
+              <div class="detail-item">
+                <strong>Price:</strong> {{selectedOrder.totalPrice || 0 | currency}}
+              </div>
+              <div class="detail-item" *ngIf="selectedOrder.estimatedDeliveryDate">
+                <strong>Est. Delivery:</strong> {{selectedOrder.estimatedDeliveryDate | date}}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-uppercase text-muted">Timestamps</h6>
+              <div class="detail-item">
+                <strong>Created:</strong> {{selectedOrder.createdAt | date:'medium'}}
+              </div>
+              <div class="detail-item" *ngIf="selectedOrder.pickedUpAt">
+                <strong>Picked Up:</strong> {{selectedOrder.pickedUpAt | date:'medium'}}
+              </div>
+              <div class="detail-item" *ngIf="selectedOrder.deliveredAt">
+                <strong>Delivered:</strong> {{selectedOrder.deliveredAt | date:'medium'}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- Action buttons based on status -->
+          <div *ngIf="selectedOrder.status === OrderStatus.PENDING">
+            <button class="btn btn-outline-danger me-2" (click)="rejectOrder(selectedOrder.orderId)">
+              Reject Order
+            </button>
+            <button class="btn btn-success" (click)="acceptOrder(selectedOrder.orderId)">
+              Accept Order
+            </button>
+          </div>
+          
+          <div *ngIf="selectedOrder.status === OrderStatus.ACCEPTED">
+            <button class="btn btn-primary" (click)="updateOrderStatus(selectedOrder.orderId, OrderStatus.PICKED_UP)">
+              Mark as Picked Up
+            </button>
+          </div>
+          
+          <div *ngIf="selectedOrder.status === OrderStatus.PICKED_UP">
+            <button class="btn btn-primary" (click)="updateOrderStatus(selectedOrder.orderId, OrderStatus.IN_TRANSIT)">
+              Mark as In Transit
+            </button>
+          </div>
+          
+          <div *ngIf="selectedOrder.status === OrderStatus.IN_TRANSIT">
+            <button class="btn btn-success" (click)="updateOrderStatus(selectedOrder.orderId, OrderStatus.DELIVERED)">
+              Mark as Delivered
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Orders Tabs -->
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="activeOrdersTab === 'pending'" (click)="setOrdersTab('pending')">
+      Pending
+      <span class="badge bg-danger ms-1" *ngIf="pendingOrders.length > 0">{{pendingOrders.length}}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="activeOrdersTab === 'active'" (click)="setOrdersTab('active')">
+      Active
+      <span class="badge bg-primary ms-1" *ngIf="activeOrders.length > 0">{{activeOrders.length}}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="activeOrdersTab === 'completed'" (click)="setOrdersTab('completed')">
+      Completed
+    </a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <!-- Pending Orders -->
+  <div class="tab-pane fade" [class.show]="activeOrdersTab === 'pending'" [class.active]="activeOrdersTab === 'pending'">
+    <div class="alert alert-info" *ngIf="pendingOrders.length === 0">
+      <i class="fas fa-info-circle me-2"></i>You have no pending orders at the moment.
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-hover" *ngIf="pendingOrders.length > 0">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Destination</th>
+            <th>Weight</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of pendingOrders">
+            <td><strong>#{{order.orderId || 'N/A'}}</strong></td>
+            <td>{{order.createdAt | date}}</td>
+            <td>{{order.recipientName || 'Unknown'}}</td>
+            <td>{{order.destinationCountry || 'N/A'}}</td>
+            <td>{{order.packageWeight || 0}} kg</td>
+            <td>{{order.totalPrice || 0 | currency}}</td>
+            <td>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-outline-secondary" (click)="viewOrderDetails(order)">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" (click)="acceptOrder(order.orderId)">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="rejectOrder(order.orderId)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Active Orders -->
+  <div class="tab-pane fade" [class.show]="activeOrdersTab === 'active'" [class.active]="activeOrdersTab === 'active'">
+    <div class="alert alert-info" *ngIf="activeOrders.length === 0">
+      <i class="fas fa-info-circle me-2"></i>You have no active orders at the moment.
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-hover" *ngIf="activeOrders.length > 0">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Customer</th>
+            <th>Destination</th>
+            <th>Weight</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of activeOrders">
+            <td><strong>#{{order.orderId || 'N/A'}}</strong></td>
+            <td>{{order.createdAt | date}}</td>
+            <td>
+              <span class="badge" [ngClass]="getOrderStatusBadgeClass(order.status)">
+                {{order.status}}
+              </span>
+            </td>
+            <td>{{order.recipientName || 'Unknown'}}</td>
+            <td>{{order.destinationCountry || 'N/A'}}</td>
+            <td>{{order.packageWeight || 0}} kg</td>
+            <td>{{order.totalPrice || 0 | currency}}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-secondary" (click)="viewOrderDetails(order)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Completed Orders -->
+  <div class="tab-pane fade" [class.show]="activeOrdersTab === 'completed'" [class.active]="activeOrdersTab === 'completed'">
+    <div class="alert alert-info" *ngIf="completedOrders.length === 0">
+      <i class="fas fa-info-circle me-2"></i>You have no completed orders yet.
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-hover" *ngIf="completedOrders.length > 0">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Customer</th>
+            <th>Destination</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of completedOrders">
+            <td><strong>#{{order.orderId || 'N/A'}}</strong></td>
+            <td>{{order.createdAt | date}}</td>
+            <td>
+              <span class="badge" [ngClass]="getOrderStatusBadgeClass(order.status)">
+                {{order.status}}
+              </span>
+            </td>
+            <td>{{order.recipientName || 'Unknown'}}</td>
+            <td>{{order.destinationCountry || 'N/A'}}</td>
+            <td>{{order.totalPrice || 0 | currency}}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-secondary" (click)="viewOrderDetails(order)">
+                <i class="fas fa-eye"></i>
+              </button>                
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  </div>
+</div>

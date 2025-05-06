@@ -1,0 +1,121 @@
+<div class="user-profile-container">
+  <div class="profile-header">
+    <div class="profile-picture-section">
+      <div class="profile-picture-wrapper">
+        <img 
+          [src]="user?.profilePicture || 'assets/default-avatar.png'" 
+          alt="Profile Picture" 
+          class="profile-picture"
+        >
+        <label class="edit-picture-overlay">
+          <input 
+            type="file" 
+            accept="image/*" 
+            (change)="onProfilePictureChange($event)" 
+            class="file-input"
+          >
+          <span class="edit-icon">✏️</span>
+        </label>
+      </div>
+      <div class="user-basic-info">
+        <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
+        <p>{{ user?.role }}</p>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <button 
+        *ngIf="!isEditMode" 
+        (click)="toggleEditMode()"
+        class="btn-edit"
+      >
+        Edit Profile
+      </button>
+      <div *ngIf="isEditMode" class="edit-buttons">
+        <button (click)="saveProfile()" class="btn-save">Save Changes</button>
+        <button (click)="toggleEditMode()" class="btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <!-- View Mode -->
+    <div *ngIf="!isEditMode" class="profile-details">
+      <div class="detail-row">
+        <span class="label">Email</span>
+        <span class="value">{{ user?.email }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Phone</span>
+        <span class="value">{{ user?.phoneNumber }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Address</span>
+        <span class="value">{{ user?.address }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Gender</span>
+        <span class="value">{{ user?.sexe }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Birth Date</span>
+        <span class="value">{{ user?.birthDate }}</span>
+      </div>
+    </div>
+
+    <!-- Edit Mode -->
+    <form *ngIf="isEditMode" class="edit-profile-form">
+      <div class="form-group">
+        <label>First Name</label>
+        <input 
+          [(ngModel)]="editedUser.firstName" 
+          name="firstName" 
+          type="text"
+        >
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input 
+          [(ngModel)]="editedUser.lastName" 
+          name="lastName" 
+          type="text"
+        >
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input 
+          [(ngModel)]="editedUser.email" 
+          name="email" 
+          type="email"
+        >
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input 
+          [(ngModel)]="editedUser.phoneNumber" 
+          name="phoneNumber" 
+          type="tel"
+        >
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <input 
+          [(ngModel)]="editedUser.address" 
+          name="address" 
+          type="text"
+        >
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select 
+          [(ngModel)]="editedUser.sexe" 
+          name="sexe"
+        >
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+    </form>
+  </div>
+</div>

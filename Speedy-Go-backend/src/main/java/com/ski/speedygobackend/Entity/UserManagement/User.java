@@ -1,8 +1,11 @@
 package com.ski.speedygobackend.Entity.UserManagement;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ski.speedygobackend.Entity.ChatbotManagement.SpeedyChat;
 import com.ski.speedygobackend.Entity.ComfirmationTransfert;
 import com.ski.speedygobackend.Entity.CommunicationManagement.ChatRoom;
+import com.ski.speedygobackend.Entity.DeliveryManagement.DeliveryOrder;
+import com.ski.speedygobackend.Entity.DeliveryManagement.DeliveryService;
 import com.ski.speedygobackend.Entity.LoyaltyManagement.LoyaltyCard;
 import com.ski.speedygobackend.Entity.OfferManagement.Store;
 import com.ski.speedygobackend.Entity.ReportManagement.Report;
@@ -101,5 +104,14 @@ public class User implements Serializable {
 
     private boolean banned = false;
 
+
+
+    @OneToMany(mappedBy = "deliveryPerson", cascade = CascadeType.ALL)
+    @JsonManagedReference("deliveryPerson-deliveryService")
+    private List<DeliveryService> deliveryServices;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonManagedReference("customer-deliveryOrder")
+    private List<DeliveryOrder> deliveryOrders;
 
 }

@@ -1,8 +1,8 @@
-// price-formatter.pipe.ts
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'priceFormatter'
+  name: 'priceFormatter',
+  standalone: true // Add this line to make the pipe standalone
 })
 export class PriceFormatterPipe implements PipeTransform {
   transform(value: number | null): string {

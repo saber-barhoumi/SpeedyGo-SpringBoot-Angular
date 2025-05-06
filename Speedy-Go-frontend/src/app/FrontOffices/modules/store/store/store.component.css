@@ -879,3 +879,561 @@ body {
 .speedgo-dark-mode .speedgo-dark-toggle:hover {
   background-color: #f39c12;
 }
+
+/* API Key Section */
+.speedgo-api-key-section {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.speedgo-api-key-container {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+}
+
+.speedgo-api-key-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.speedgo-api-key-input:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+  outline: none;
+}
+
+.speedgo-dark-mode .speedgo-api-key-section {
+  background-color: #2c2c2c;
+}
+
+.speedgo-dark-mode .speedgo-api-key-input {
+  background-color: #1e1e1e;
+  border-color: #444;
+  color: #fff;
+}
+
+/* Recommended Sections */
+.speedgo-recommended-section {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #f1f5fb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.speedgo-recommended-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #3f51b5;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e6ed;
+}
+
+.speedgo-recommended-stores,
+.speedgo-recommended-offers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Store Card Styles */
+.speedgo-recommended-store-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.speedgo-recommended-store-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.speedgo-recommended-store-image {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.speedgo-recommended-store-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.speedgo-recommended-store-card:hover .speedgo-recommended-store-image img {
+  transform: scale(1.05);
+}
+
+.speedgo-recommended-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #ff4081;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.speedgo-recommended-store-info {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.speedgo-recommended-store-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #333;
+}
+
+.speedgo-store-type {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.speedgo-store-description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.speedgo-recommended-store-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.speedgo-store-status {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.speedgo-store-status.open {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.speedgo-store-status.closed {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.speedgo-store-status.suspended {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+/* Offer Card Styles */
+.speedgo-recommended-offer-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.speedgo-recommended-offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.speedgo-recommended-offer-image {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.speedgo-recommended-offer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.speedgo-recommended-offer-card:hover .speedgo-recommended-offer-image img {
+  transform: scale(1.05);
+}
+
+.speedgo-offer-discount {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #4caf50;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.speedgo-recommended-offer-info {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.speedgo-recommended-offer-info h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #333;
+}
+
+.speedgo-offer-store {
+  color: #757575;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.speedgo-offer-description {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.speedgo-recommended-offer-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.speedgo-offer-price {
+  display: flex;
+  flex-direction: column;
+}
+
+.speedgo-original-price {
+  color: #9e9e9e;
+  font-size: 13px;
+  text-decoration: line-through;
+}
+
+.speedgo-discounted-price {
+  color: #f44336;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Button Styles */
+.speedgo-btn-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.speedgo-btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Dark Mode Styles */
+.speedgo-dark-mode .speedgo-recommended-section {
+  background-color: #202020;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.speedgo-dark-mode .speedgo-recommended-title {
+  color: #7986cb;
+  border-bottom-color: #424242;
+}
+
+.speedgo-dark-mode .speedgo-recommended-store-card,
+.speedgo-dark-mode .speedgo-recommended-offer-card {
+  background-color: #2d2d2d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.speedgo-dark-mode .speedgo-recommended-store-info h3,
+.speedgo-dark-mode .speedgo-recommended-offer-info h3 {
+  color: #e0e0e0;
+}
+
+.speedgo-dark-mode .speedgo-store-type {
+  background-color: #1a3a5e;
+  color: #90caf9;
+}
+
+.speedgo-dark-mode .speedgo-store-description,
+.speedgo-dark-mode .speedgo-offer-description {
+  color: #bdbdbd;
+}
+
+.speedgo-dark-mode .speedgo-store-status.open {
+  background-color: #1b5e20;
+  color: #b9f6ca;
+}
+
+.speedgo-dark-mode .speedgo-store-status.closed {
+  background-color: #b71c1c;
+  color: #ffcdd2;
+}
+
+.speedgo-dark-mode .speedgo-store-status.suspended {
+  background-color: #bf7200;
+  color: #ffecb3;
+}
+
+.speedgo-dark-mode .speedgo-offer-store {
+  color: #9e9e9e;
+}
+
+.speedgo-dark-mode .speedgo-btn-secondary {
+  background-color: #424242;
+  color: #e0e0e0;
+}
+
+.speedgo-dark-mode .speedgo-btn-secondary:hover {
+  background-color: #616161;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .speedgo-api-key-container {
+    flex-direction: column;
+  }
+  
+  .speedgo-recommended-stores,
+  .speedgo-recommended-offers {
+    grid-template-columns: 1fr;
+  }
+}
+
+.speedgo-api-key-status {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 12px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  width: 100%;
+}
+
+.speedgo-api-key-status i {
+  font-size: 18px;
+  color: #4caf50;
+}
+
+.speedgo-dark-mode .speedgo-api-key-status {
+  background-color: #1b5e20;
+  color: #b9f6ca;
+}
+
+/* Debug Panel Styles */
+.speedgo-debug-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 450px;
+  max-height: 80vh;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.speedgo-debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #3f51b5;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.speedgo-debug-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.speedgo-debug-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.speedgo-debug-content {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 120px);
+}
+
+.speedgo-debug-section {
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.speedgo-debug-section h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #3f51b5;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.speedgo-debug-section pre {
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.speedgo-debug-section p {
+  margin: 6px 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.speedgo-explanation-item {
+  background-color: #f1f8e9;
+  border-left: 3px solid #4caf50;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 0 4px 4px 0;
+}
+
+.speedgo-explanation-item p {
+  margin: 0;
+}
+
+.speedgo-no-data {
+  color: #757575;
+  font-style: italic;
+}
+
+.speedgo-debug-footer {
+  padding: 12px 16px;
+  background-color: #eee;
+  font-size: 12px;
+  color: #666;
+  border-top: 1px solid #ddd;
+}
+
+.speedgo-debug-footer p {
+  margin: 4px 0;
+}
+
+.speedgo-debug-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 16px;
+  font-weight: 600;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.speedgo-debug-toggle:hover {
+  background-color: #f50057;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.speedgo-debug-toggle i {
+  font-size: 16px;
+}
+
+/* Dark mode */
+.speedgo-dark-mode .speedgo-debug-panel {
+  background-color: #263238;
+  border-color: #37474f;
+}
+
+.speedgo-dark-mode .speedgo-debug-header {
+  background-color: #1a237e;
+}
+
+.speedgo-dark-mode .speedgo-debug-section {
+  background-color: #37474f;
+}
+
+.speedgo-dark-mode .speedgo-debug-section h4 {
+  color: #90caf9;
+  border-bottom-color: #455a64;
+}
+
+.speedgo-dark-mode .speedgo-debug-section pre {
+  background-color: #263238;
+  color: #e0e0e0;
+}
+
+.speedgo-dark-mode .speedgo-explanation-item {
+  background-color: #1b5e20;
+  border-left-color: #4caf50;
+  color: #e8f5e9;
+}
+
+.speedgo-dark-mode .speedgo-debug-footer {
+  background-color: #1a237e;
+  color: #b0bec5;
+  border-top-color: #37474f;
+}
+
+.speedgo-dark-mode .speedgo-no-data {
+  color: #9e9e9e;
+}

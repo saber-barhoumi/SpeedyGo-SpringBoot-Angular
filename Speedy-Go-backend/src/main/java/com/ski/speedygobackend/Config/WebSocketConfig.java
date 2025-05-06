@@ -36,6 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("http://localhost:4200") // Angular dev server
+                // Note: Use setAllowedOriginPatterns("*") only for development if multiple origins are needed
                 .withSockJS();
     }
 

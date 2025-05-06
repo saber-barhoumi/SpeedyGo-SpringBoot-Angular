@@ -1,0 +1,485 @@
+<app-header-front></app-header-front>
+
+<div class="container-fluid carpooling py-6 wow bounceInUp" data-wow-delay="0.1s">
+  <div class="container">
+    <div class="row g-0">
+      <div class="col-12">
+        <div class="border-bottom border-top border-primary bg-light py-5 px-4">
+          <div class="text-center">
+            <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Find a Ride</small>
+            <h1 class="display-5 mb-5">Carpooling </h1>
+          </div>
+          
+          <!-- Advanced Filtering Section -->
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+              <h4 class="mb-0">Filter Carpoolings</h4>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="filterForm">
+                <div class="row g-4">
+                  <div class="col-lg-3 col-md-6">
+                    <label>Departure Location</label>
+                    <select formControlName="departureLocation" class="form-select border-primary p-2">
+                      <option value="">All Cities</option>
+                      <option *ngFor="let city of cities" [value]="city">{{city}}</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <label>Destination</label>
+                    <select formControlName="destination" class="form-select border-primary p-2">
+                      <option value="">All Cities</option>
+                      <option *ngFor="let city of cities" [value]="city">{{city}}</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <label>From Date</label>
+                    <input type="date" formControlName="startDateFrom" class="form-control border-primary p-2">
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <label>To Date</label>
+                    <input type="date" formControlName="startDateTo" class="form-control border-primary p-2">
+                  </div>
+                </div>
+                
+                <div class="row g-4 mt-3">
+                  <div class="col-lg-3 col-md-6">
+                    <label>Vehicle Type</label>
+                    <select formControlName="vehicleType" class="form-select border-primary p-2">
+                      <option value="">All Types</option>
+                      <option *ngFor="let type of vehicleTypes" [value]="type">{{type}}</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <label>Min Price (TND)</label>
+                    <input type="number" formControlName="minPrice" class="form-control border-primary p-2" min="0">
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <label>Max Price (TND)</label>
+                    <input type="number" formControlName="maxPrice" class="form-control border-primary p-2" min="0">
+                  </div>
+                  <div class="col-lg-3 col-md-6">
+                    <div class="form-check mt-4">
+                      <input type="checkbox" formControlName="wifi" class="form-check-input" id="wifiFilter">
+                      <label class="form-check-label" for="wifiFilter">WiFi Available</label>
+                    </div>
+                    <div class="form-check">
+                      <input type="checkbox" formControlName="airConditioning" class="form-check-input" id="acFilter">
+                      <label class="form-check-label" for="acFilter">Air Conditioning</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row mt-4">
+                  <div class="col-12 text-center">
+                    <button (click)="resetFilters()" class="btn btn-secondary px-5 py-3 rounded-pill">Reset Filters</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        
+          <!-- Sorting and View Options -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="btn-group" role="group">
+                <button type="button" class="btn" 
+                        [ngClass]="viewMode === 'upcoming' ? 'btn-primary' : 'btn-outline-primary'"
+                        (click)="toggleViewMode('upcoming')">
+                  Upcoming Carpoolings
+                </button>
+                <button type="button" class="btn" 
+                        [ngClass]="viewMode === 'all' ? 'btn-primary' : 'btn-outline-primary'"
+                        (click)="toggleViewMode('all')">
+                  All Carpoolings
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6 text-end">
+              <label class="me-2">Sort By:</label>
+              <select (change)="sortCarpoolings($event)" class="form-select border-primary d-inline-block w-auto">
+                <option *ngFor="let option of sortOptions" [value]="option.value">
+                  {{option.label}}
+                </option>
+              </select>
+            </div>
+          </div>
+        
+          <!-- Carpooling List -->
+          <div class="row g-4">
+            <div class="col-12 text-center mb-4" *ngIf="isLoading">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            
+            <ng-container *ngFor="let carpooling of paginatedCarpoolings">
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100" [ngClass]="{'border-warning border-3': isStartingSoon(carpooling.startTime)}">
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold">
+                      {{ carpooling.departureLocation }} to {{ carpooling.destination }}
+                    </h5>
+                    
+                    <!-- Rating stars at the top -->
+                    <div class="rating mb-2">
+                      <div class="d-flex align-items-center">
+                        <div class="stars" *ngIf="getAverageRating(carpooling.carpoolingId || 0) > 0">
+                          <i *ngFor="let star of getStarsArray(getAverageRating(carpooling.carpoolingId || 0))" 
+                             class="fas fa-star" 
+                             [ngClass]="{'text-warning': star === 1, 'text-muted': star === 0}"></i>
+                             <span class="text-muted ms-2">
+                              ({{ (carpoolingReviews[carpooling.carpoolingId || 0] || []).length }} reviews)
+                            </span>
+                        </div>
+                        <div *ngIf="getAverageRating(carpooling.carpoolingId || 0) === 0" class="text-muted">
+                          No ratings yet
+                        </div>
+                        <button class="btn btn-link ms-auto p-0" 
+                                data-bs-toggle="modal" 
+                                [attr.data-bs-target]="'#reviewsModal' + carpooling.carpoolingId">
+                          See Reviews
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="card-text">
+                      <!-- Trip details -->
+                      <p>
+                        <strong>Start:</strong> {{ carpooling.startTime | date:'medium' }}<br>
+                        <span *ngIf="carpooling.startTime && isInFuture(carpooling.startTime)" class="text-primary">
+                          {{ getTimeUntilStart(carpooling.startTime) }}
+                        </span>
+                      </p>
+                      
+                      <!-- Amenities and Details -->
+                      <div class="amenities">
+                        <span *ngIf="carpooling.wifi == 1" class="badge bg-info me-1">
+                          <i class="fa fa-wifi"></i> WiFi
+                        </span>
+                        <span *ngIf="carpooling.airConditioning == 1" class="badge bg-info me-1">
+                          <i class="fa fa-snowflake"></i> A/C
+                        </span>
+                        <span class="badge bg-secondary">
+                          {{ carpooling.vehicleType }}
+                        </span>
+                      </div>
+        
+                      <!-- Pricing and Seat Selection -->
+                      <div class="pricing mt-3">
+                        <p>
+                          <strong>Seats:</strong> {{ carpooling.availableSeats }}<br>
+                          <strong>Price per Seat:</strong> {{ carpooling.pricePerSeat }} TND
+                        </p>
+                        
+                        <!-- Seat Selection Dropdown -->
+                        <div class="form-group">
+                          <label>Number of Seats:</label>
+                          <select 
+                            [(ngModel)]="selectedSeats[carpooling.carpoolingId || 0]"
+                            (change)="updateSelectedSeats(carpooling.carpoolingId || 0, selectedSeats[carpooling.carpoolingId || 0])"
+                            class="form-select border-primary p-2" 
+                            [disabled]="carpooling.availableSeats < 1">
+                            <option *ngFor="let i of getAvailableSeatsArray(carpooling.availableSeats);let idx = index" [value]="idx + 1">
+                              {{ idx + 1 }}
+                            </option>
+                          </select>
+                        </div>
+        
+                        <!-- Total Price Calculation -->
+                        <div class="total-price mt-2">
+                          <strong>Total:</strong> 
+                          {{ totalPrices[carpooling.carpoolingId || 0] }} TND
+                        </div>
+                      </div>
+        
+                      <!-- Reserve Button -->
+                      <button 
+                        class="btn btn-primary mt-3 w-100 py-2 rounded-pill" 
+                        (click)="reserveCarpooling(carpooling.carpoolingId || 0)"
+                        [disabled]="carpooling.availableSeats < 1">
+                        {{ carpooling.availableSeats < 1 ? 'No Seats Available' : 'Reserve' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Reviews Modal for each carpooling -->
+              <div class="modal fade" 
+                   [id]="'reviewsModal' + carpooling.carpoolingId" 
+                   tabindex="-1" 
+                   aria-labelledby="reviewsModalLabel" 
+                   aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header bg-light">
+                      <h5 class="modal-title">Reviews for {{ carpooling.departureLocation }} to {{ carpooling.destination }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div *ngIf="(carpoolingReviews[carpooling.carpoolingId || 0] || []).length > 0; else noReviewsYet">
+                        <div class="review-summary mb-4">
+                          <div class="d-flex align-items-center mb-2">
+                            <div class="h4 mb-0 me-3">{{ getAverageRating(carpooling.carpoolingId || 0).toFixed(1) }}</div>
+                            <div class="stars">
+                              <i *ngFor="let star of getStarsArray(getAverageRating(carpooling.carpoolingId || 0))" 
+                                 class="fas fa-star" 
+                                 [ngClass]="{'text-warning': star === 1, 'text-muted': star === 0}"></i>
+                            </div>
+                            <div class="text-muted ms-2">
+                              ({{ (carpoolingReviews[carpooling.carpoolingId || 0] || []).length }} reviews)
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="review-list">
+                          <div class="review-item card mb-3" *ngFor="let review of carpoolingReviews[carpooling.carpoolingId || 0] || []">
+                            <div class="card-body">
+                              <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="reviewer-info">
+                                  <div class="fw-bold">{{ review.userName || 'Anonymous User' }}</div>
+                                  <div class="text-muted small">{{ review.createdAt | date:'medium' }}</div>
+                                </div>
+                                <div class="rating">
+                                  <i *ngFor="let star of getStarsArray(review.rating || 0)" 
+                                     class="fas fa-star" 
+                                     [ngClass]="{'text-warning': star === 1, 'text-muted': star === 0}"></i>
+                                </div>
+                              </div>
+                              <p *ngIf="review.reviewText" class="review-text mb-0">
+                                {{ review.reviewText }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <ng-template #noReviewsYet>
+                        <div class="alert alert-info text-center">
+                          No reviews yet for this carpooling.
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+        
+            <!-- No Results Message -->
+            <div class="col-12" *ngIf="filteredCarpoolings.length === 0 && !isLoading">
+              <div class="alert alert-info text-center">
+                No carpoolings match your current filters.
+              </div>
+            </div>
+          </div>
+        
+          <!-- Pagination -->
+          <nav *ngIf="filteredCarpoolings.length > itemsPerPage" class="mt-4">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="currentPage = currentPage - 1; updatePagination()" [disabled]="currentPage === 1">
+                  Previous
+                </button>
+              </li>
+              
+              <li class="page-item" *ngFor="let page of [].constructor(Math.ceil(filteredCarpoolings.length / itemsPerPage)); let i = index"
+                  [class.active]="currentPage === i + 1">
+                <button class="page-link" (click)="currentPage = i + 1; updatePagination()">
+                  {{ i + 1 }}
+                </button>
+              </li>
+              
+              <li class="page-item" 
+                  [class.disabled]="currentPage === Math.ceil(filteredCarpoolings.length / itemsPerPage)">
+                <button class="page-link" 
+                        (click)="currentPage = currentPage + 1; updatePagination()"
+                        [disabled]="currentPage === Math.ceil(filteredCarpoolings.length / itemsPerPage)">
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
+        
+          <!-- My Reservations Section -->
+          <div class="text-center mt-5 mb-4">
+            <small class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">My Bookings</small>
+            <h2 class="mb-4">My Carpooling Reservations</h2>
+          </div>
+          
+          <div class="row g-4" *ngIf="myReservations && myReservations.length > 0; else noReservations">
+            <div class="col-lg-4 col-md-6 mb-4" *ngFor="let reservation of myReservations">
+              <div class="card h-100" 
+                   [ngClass]="{'border-warning border-3': reservation.carpooling.start_time && isStartingSoon(reservation.carpooling.start_time)}">
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">
+                    {{ reservation.carpooling.departure_location }} to 
+                    {{ reservation.carpooling.destination }}
+                  </h5>
+                  
+                  <div class="card-text">
+                    <!-- Reservation Details -->
+                    <p>
+                      <strong>Start:</strong> {{ reservation.carpooling.start_time | date:'medium' }}<br>
+                      <span *ngIf="reservation.carpooling.start_time && isInFuture(reservation.carpooling.start_time)" class="text-primary">
+                        {{ getTimeUntilStart(reservation.carpooling.start_time) }}
+                      </span>
+                    </p>
+                    
+                    <p>
+                      <strong>Reservation ID:</strong> {{ reservation.reservation_id }}<br>
+                      <strong>Seats Booked:</strong> {{ reservation.seatsReserved }}<br>
+                      <strong>Total Price:</strong> {{ reservation.carpooling.price_per_seat * reservation.seatsReserved }} TND
+                    </p>
+        
+                    <!-- Rating Section -->
+                    <div class="rating-section mt-3 mb-3">
+                      <label>Rate Your Trip:</label>
+                      <div class="star-rating">
+                        <button 
+                          *ngFor="let star of [1,2,3,4,5]" 
+                          class="btn btn-sm" 
+                          [ngClass]="{
+                            'btn-warning': reservation.rating && reservation.rating >= star, 
+                            'btn-outline-secondary': !reservation.rating || reservation.rating < star
+                          }"
+                          (click)="rateCarpooling(reservation.reservation_id, star)">
+                          <i class="fas fa-star"></i>
+                        </button>
+                      </div>
+                      <p *ngIf="reservation.rating" class="text-muted mt-2 mb-0">
+                        You rated this trip {{ reservation.rating }}/5 stars
+                      </p>
+                    </div>
+                  </div>
+        
+                  <!-- Reservation Actions -->
+                  <div class="d-flex justify-content-between mt-3">
+                    <button 
+                      class="btn btn-danger rounded-pill" 
+                      (click)="deleteMyReservation(reservation.reservation_id)">
+                      Cancel Reservation
+                    </button>
+                    
+                    <!-- Add Review Button -->
+                    <button 
+                      class="btn btn-outline-primary rounded-pill" 
+                      data-bs-toggle="modal" 
+                      [attr.data-bs-target]="'#reviewModal' + reservation.reservation_id">
+                      Add Review
+                    </button>
+                  </div>
+                </div>
+              </div>
+        
+              <!-- Review Modal -->
+              <div class="modal fade" 
+                   [id]="'reviewModal' + reservation.reservation_id" 
+                   tabindex="-1" 
+                   aria-labelledby="reviewModalLabel" 
+                   aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header bg-light">
+                      <h5 class="modal-title">Write a Review</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" [id]="'closeReviewModal' + reservation.reservation_id"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form>
+                        <div class="form-group">
+                          <label for="reviewText{{reservation.reservation_id}}">Your Review</label>
+                          <textarea 
+                            class="form-control border-primary p-2" 
+                            id="reviewText{{reservation.reservation_id}}" 
+                            rows="4" 
+                            placeholder="Share your experience..."
+                            [(ngModel)]="reviewText[reservation.reservation_id]"
+                            [ngModelOptions]="{standalone: true}">
+                          </textarea>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+                      <button type="button" 
+                              class="btn btn-primary rounded-pill" 
+                              [disabled]="!reviewText[reservation.reservation_id]"
+                              (click)="submitReview(reservation.reservation_id)">
+                        Submit Review
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <ng-template #noReservations>
+            <div class="alert alert-info text-center">
+              You have no carpooling reservations yet.
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Styling -->
+<style>
+  .carpooling {
+    animation-duration: 1s;
+  }
+  
+  .star-rating .btn {
+    padding: 0.25rem 0.5rem;
+    margin-right: 0.25rem;
+  }
+  
+  .star-rating .btn-warning {
+    color: #fff;
+  }
+  
+  .amenities .badge {
+    margin-right: 0.25rem;
+  }
+  
+  .total-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0d6efd;
+  }
+  
+  .review-text {
+    white-space: pre-line;
+  }
+  
+  .btn-primary {
+    transition: all 0.3s;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card {
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .border-warning {
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.5);
+  }
+</style>
+
+<app-chat *ngIf="isLoggedIn"></app-chat>
+<app-footer-front></app-footer-front>

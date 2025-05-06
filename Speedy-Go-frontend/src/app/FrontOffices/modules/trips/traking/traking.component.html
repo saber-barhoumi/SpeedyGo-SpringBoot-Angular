@@ -1,8 +1,27 @@
-<app-header-front></app-header-front>
 <div class="tracking-container">
   <div class="tracking-header">
     <h1>Real-Time Location Tracking</h1>
     <p class="sub-title">Track your current location with precision</p>
+    
+    <!-- Delivery Driver Controls - Only visible for users with DELEVERY role -->
+    <div class="delivery-controls" *ngIf="isDeliveryUser">
+      <button class="delivery-btn" [ngClass]="{'active': isDeliveryActive}" (click)="toggleDeliveryStatus()">
+        <i class="fas" [ngClass]="isDeliveryActive ? 'fa-stop-circle' : 'fa-play-circle'"></i>
+        {{ isDeliveryActive ? 'Stop Delivery' : 'Start Delivery' }}
+      </button>
+      <span class="status-indicator" [ngClass]="{'active': isDeliveryActive}">
+        Status: {{ isDeliveryActive ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+
+    <!-- Active Delivery Drivers - Only visible for non-delivery users -->
+    <div class="active-drivers-info" *ngIf="!isDeliveryUser && activeDrivers.length > 0">
+      <div class="drivers-badge">
+        <i class="fas fa-truck"></i>
+        <span>{{ activeDrivers.length }} Active Delivery {{ activeDrivers.length === 1 ? 'Driver' : 'Drivers' }}</span>
+      </div>
+      <p class="drivers-hint">Delivery drivers are visible on the map with <span class="driver-icon-sample"></span> red markers</p>
+    </div>
   </div>
   
   <div class="card">
@@ -55,6 +74,21 @@
       </div>
       <div class="info-content" *ngIf="currentLocation">
         <p>Your device is being tracked in real-time. The blue marker indicates your current position with accuracy visualization.</p>
+        
+        <!-- Active Delivery Drivers Section for non-delivery users -->
+        <div class="driver-data-section" *ngIf="!isDeliveryUser && activeDrivers.length > 0">
+          <h4><i class="fas fa-truck"></i> Active Delivery Drivers</h4>
+          <div class="driver-list">
+            <div class="driver-item" *ngFor="let driver of activeDrivers">
+              <div class="driver-icon"></div>
+              <div class="driver-info">
+                <span class="driver-id">Driver #{{ driver.userId }}</span>
+                <span class="driver-updated">Updated: {{ driver.timestamp | date:'shortTime' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="info-data">
           <div class="data-row">
             <span class="data-label">Status:</span>
@@ -63,6 +97,13 @@
           <div class="data-row">
             <span class="data-label">Updated:</span>
             <span class="data-value">Just now</span>
+          </div>
+          <!-- Delivery Status - Only visible for users with DELEVERY role -->
+          <div class="data-row" *ngIf="isDeliveryUser">
+            <span class="data-label">Delivery:</span>
+            <span class="data-value" [ngClass]="{'active': isDeliveryActive, 'inactive': !isDeliveryActive}">
+              {{ isDeliveryActive ? 'In Progress' : 'Not Started' }}
+            </span>
           </div>
         </div>
       </div>
@@ -76,8 +117,3 @@
     </div>
   </div>
 </div>
-
-
-
-
-<app-footer-front></app-footer-front> 

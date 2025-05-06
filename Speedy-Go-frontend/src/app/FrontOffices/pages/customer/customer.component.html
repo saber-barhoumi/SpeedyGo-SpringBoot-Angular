@@ -24,10 +24,14 @@
 <div class="container">
   <h1>Customer Dashboard</h1>
   
+  <div class="mb-3">
   <button (click)="toggleCarpoolingList()" class="btn btn-primary">
     {{ showCarpoolingList ? 'Hide Carpoolings' : 'Show Carpoolings' }}
   </button>
-
+  <button (click)="navigateToPaidParcels()" class="btn btn-primary">
+    Show My Paid Parcels
+  </button>
+  </div>
   <div *ngIf="showCarpoolingList">
     <div class="blog-section">
       <div class="container">
@@ -179,6 +183,7 @@
 </div>
 <app-chat *ngIf="isLoggedIn"></app-chat>
 <app-footer-front></app-footer-front>
+<app-chat-button></app-chat-button>
 
 <!-- Bootstrap CSS -->
 <link href="/assets/FrontOffice/css2/bootstrap.min.css" rel="stylesheet">

@@ -66,6 +66,41 @@
       </div>
     </div>
   
+    <!-- Recommendation API Key Input -->
+    <div class="speedgo-api-key-section">
+      <div class="speedgo-api-key-container">
+        <div class="speedgo-api-key-status">
+          <i class="fas fa-check-circle"></i> Recommendations are enabled with the LLM : llama3-70b-8192 !
+        </div>
+      </div>
+    </div>
+  
+    <!-- Recommended Stores Section -->
+    <div *ngIf="recommendationsEnabled && recommendedStores.length > 0 && userRole === 'CUSTOMER'" class="speedgo-recommended-section">
+      <h2 class="speedgo-recommended-title">Recommended Stores For You</h2>
+      <div class="speedgo-recommended-stores">
+        <div *ngFor="let store of recommendedStores" class="speedgo-recommended-store-card">
+          <div class="speedgo-recommended-store-image">
+            <img [src]="store.image || 'assets/images/store-placeholder.jpg'" alt="{{ store.name }}">
+            <div class="speedgo-recommended-badge">Recommended</div>
+          </div>
+          <div class="speedgo-recommended-store-info">
+            <h3>{{ store.name }}</h3>
+            <p class="speedgo-store-type">{{ store.storeType }}</p>
+            <p class="speedgo-store-description">{{ store.description | slice:0:100 }}{{ store.description.length > 100 ? '...' : '' }}</p>
+            <div class="speedgo-recommended-store-footer">
+              <span class="speedgo-store-status" [ngClass]="store.storeStatus.toLowerCase()">
+                {{ store.storeStatus }}
+              </span>
+              <button class="speedgo-btn-secondary" (click)="store.storeID && viewStore(store.storeID)">
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
     <div class="speedgo-filters-section">
       <div class="speedgo-search-input">
         <input type="text" placeholder="Search stores..." (input)="search($event)">
@@ -177,6 +212,55 @@
       </button>
     </div>
   </div>
+
+<!-- Debug Panel for demonstration purposes -->
+<div *ngIf="showDebugPanel" class="speedgo-debug-panel">
+  <div class="speedgo-debug-header">
+    <h3>Recommender System Debug Panel 🔍</h3>
+    <button class="speedgo-debug-close" (click)="showDebugPanel = false">×</button>
+  </div>
+  <div class="speedgo-debug-content">
+    <div class="speedgo-debug-section">
+      <h4>User Profile</h4>
+      <pre>{{ userDebugInfo | json }}</pre>
+      <button class="speedgo-btn-primary" (click)="setTestDemographicData()" style="margin-top: 10px;">
+        Set Test Demographics
+      </button>
+      <small style="display: block; margin-top: 5px; color: #888;">For demonstration purposes only</small>
+    </div>
+    <div class="speedgo-debug-section">
+      <h4>Raw User Data</h4>
+      <div style="max-height: 150px; overflow-y: auto; background: #f5f5f5; padding: 10px; font-size: 12px; border-radius: 4px;">
+        <pre>{{ userDebugInfo.rawUserData }}</pre>
+      </div>
+    </div>
+    <div class="speedgo-debug-section">
+      <h4>Recommendation Process</h4>
+      <p>1. User profile data extracted</p>
+      <p>2. Store data prepared</p>
+      <p>3. LLM prompt generated</p>
+      <p>4. Query sent to Groq API (llama3-70b-8192)</p>
+      <p>5. Response processed and ranked</p>
+      <p>6. Results displayed to user</p>
+    </div>
+    <div class="speedgo-debug-section">
+      <h4>LLM Explanations</h4>
+      <div *ngFor="let explanation of recommendationExplanations" class="speedgo-explanation-item">
+        <p><strong>Item #{{ explanation.id }}:</strong> {{ explanation.text }}</p>
+      </div>
+      <p *ngIf="!recommendationExplanations.length" class="speedgo-no-data">No explanations available yet.</p>
+    </div>
+  </div>
+  <div class="speedgo-debug-footer">
+    <p>Check browser console for detailed logs (F12)</p>
+    <p><small>Groq API Key: {{ maskedApiKey }}</small></p>
+  </div>
+</div>
+
+<!-- Button to toggle debug panel -->
+<button class="speedgo-debug-toggle" (click)="toggleDebugPanel()" title="Show Recommender Debug Panel">
+  <i class="fas fa-flask"></i> Demo Mode
+</button>
 
 
 

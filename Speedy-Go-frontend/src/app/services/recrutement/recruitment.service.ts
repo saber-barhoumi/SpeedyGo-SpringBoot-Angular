@@ -179,4 +179,12 @@ export class RecruitmentService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
+  getAIRecommendation(
+    recruitmentId: number
+  ): Observable<{ recommendation: string; confidence: number }> {
+    const url = `http://localhost:8084/api/recruitment/${recruitmentId}/recommendation`;
+    return this.http.get<{ recommendation: string; confidence: number }>(url);
+  }
+  
 }

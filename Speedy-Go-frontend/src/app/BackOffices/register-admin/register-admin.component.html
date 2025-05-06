@@ -1,97 +1,152 @@
-<div class="auth-wrapper">
-	<div class="auth-content text-center">
-		<img src="assets/images/logo.png" alt="" class="img-fluid mb-4">
-		<div class="card borderless">
-			<div class="row align-items-center text-center">
-				<div class="col-md-12">
-					<div class="card-body">
-						<h4 class="f-w-400">Sign up</h4>
-						<hr>
-						<form [formGroup]="registerForm" (ngSubmit)="register()">
-                            <!-- First Name -->
-                            <div class="form-group mb-3">
-                                <input type="text" class="form-control" formControlName="first_name" placeholder="First Name">
-                                <small *ngIf="submitted && f['first_name'].errors?.required" class="text-danger">First name is required</small>
-                            </div>
-                        
-                            <!-- Last Name -->
-                            <div class="form-group mb-3">
-                                <input type="text" class="form-control" formControlName="last_name" placeholder="Last Name">
-                                <small *ngIf="submitted && f['last_name'].errors?.required" class="text-danger">Last name is required</small>
-                            </div>
-                        
-                            <!-- Birth Date -->
-                            <div class="form-group mb-3">
-                                <input type="date" class="form-control" formControlName="birth_date">
-                                <small *ngIf="submitted && f['birth_date'].errors?.required" class="text-danger">Birth date is required</small>
-                            </div>
-                        
-                            <!-- Email Input -->
-                            <div class="form-group mb-3">
-                                <input type="email" class="form-control" formControlName="email" placeholder="Email address">
-                                <small *ngIf="submitted && f['email'].errors?.required" class="text-danger">Email is required</small>
-                                <small *ngIf="submitted && f['email'].errors?.email" class="text-danger">Invalid email format</small>
-                            </div>
-                        
-                            <!-- Password -->
-                            <div class="form-group mb-4">
-                                <input type="password" class="form-control" formControlName="password" placeholder="Password">
-                                <small *ngIf="submitted && f['password'].errors?.required" class="text-danger">Password is required</small>
-                                <small *ngIf="submitted && f['password'].errors?.minlength" class="text-danger">Password must be at least 6 characters</small>
-                            </div>
-                        
-                            <!-- Phone Number -->
-                            <div class="form-group mb-3">
-                                <input type="text" class="form-control" formControlName="phone_number" placeholder="Phone Number">
-                                <small *ngIf="submitted && f['phone_number'].errors?.required" class="text-danger">Phone number is required</small>
-                            </div>
-                        
-                            <!-- Address -->
-                            <div class="form-group mb-3">
-                                <input type="text" class="form-control" formControlName="address" placeholder="Address">
-                                <small *ngIf="submitted && f['address'].errors?.required" class="text-danger">Address is required</small>
-                            </div>
-                        
-                            <!-- Gender Selection -->
-                            <div class="form-group mb-3">
-                                <select class="form-control" formControlName="sexe">
-                                    <option value="">Select Gender</option>
-                                    <option value="MEN">Male</option>
-                                    <option value="WOMEN">Female</option>
-                                </select>
-                                <small *ngIf="submitted && f['sexe'].errors?.required" class="text-danger">Gender is required</small>
-                            </div>
-                        
-                            <!-- Role (Hidden, Default: ADMIN) -->
-                            <input type="hidden" formControlName="role" value="ADMIN"> 
-
-                            <!-- Profile Picture -->
-                            <div class="form-group mb-3">
-                             <label for="profilePicture">Profile Picture</label>
-                             <input type="file" class="form-control" (change)="onFileSelect($event)">
-                            </div> 
+<section class="register-section">
+    <div class="register-container">
+      <div class="register-box">
+        <form [formGroup]="registerForm" (ngSubmit)="register()" class="register-form">
+          <h2 class="register-title">Create Admin Account</h2>
+          
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
   
-                       
-                        
-                            <!-- Newsletter Checkbox -->
-                            <div class="custom-control custom-checkbox text-left mb-4 mt-2">
-                                <input type="checkbox" class="custom-control-input" formControlName="newsletter" id="customCheck1">
-                                <label class="custom-control-label" for="customCheck1">Send me the <a href="#">Newsletter</a> weekly.</label>
-                            </div>
-                        
-                            <!-- Submit Button -->
-                            <button type="submit" class="btn btn-primary btn-block mb-4">Sign up</button>
-                        </form>
-                        
-
-						<!-- Error Message -->
-						<p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-						<hr>
-						<p class="mb-2">Already have an account? <a routerLink="/loginAdmin" class="f-w-400">Sign in</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+          <!-- First Name Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <input 
+              type="text" 
+              formControlName="first_name" 
+              required 
+              placeholder="First Name"
+            >
+            <label>First Name</label>
+            <small *ngIf="submitted && f['first_name'].errors?.required" class="text-danger">First name is required</small>
+          </div>
+  
+          <!-- Last Name Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <input 
+              type="text" 
+              formControlName="last_name" 
+              required 
+              placeholder="Last Name"
+            >
+            <label>Last Name</label>
+            <small *ngIf="submitted && f['last_name'].errors?.required" class="text-danger">Last name is required</small>
+          </div>
+  
+          <!-- Email Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-envelope"></i></span>
+            <input 
+              type="email" 
+              formControlName="email" 
+              required 
+              placeholder="Email Address"
+            >
+            <label>Email</label>
+            <small *ngIf="submitted && f['email'].errors?.required" class="text-danger">Email is required</small>
+            <small *ngIf="submitted && f['email'].errors?.email" class="text-danger">Invalid email format</small>
+          </div>
+  
+          <!-- Password Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-lock"></i></span>
+            <input 
+              type="password" 
+              formControlName="password" 
+              required 
+              placeholder="Password"
+            >
+            <label>Password</label>
+            <small *ngIf="submitted && f['password'].errors?.required" class="text-danger">Password is required</small>
+            <small *ngIf="submitted && f['password'].errors?.minlength" class="text-danger">Password must be at least 6 characters</small>
+          </div>
+  
+          <!-- Birth Date Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-calendar"></i></span>
+            <input 
+              type="date" 
+              formControlName="birth_date" 
+              required 
+            >
+            <label>Birth Date</label>
+            <small *ngIf="submitted && f['birth_date'].errors?.required" class="text-danger">Birth date is required</small>
+          </div>
+  
+          <!-- Phone Number Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-phone"></i></span>
+            <input 
+              type="text" 
+              formControlName="phone_number" 
+              placeholder="Phone Number"
+              required
+            >
+            <label>Phone Number</label>
+            <small *ngIf="submitted && f['phone_number'].errors?.required" class="text-danger">Phone number is required</small>
+          </div>
+  
+          <!-- Address Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-home"></i></span>
+            <input 
+              type="text" 
+              formControlName="address" 
+              required 
+              placeholder="Address"
+            >
+            <label>Address</label>
+            <small *ngIf="submitted && f['address'].errors?.required" class="text-danger">Address is required</small>
+          </div>
+  
+          <!-- Profile Picture Input -->
+          <div class="input-box file-input">
+            <span class="icon"><i class="fas fa-image"></i></span>
+            <input 
+              type="file"
+              (change)="onFileSelected($event)" 
+              accept="image/*"
+            >
+            <label>Profile Picture</label>
+            <small *ngIf="submitted && !selectedFile" class="text-warning">Profile picture is recommended</small>
+          </div>
+  
+          <!-- Gender Select -->
+          <div class="input-box select-box">
+            <span class="icon"><i class="fas fa-venus-mars"></i></span>
+            <select formControlName="sexe">
+              <option value="" disabled selected hidden>Select gender</option>
+              <option value="MEN">Male</option>
+              <option value="WOMEN">Female</option>
+            </select>
+            <label>Gender</label>
+            <small *ngIf="submitted && f['sexe'].errors?.required" class="text-danger">Gender is required</small>
+          </div>
+  
+          <!-- Newsletter Checkbox -->
+          <div class="checkbox-container">
+            <input type="checkbox" formControlName="newsletter" id="newsletter">
+            <label for="newsletter">Send me the <a href="#">Newsletter</a> weekly.</label>
+          </div>
+  
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            [disabled]="isLoading"
+          >
+            {{ isLoading ? 'Creating Account...' : 'Register' }}
+          </button>
+  
+          <!-- Login Link -->
+          <div class="login-link">
+            <p>
+              Already have an account? 
+              <a routerLink="/loginAdmin">Sign in</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>

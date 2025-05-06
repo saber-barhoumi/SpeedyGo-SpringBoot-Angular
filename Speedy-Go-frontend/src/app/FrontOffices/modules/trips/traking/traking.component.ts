@@ -9,6 +9,14 @@ interface Location {
   lng: number;
 }
 
+// Interface for driver location data
+interface DriverLocation {
+  userId: string;
+  location: Location;
+  timestamp: string;
+  isDeliveryActive: boolean;
+}
+
 @Component({
   selector: 'app-traking',
   templateUrl: './traking.component.html',
@@ -30,6 +38,15 @@ export class TrakingComponent implements OnInit, OnDestroy, AfterViewInit {
   maxRetries: number = 3;
   mapsLoaded: boolean = false;
   
+  // Delivery driver specific properties
+  isDeliveryUser: boolean = false;
+  isDeliveryActive: boolean = false;
+  userData: any = null;
+  
+  // Driver tracking for regular users
+  deliveryDriverMarkers: Map<string, any> = new Map(); // Map of driver userId to marker
+  activeDrivers: DriverLocation[] = [];
+  
   // Ably related properties
   private ably: any = null; // Using 'any' to avoid TypeScript errors with Ably
   private locationChannel: RealtimeChannel | null = null;
@@ -42,11 +59,98 @@ export class TrakingComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {
+    // Check if user is a delivery driver
+    this.checkUserRole();
+    
     // Load Google Maps API with proper async loading pattern
     this.loadGoogleMapsAPI();
     
     // Initialize Ably and get user ID
     this.initializeAbly();
+  }
+
+  // Check if user has delivery role
+  checkUserRole(): void {
+    try {
+      const userDataStr = localStorage.getItem('user');
+      if (userDataStr) {
+        this.userData = JSON.parse(userDataStr);
+        this.isDeliveryUser = this.userData && this.userData.role === 'DELEVERY';
+        console.log('User role check:', this.isDeliveryUser ? 'Delivery driver' : 'Regular user');
+      }
+    } catch (error) {
+      console.error('Error parsing user data from localStorage:', error);
+      this.isDeliveryUser = false;
+    }
+  }
+
+  // Toggle delivery status
+  toggleDeliveryStatus(): void {
+    this.isDeliveryActive = !this.isDeliveryActive;
+    
+    if (this.isDeliveryActive) {
+      console.log('Delivery tracking started for driver ID:', this.userData?.userId);
+      // Start more frequent location publishing
+      this.startDeliveryTracking();
+    } else {
+      console.log('Delivery tracking stopped');
+      // Revert back to normal publishing interval
+      this.stopDeliveryTracking();
+    }
+  }
+
+  // Start more frequent location publishing for active delivery
+  startDeliveryTracking(): void {
+    // Clear existing interval
+    if (this.publishIntervalId) {
+      clearInterval(this.publishIntervalId);
+    }
+    
+    // Set more frequent updates during active delivery
+    this.publishIntervalId = setInterval(() => {
+      if (this.currentLocation && this.locationChannel) {
+        // For active delivery, always publish location regardless of distance change
+        this.publishLocationData();
+      }
+    }, 3000); // More frequent updates (every 3 seconds)
+  }
+
+  // Stop frequent location publishing
+  stopDeliveryTracking(): void {
+    // Clear existing interval
+    if (this.publishIntervalId) {
+      clearInterval(this.publishIntervalId);
+    }
+    
+    // Reset to normal publishing interval
+    this.setupLocationPublishing();
+  }
+
+  // Publish location data directly
+  publishLocationData(): void {
+    if (!this.currentLocation || !this.locationChannel || !this.userId) return;
+    
+    // Prepare location data with user ID and delivery status
+    const locationData = {
+      userId: this.userId,
+      location: this.currentLocation,
+      timestamp: new Date().toISOString(),
+      isDeliveryActive: this.isDeliveryActive
+    };
+    
+    // Publish to Ably channel
+    this.locationChannel.publish('location', locationData)
+      .then(() => {
+        console.log('Location published successfully:', locationData);
+        
+        // Update last published location
+        if (this.currentLocation) {
+          this.lastPublishedLocation = { ...this.currentLocation };
+        }
+      })
+      .catch((err) => {
+        console.error('Error publishing location to Ably:', err);
+      });
   }
 
   ngAfterViewInit(): void {
@@ -795,26 +899,37 @@ export class TrakingComponent implements OnInit, OnDestroy, AfterViewInit {
       // Set up interval for publishing location (if significant movement detected)
       this.setupLocationPublishing();
       
+      // If not a delivery user, subscribe to location updates from delivery drivers
+      if (!this.isDeliveryUser) {
+        this.subscribeToDriverLocations();
+      }
+      
       console.log('Ably initialized successfully with user ID:', this.userId);
     } catch (error) {
       console.error('Error initializing Ably:', error);
     }
   }
   
+  // Set up interval for publishing location
   setupLocationPublishing(): void {
     // Clear any existing interval
     if (this.publishIntervalId) {
       clearInterval(this.publishIntervalId);
+      this.publishIntervalId = null;
     }
     
-    // Set up interval to check and publish location regularly
+    // Set up interval for regular location publishing
     this.publishIntervalId = setInterval(() => {
       if (this.currentLocation && this.locationChannel) {
+        // For normal publishing, only send if position changed significantly
         this.publishLocationIfChanged();
       }
     }, this.PUBLISH_INTERVAL);
+    
+    console.log('Location publishing interval set up. Interval:', this.PUBLISH_INTERVAL, 'ms');
   }
-  
+
+  // Publish location data if it has changed significantly
   publishLocationIfChanged(): void {
     if (!this.currentLocation || !this.locationChannel || !this.userId) return;
     
@@ -822,35 +937,211 @@ export class TrakingComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.lastPublishedLocation || 
         this.calculateDistance(this.currentLocation, this.lastPublishedLocation) > this.MIN_DISTANCE_TO_PUBLISH) {
       
-      // Prepare location data with user ID
-      const locationData = {
-        userId: this.userId,
-        location: this.currentLocation,
-        timestamp: new Date().toISOString()
-      };
-      
-      // Publish to Ably channel - fixed API usage
-      this.locationChannel.publish('location', locationData)
-        .then(() => {
-          console.log('Location published successfully:', locationData);
+      // Use the publishLocationData method to ensure consistent data format
+      this.publishLocationData();
+    }
+  }
+
+  // Subscribe to delivery driver location updates (for non-delivery users)
+  subscribeToDriverLocations(): void {
+    if (!this.locationChannel) return;
+    
+    console.log('Subscribing to delivery driver location updates...');
+    
+    this.locationChannel.subscribe('location', (message) => {
+      this.ngZone.run(() => {
+        const driverData = message.data as DriverLocation;
+        
+        // Only process if it's a delivery driver with active status
+        if (driverData && driverData.isDeliveryActive) {
+          console.log('Received driver location update:', driverData);
           
-          // Update last published location
-          if (this.currentLocation) {
-            this.lastPublishedLocation = { ...this.currentLocation };
+          // Update or add to active drivers array
+          const driverIndex = this.activeDrivers.findIndex(d => d.userId === driverData.userId);
+          
+          if (driverIndex >= 0) {
+            // Update existing driver data
+            this.activeDrivers[driverIndex] = driverData;
+          } else {
+            // Add new driver
+            this.activeDrivers.push(driverData);
           }
-        })
-        .catch((err) => {
-          console.error('Error publishing location to Ably:', err);
-        });
+          
+          // Update marker on map
+          this.updateDriverMarker(driverData);
+        }
+      });
+    });
+  }
+  
+  // Update or create a marker for a delivery driver
+  updateDriverMarker(driverData: DriverLocation): void {
+    if (!this.map) return;
+    
+    // Check if we already have a marker for this driver
+    const existingMarker = this.deliveryDriverMarkers.get(driverData.userId);
+    
+    if (existingMarker) {
+      // Update existing marker
+      try {
+        if ((window as any).google?.maps?.marker?.AdvancedMarkerElement && 
+            existingMarker instanceof (window as any).google.maps.marker.AdvancedMarkerElement) {
+          existingMarker.position = driverData.location;
+        } else if ('setPosition' in existingMarker) {
+          existingMarker.setPosition(driverData.location);
+        }
+      } catch (error) {
+        console.warn('Error updating driver marker:', error);
+      }
+    } else {
+      // Create a new marker for this driver
+      this.createDriverMarker(driverData);
     }
   }
   
+  // Create a new marker for a delivery driver
+  createDriverMarker(driverData: DriverLocation): void {
+    if (!this.map) return;
+    
+    // Check if AdvancedMarkerElement exists in the loaded API
+    if ((window as any).google?.maps?.marker?.AdvancedMarkerElement) {
+      try {
+        // Using the modern AdvancedMarkerElement
+        const { AdvancedMarkerElement } = (window as any).google.maps.marker;
+        
+        // Create marker element for delivery driver (red color)
+        const markerElement = document.createElement('div');
+        markerElement.className = 'driver-marker';
+        markerElement.innerHTML = `
+          <div style="
+            width: 22px; 
+            height: 22px; 
+            background-color: #e74a3b; 
+            border: 2px solid white; 
+            border-radius: 50%; 
+            box-shadow: 0 0 8px rgba(231, 74, 59, 0.8);
+            animation: pulse 1.5s infinite;
+            position: relative;
+          ">
+            <div style="
+              position: absolute;
+              top: -25px;
+              left: 50%;
+              transform: translateX(-50%);
+              background-color: rgba(0,0,0,0.7);
+              color: white;
+              padding: 3px 6px;
+              border-radius: 3px;
+              font-size: 10px;
+              white-space: nowrap;
+            ">Delivery Driver</div>
+          </div>
+        `;
+        
+        const driverMarker = new AdvancedMarkerElement({
+          map: this.map,
+          position: driverData.location,
+          title: 'Delivery Driver',
+          content: markerElement
+        });
+        
+        // Add info window
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding: 10px; max-width: 200px;">
+              <h4 style="margin-top: 0;">Delivery Driver</h4>
+              <p style="margin-bottom: 5px;"><strong>Driver ID:</strong> ${driverData.userId}</p>
+              <p style="margin-bottom: 5px;"><strong>Status:</strong> Active</p>
+              <p style="margin-bottom: 0;"><strong>Last update:</strong> ${new Date(driverData.timestamp).toLocaleTimeString()}</p>
+            </div>
+          `
+        });
+        
+        // Add click listener for info window
+        (driverMarker as any).addListener('click', () => {
+          infoWindow.open(this.map, driverMarker);
+        });
+        
+        // Store the marker reference
+        this.deliveryDriverMarkers.set(driverData.userId, driverMarker);
+        
+      } catch (error) {
+        console.warn('Error creating AdvancedMarkerElement for driver, falling back to legacy Marker', error);
+        this.createLegacyDriverMarker(driverData);
+      }
+    } else {
+      // Fallback to legacy marker if AdvancedMarkerElement is not available
+      this.createLegacyDriverMarker(driverData);
+    }
+  }
+  
+  // Create a legacy marker for delivery driver
+  createLegacyDriverMarker(driverData: DriverLocation): void {
+    if (!this.map) return;
+    
+    console.warn('Using legacy Google Maps Marker for driver. Consider upgrading to AdvancedMarkerElement in the future.');
+    
+    const driverMarker = new google.maps.Marker({
+      position: driverData.location,
+      map: this.map,
+      title: 'Delivery Driver',
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: '#e74a3b',
+        fillOpacity: 0.9,
+        strokeColor: '#ffffff',
+        strokeWeight: 2,
+        scale: 12
+      },
+      label: {
+        text: 'D',
+        color: '#ffffff',
+        fontSize: '10px',
+        fontWeight: 'bold'
+      }
+    });
+    
+    // Add info window
+    const infoWindow = new google.maps.InfoWindow({
+      content: `
+        <div style="padding: 10px; max-width: 200px;">
+          <h4 style="margin-top: 0;">Delivery Driver</h4>
+          <p style="margin-bottom: 5px;"><strong>Driver ID:</strong> ${driverData.userId}</p>
+          <p style="margin-bottom: 5px;"><strong>Status:</strong> Active</p>
+          <p style="margin-bottom: 0;"><strong>Last update:</strong> ${new Date(driverData.timestamp).toLocaleTimeString()}</p>
+        </div>
+      `
+    });
+    
+    // Add click listener
+    driverMarker.addListener('click', () => {
+      infoWindow.open(this.map, driverMarker);
+    });
+    
+    // Store the marker reference
+    this.deliveryDriverMarkers.set(driverData.userId, driverMarker);
+  }
+  
+  // Clean up resources when component is destroyed
   cleanupAbly(): void {
     // Clear publishing interval
     if (this.publishIntervalId) {
       clearInterval(this.publishIntervalId);
       this.publishIntervalId = null;
     }
+    
+    // Clean up driver markers
+    this.deliveryDriverMarkers.forEach(marker => {
+      if (marker) {
+        if ((window as any).google?.maps?.marker?.AdvancedMarkerElement && 
+            marker instanceof (window as any).google.maps.marker.AdvancedMarkerElement) {
+          marker.map = null;
+        } else if ('setMap' in marker) {
+          marker.setMap(null);
+        }
+      }
+    });
+    this.deliveryDriverMarkers.clear();
     
     // Close Ably connection
     if (this.ably) {

@@ -1,6 +1,7 @@
 package com.ski.speedygobackend.Controller.UserManagement;
 
 import com.ski.speedygobackend.DTO.UserDTO;
+import com.ski.speedygobackend.DTO.UserUpdateDTO;
 import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.Role;
 import com.ski.speedygobackend.Enum.Sexe;
@@ -121,4 +122,52 @@ public class UserRestController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<UserDTO> updateUserProfile(
+            @PathVariable Long userId,
+            @RequestBody UserUpdateDTO updateDTO) {
+        try {
+            User updatedUser = userService.updateUserProfile(userId, updateDTO);
+
+            // Convert to DTO
+            UserDTO userDTO = convertToDTO(updatedUser);
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Helper method to convert User to UserDTO
+    private UserDTO convertToDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getUserId());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setSexe(user.getSexe().name());
+        userDTO.setRole(user.getRole().name());
+
+        if (user.getProfilePicture() != null) {
+            userDTO.setProfilePicture(Base64.getEncoder().encodeToString(user.getProfilePicture()));
+        }
+
+        return userDTO;
+    }
+
+    // Add method to upload profile picture
+    @PostMapping("/{userId}/profile-picture")
+    public ResponseEntity<UserDTO> uploadProfilePicture(
+            @PathVariable Long userId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            User updatedUser = userService.updateProfilePicture(userId, file);
+            UserDTO userDTO = convertToDTO(updatedUser);
+            return ResponseEntity.ok(userDTO);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
+

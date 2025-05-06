@@ -1,0 +1,178 @@
+// Card styling
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.border-warning {
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  // Pulsating animation for trips starting soon
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+  }
+  
+  // Rating stars styling
+  .stars {
+    .fas {
+      margin-right: 2px;
+    }// Card styling
+.card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.border-warning {
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  // Pulsating animation for trips starting soon
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+  }
+  
+  // Rating stars styling
+  .stars {
+    .fas {
+      margin-right: 2px;
+    }
+  }
+  
+  // Star rating buttons
+  .star-rating {
+    display: flex;
+    align-items: center;
+    
+    .btn {
+      padding: 0.25rem 0.5rem;
+      margin-right: 0.25rem;
+      border-radius: 4px;
+      
+      &.btn-warning {
+        .fas {
+          color: #fff;
+        }
+      }
+      
+      &.btn-outline-secondary {
+        .fas {
+          color: #6c757d;
+        }
+      }
+    }
+  }
+  
+  // Price and seat selection
+  .pricing {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    
+    .total-price {
+      color: #0d6efd;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+  
+  // Amenities badges
+  .amenities {
+    margin: 15px 0;
+    
+    .badge {
+      padding: 6px 10px;
+      margin-right: 5px;
+      font-weight: normal;
+      
+      .fa {
+        margin-right: 5px;
+      }
+    }
+  }
+  
+  // Review section
+  .review-text {
+    white-space: pre-line;
+    font-style: italic;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #dee2e6;
+    margin: 10px 0;
+  }
+  
+  // Review modals
+  .modal {
+    .modal-header {
+      background-color: #f8f9fa;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+  }
+  
+  // Loading spinner
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  // Pagination enhancements
+  .pagination {
+    .page-link {
+      color: #0d6efd;
+      border-radius: 4px;
+      margin: 0 3px;
+      
+      &:hover {
+        background-color: #e9ecef;
+      }
+    }
+    
+    .active .page-link {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    .btn-group {
+      display: flex;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .form-select {
+      width: 100% !important;
+      margin-top: 10px;
+    }
+  }
+}

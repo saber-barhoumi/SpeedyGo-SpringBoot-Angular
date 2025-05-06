@@ -3,29 +3,23 @@ package com.ski.speedygobackend.security;
 import com.ski.speedygobackend.Service.UserManagement.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-
-import java.util.Arrays;
-
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
@@ -42,9 +36,6 @@ public class SecurityConfig {
                 // Disable CSRF protection
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // Configure CORS
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
                 // Configure session management
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -55,42 +46,59 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(
                                 "/ws/**",
+                                "/parcel/**",
+                                "/payment/**",
+                                "/route/**",
                                 "/public/**",
                                 "/api/auth/**",
                                 "/api/email/forgot-password",
                                 "/api/email/reset-password",
-                                "/api/carpoolings/calculate-price", // Original endpoint
-                                "/api/price/**", // New price calculation endpoint
+                                "/api/carpoolings/calculate-price",
+                                "/api/price/**",
                                 "/api/trips/**",
+                                "/api/demandes-conge/create",
+                                "/api/recruitment/**",
+                                "/api/reviews/carpooling/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-resources/**"
-
+                                "/swagger-resources/**",
+                                "/specific-trips/**",
+                                "/stores/**",
+                                "/stores/images/**",
+                                "/api/offres/**",
+                                "/offres/**",
+                                "/statistiques/**",
+                                "/api/statistiques/**",
+                                "/api/specific-trips/**",
+                                "/api/specific-trips/images/**",
+                                "/api/stores/**",
+                                "/api/uploads/**"
                         ).permitAll()
 
                         // Admin-specific endpoints
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/admin/**",
+                                "/payment/get/**",
+                                "/payment/getAll",
+                                "/payment/add",
+                                "/payment/update/**",
+                                "/payment/delete/**"
+                        ).hasRole("ADMIN")
 
-                        // Customer-specific endpoints
+                        // Customer and delivery-specific endpoints
                         .requestMatchers("/api/carpoolings/reservations/me").authenticated()
                         .requestMatchers("/api/carpoolings/add").authenticated()
                         .requestMatchers("/api/carpoolings/{id}/reserve").hasAnyRole("CUSTOMER", "DELEVERY", "USER")
-
-                        .requestMatchers("/api/carpoolings/{id}/reserve").authenticated()
-                        .requestMatchers("/specific-trips/**").permitAll()
-                        .requestMatchers("/stores/**").permitAll()
-                        .requestMatchers("/stores/images/**").permitAll()
-                        .requestMatchers("/api/offres/**").permitAll()
-                        .requestMatchers("/offres/**").permitAll()
-                        .requestMatchers("/statistiques/**").permitAll()
-                        .requestMatchers("/api/statistiques/**").permitAll()
-                        .requestMatchers("/api/specific-trips/**").permitAll() // Ajouté pour inclure les URLs avec préfixe API
-                        .requestMatchers("/api/specific-trips/images/**").permitAll() // Ajouté spécifiquement pour les images
-                        .requestMatchers("/api/stores/**").permitAll()
-                        .requestMatchers("api/uploads/**").permitAll()
-
-
-
+                        .requestMatchers("/api/delivery-services/register").hasAnyRole("DELEVERY", "ADMIN")
+                        .requestMatchers("/api/delivery-services/provider/**").hasAnyRole("ADMIN", "DELEVERY")
+                        .requestMatchers("/api/delivery-orders/delivery-person/**").hasAnyRole("ADMIN", "DELEVERY")
+                        .requestMatchers(HttpMethod.POST, "/api/delivery-services/*/rate").hasAnyRole("CUSTOMER", "ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/api/delivery-orders").hasAnyRole("CUSTOMER", "ADMIN", "DELEVERY", "USER")
+                        .requestMatchers("/api/reviews/**").authenticated()
+                        .requestMatchers("/api/reviews/rate").hasAnyRole("USER", "DELEVERY")
+                        .requestMatchers("/api/reviews/add").hasAnyRole("USER", "DELEVERY")
+                        .requestMatchers("/api/carpoolings/reservations/my-reservations").hasRole("CUSTOMER")
+                        .requestMatchers("/api/reviews/user").hasRole("CUSTOMER")
 
                         // Require authentication for all other requests
                         .anyRequest().authenticated()
@@ -117,20 +125,5 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration
     ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        // Replace wildcard with specific origin
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
-        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }

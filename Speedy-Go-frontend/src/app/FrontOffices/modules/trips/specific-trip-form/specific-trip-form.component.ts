@@ -8,6 +8,8 @@ declare global {
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpecificTripService } from 'src/app/FrontOffices/services/specific-trip/specific-trip.service';
+import { ImageAnalysisService } from 'src/app/FrontOffices/services/image-analysis/image-analysis.service';
+import { PdfService } from 'src/app/FrontOffices/services/pdf/pdf.service';
 
 @Component({
   selector: 'app-specific-trip-form',
@@ -16,6 +18,9 @@ import { SpecificTripService } from 'src/app/FrontOffices/services/specific-trip
 })
 export class SpecificTripFormComponent implements OnInit {
   isSubmitting = false;
+  isAnalyzing = false;
+  isGeneratingPDF = false;
+  apiError = '';
   
   @ViewChild('departureLocationInput', { static: false }) departureLocationInput!: ElementRef;
   @ViewChild('passThroughLocationInput', { static: false }) passThroughLocationInput!: ElementRef;
@@ -24,6 +29,8 @@ export class SpecificTripFormComponent implements OnInit {
 
   constructor(
     private specificTripService: SpecificTripService,
+    private imageAnalysisService: ImageAnalysisService,
+    private pdfService: PdfService,
     private router: Router,
     private ngZone: NgZone
   ) {}
@@ -164,5 +171,83 @@ export class SpecificTripFormComponent implements OnInit {
     } else {
       console.log('Form is invalid:', form.errors);
     }
+  }
+
+  /**
+   * Analyze the uploaded parcel image and auto-fill form fields
+   */
+  analyzeParcelImage(): void {
+    const fileInput = document.getElementById('photo') as HTMLInputElement;
+    const file = fileInput && fileInput.files ? fileInput.files[0] : undefined;
+    
+    if (!file) {
+      this.apiError = 'Please upload an image first';
+      return;
+    }
+    
+    this.isAnalyzing = true;
+    this.apiError = '';
+    
+    this.imageAnalysisService.analyzeImage(file).subscribe({
+      next: (response) => {
+        console.log('Image analysis response:', response);
+        this.isAnalyzing = false;
+        
+        // Update the form with the analysis results
+        if (this.tripForm && this.tripForm.form) {
+          this.tripForm.form.patchValue({
+            parcelDescription: response.package_description || '',
+            parcelLength: response.Length || 0,
+            parcelWidth: response.Width || 0,
+            parcelHeight: response.Height || 0
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error analyzing image:', error);
+        this.isAnalyzing = false;
+        this.apiError = 'Failed to analyze image. Please try again or fill in the details manually.';
+      }
+    });
+  }
+
+  /**
+   * Generate a PDF document with the trip details
+   */
+  generatePDF(): void {
+    if (this.tripForm.invalid) {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.tripForm.form.controls).forEach(key => {
+        this.tripForm.form.get(key)?.markAsTouched();
+      });
+      return;
+    }
+    
+    this.isGeneratingPDF = true;
+    
+    // Get the form data
+    const tripData = this.tripForm.value;
+    
+    // Generate the PDF
+    this.pdfService.generateTripPDF(tripData)
+      .then(pdfBlob => {
+        // Create a URL for the blob
+        const blobUrl = URL.createObjectURL(pdfBlob);
+        
+        // Create a link element and trigger a download
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = `speedy-go-trip-${new Date().getTime()}.pdf`;
+        link.click();
+        
+        // Clean up
+        URL.revokeObjectURL(blobUrl);
+        this.isGeneratingPDF = false;
+      })
+      .catch(error => {
+        console.error('Error generating PDF:', error);
+        this.isGeneratingPDF = false;
+        // You could show an error message here
+      });
   }
 }

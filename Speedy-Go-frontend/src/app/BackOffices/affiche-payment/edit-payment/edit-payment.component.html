@@ -1,0 +1,32 @@
+<div class="container">
+  <h2>Modifier le Paiement</h2>
+  <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="amount">Montant :</label>
+      <input id="amount" formControlName="amount" type="number" required>
+      <div *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched" class="error">
+        Le montant est requis et doit être supérieur à 0.
+      </div>
+    </div>
+    <div>
+      <label for="paymentMethod">Méthode de Paiement :</label>
+      <select id="paymentMethod" formControlName="paymentMethod" required>
+        <option value="" disabled>Sélectionnez une méthode</option>
+        <option value="CREDIT_CARD">Carte de Crédit</option>
+      </select>
+      <div *ngIf="paymentForm.get('paymentMethod')?.invalid && paymentForm.get('paymentMethod')?.touched" class="error">
+        La méthode de paiement est requise.
+      </div>
+    </div>
+    <div>
+      <label for="userId">ID Utilisateur :</label>
+      <input id="userId" formControlName="userId" type="number">
+    </div>
+    <div>
+      <label for="userEmail">Email Utilisateur :</label>
+      <input id="userEmail" formControlName="userEmail" type="email">
+    </div>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!paymentForm.valid">Sauvegarder</button>
+    <button mat-raised-button type="button" (click)="cancel()">Annuler</button>
+  </form>
+</div>

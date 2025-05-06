@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { DeliveryVehicle, VehicleType } from '../../../../models/vehicle.model';
-import { VehicleService } from '../../../../services/recrutement/vehicle.service';
+import { VehicleService } from 'src/app/services/vehicle/vehicle.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/user/auth.service';
 import { CarbonFootprintService } from 'src/app/services/carbon-footprint.service'; // adapte le chemin si nécessaire

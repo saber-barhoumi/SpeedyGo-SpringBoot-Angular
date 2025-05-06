@@ -1,0 +1,71 @@
+<div class="container my-5">
+    <div class="row mb-4">
+      <div class="col">
+        <h2 class="mb-0">My Shipping Orders</h2>
+        <p class="text-muted">Manage and track your international shipments</p>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary rounded-pill" (click)="loadOrders()">
+          <i class="fas fa-sync-alt me-2"></i>Refresh
+        </button>
+      </div>
+    </div>
+  
+    <!-- Loading and Error States -->
+    <div *ngIf="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3">Loading your orders...</p>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+      {{error}}
+    </div>
+  
+    <!-- No Orders Message -->
+    <div *ngIf="!loading && !error && orders.length === 0" class="text-center py-5">
+      <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+      <h4>No orders found</h4>
+      <p>You haven't placed any international shipping orders yet</p>
+      <button class="btn btn-primary rounded-pill mt-3" routerLink="/customer/international-shipping">
+        <i class="fas fa-plus-circle me-2"></i>Place Your First Order
+      </button>
+    </div>
+  
+    <!-- Orders Table -->
+    <div class="card shadow-sm" *ngIf="!loading && orders.length > 0">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td><strong>#{{order.orderId}}</strong></td>
+                <td>{{order.orderDate | date}}</td>
+                <td>{{order.serviceName}}</td>
+                <td>{{order.destinationCountry}}</td>
+                <td><span [ngClass]="getOrderStatusColor(order.status)">{{order.status}}</span></td>
+                <td>{{order.totalPrice | currency}}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary" (click)="viewOrderDetails(order.orderId)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

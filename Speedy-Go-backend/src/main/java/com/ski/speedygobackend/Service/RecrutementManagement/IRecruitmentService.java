@@ -5,6 +5,7 @@ import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.RecruitmentStatus;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IRecruitmentService {
     List<Recruitment> getAllRecruitments();
@@ -16,6 +17,5 @@ public interface IRecruitmentService {
     List<Recruitment> getRecruitmentsByApplicant(User applicant);
     boolean hasActiveApplication(User applicant);
     Recruitment updateRecruitmentStatus(Long id, RecruitmentStatus newStatus, String feedback);
-    boolean isDeliveryRecruitmentCompleted(User user); // Add this line
-
+    Map<String, Object> getAiRecommendation(Long recruitmentId);
 }

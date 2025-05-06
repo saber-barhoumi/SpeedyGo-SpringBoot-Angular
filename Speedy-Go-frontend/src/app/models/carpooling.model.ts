@@ -18,4 +18,8 @@ export interface Carpooling {
   status?: string;
   weatherType?: string;
   reservationCarpoos?: any[];
+  createdAt?: Date;
+  updatedAt?: Date;
+  averageRating?: number;
+  rating?: number;
 }

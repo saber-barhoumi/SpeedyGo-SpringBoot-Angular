@@ -5,12 +5,18 @@ import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.RecruitmentStatus;
 import com.ski.speedygobackend.Repository.IRecruitmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class RecruitmentServiceImpl implements IRecruitmentService {
@@ -78,7 +84,7 @@ public class RecruitmentServiceImpl implements IRecruitmentService {
 
     @Override
     public List<Recruitment> getRecruitmentsByApplicant(User applicant) {
-        return recruitmentRepository.findAllByApplicant(applicant);
+        return recruitmentRepository.findByApplicant(applicant);
     }
 
     @Override
@@ -108,15 +114,26 @@ public class RecruitmentServiceImpl implements IRecruitmentService {
 
         return recruitmentRepository.save(recruitment);
     }
-    @Override
-    public boolean isDeliveryRecruitmentCompleted(User user) {
-        Optional<Recruitment> recruitment = recruitmentRepository.findByApplicant(user);
-        if (recruitment.isPresent()) {
-            // Check if the recruitment status is COMPLETED
-            return recruitment.get().getStatus() == RecruitmentStatus.ACCEPTED;
-        } else {
-            return false;
-        }
-    }
 
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getAiRecommendation(Long recruitmentId) {
+        Recruitment recruitment = getRecruitmentById(recruitmentId);
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("yearsOfExperience", recruitment.getYearsOfExperience());
+        payload.put("previousEmployer", recruitment.getPreviousEmployer());
+        payload.put("coverLetter", recruitment.getCoverLetter());
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(
+                "http://localhost:8000/predict", request, Map.class
+        );
+
+        return response.getBody();
+    }
 }

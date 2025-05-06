@@ -107,4 +107,6 @@ public class Recruitment implements Serializable {
     protected void onUpdate() {
         lastStatusUpdateDate = LocalDateTime.now();
     }
+
+    
 }

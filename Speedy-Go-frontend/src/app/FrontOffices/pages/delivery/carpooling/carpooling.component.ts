@@ -1,15 +1,21 @@
-// FrontOffices/pages/delivery/carpooling/carpooling.component.ts
+// BackOffices/pages-back/Delivery/carpooling/carpooling.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooling.service';
 import { TripsService } from 'src/app/services/delivery/trips/trips.service';
 import { GouvernoratService } from 'src/app/services/delivery/gouvernorats/gouvernorats.service';
 import { Carpooling } from 'src/app/models/carpooling.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PriceFormatterPipe } from 'src/app/pipes/price-formatter.pipe';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-carpooling',
   templateUrl: './carpooling.component.html',
-  styleUrls: ['./carpooling.component.css']
+  styleUrls: ['./carpooling.component.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PriceFormatterPipe, DatePipe]
 })
 export class CarpoolingComponent implements OnInit {
   carpoolings: Carpooling[] = [];
@@ -17,6 +23,11 @@ export class CarpoolingComponent implements OnInit {
   isEditing = false;
   showForm = false;
   calculatedPrice: number | null = null;
+
+  // Stats properties
+  totalRides = 0;
+  totalEarnings = 0;
+  totalPassengers = 0;
 
   // Dropdown options
   gouvernorats: string[] = [];
@@ -36,8 +47,22 @@ export class CarpoolingComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCarpoolings();
+    this.loadStats();
     this.gouvernorats = this.gouvernoratService.getGouvernorats();
     this.setupFormListeners();
+  }
+
+  loadStats(): void {
+    this.carpoolingService.getReviewStatistics().subscribe({
+      next: (stats: any) => {
+        this.totalRides = stats.totalRides || 0;
+        this.totalEarnings = stats.totalEarnings || 0;
+        this.totalPassengers = stats.totalPassengers || 0;
+      },
+      error: (error: any) => {
+        console.error('Error loading carpooling stats', error);
+      }
+    });
   }
 
   initForm(): void {
@@ -48,7 +73,7 @@ export class CarpoolingComponent implements OnInit {
     this.carpoolingForm = this.fb.group({
       departureLocation: ['', Validators.required],
       destination: ['', Validators.required],
-      startTime: [defaultStartTime.toISOString().slice(0, 16), Validators.required], // Add startTime with default value
+      startTime: [defaultStartTime.toISOString().slice(0, 16), Validators.required],
       distanceKm: [{ value: '', disabled: true }, Validators.required],
       durationMinutes: [{ value: '', disabled: true }, Validators.required],
       vehicleType: ['', Validators.required],
@@ -90,7 +115,7 @@ export class CarpoolingComponent implements OnInit {
             durationMinutes: trip.duration_minutes
           });
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error fetching trip details', error);
         }
       });
@@ -153,7 +178,7 @@ export class CarpoolingComponent implements OnInit {
         this.carpoolings = data;
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading carpoolings', error);
         this.isLoading = false;
       }
@@ -165,7 +190,7 @@ export class CarpoolingComponent implements OnInit {
     const carpoolingData = this.carpoolingForm.getRawValue();
     
     this.carpoolingService.calculatePrice(carpoolingData).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.isLoading = false;
         
         // Check if response is an object with price
@@ -186,7 +211,7 @@ export class CarpoolingComponent implements OnInit {
           this.calculatedPrice = typeof response === 'number' ? response : parseFloat(response);
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error calculating price', error);
         this.isLoading = false;
       }
@@ -210,10 +235,10 @@ export class CarpoolingComponent implements OnInit {
     }
   }
 
-  createCarpooling(carpoolingData: Carpooling): void {
+  createCarpooling(carpoolingData: any): void {
     // Add the calculated price to the carpooling data
-    carpoolingData.pricePerSeat = this.calculatedPrice as number;
-    
+    const pricePerSeat = this.calculatedPrice !== null ? this.calculatedPrice : 0;
+  
     // Ensure all required fields are present and properly formatted
     const formData = {
       departureLocation: carpoolingData.departureLocation,
@@ -223,7 +248,7 @@ export class CarpoolingComponent implements OnInit {
       vehicleType: carpoolingData.vehicleType,
       fuelType: carpoolingData.fuelType,
       availableSeats: Number(carpoolingData.availableSeats),
-      pricePerSeat: this.calculatedPrice,
+      pricePerSeat: pricePerSeat,
       startTime: typeof carpoolingData.startTime === 'string' ? 
                  new Date(carpoolingData.startTime).toISOString() : 
                  carpoolingData.startTime,
@@ -235,30 +260,49 @@ export class CarpoolingComponent implements OnInit {
     
     console.log('Sending carpooling data:', formData);
     
-    this.carpoolingService.createCarpooling(formData as Carpooling).subscribe({
+    this.carpoolingService.createCarpooling(formData).subscribe({
       next: () => {
         this.loadCarpoolings();
+        this.loadStats(); // Reload stats after creating
         this.resetForm();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error creating carpooling', error);
         this.isLoading = false;
       }
     });
   }
 
-  updateCarpooling(carpoolingData: Carpooling): void {
+  updateCarpooling(carpoolingData: any): void {
     // Add the calculated price to the carpooling data
-    carpoolingData.pricePerSeat = this.calculatedPrice as number;
-    
+    const pricePerSeat = this.calculatedPrice !== null ? this.calculatedPrice : 0;
     const currentCarpoolingId = this.carpoolingForm.get('carpoolingId')?.value;
+  
+    const formData = {
+      departureLocation: carpoolingData.departureLocation,
+      destination: carpoolingData.destination,
+      distanceKm: Number(carpoolingData.distanceKm),
+      durationMinutes: Number(carpoolingData.durationMinutes),
+      vehicleType: carpoolingData.vehicleType,
+      fuelType: carpoolingData.fuelType,
+      availableSeats: Number(carpoolingData.availableSeats),
+      pricePerSeat: pricePerSeat,
+      startTime: typeof carpoolingData.startTime === 'string' ? 
+                 new Date(carpoolingData.startTime).toISOString() : 
+                 carpoolingData.startTime,
+      wifi: carpoolingData.wifi ? 1 : 0,
+      airConditioning: carpoolingData.airConditioning ? 1 : 0,
+      description: carpoolingData.description || '',
+      weatherType: carpoolingData.weatherType || 'Clear'
+    };
     
-    this.carpoolingService.updateCarpooling(currentCarpoolingId, carpoolingData).subscribe({
+    this.carpoolingService.updateCarpooling(currentCarpoolingId, formData).subscribe({
       next: () => {
         this.loadCarpoolings();
+        this.loadStats(); // Reload stats after updating
         this.resetForm();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error updating carpooling', error);
         this.isLoading = false;
       }
@@ -272,12 +316,13 @@ export class CarpoolingComponent implements OnInit {
     }
   
     this.isLoading = true;
-    this.carpoolingService.deleteCarpooling(id).subscribe({
+    this.carpoolingService.removeCarpooling(id).subscribe({
       next: () => {
         this.loadCarpoolings();
+        this.loadStats(); // Reload stats after deleting
         this.isLoading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error deleting carpooling', error);
         this.isLoading = false;
       }

@@ -1,10 +1,13 @@
 // services/delivery/carpooling/carpooling.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Carpooling } from 'src/app/models/carpooling.model';
-import { environment } from '../../../environments/environment';
 import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model';
+import { CarpoolingReview } from 'src/app/models/carpooling-review.model';
+import { environment } from '../../../environments/environment';
+import { AuthService } from '../../../FrontOffices/services/user/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,46 +16,67 @@ export class CarpoolingService {
   private apiUrl = `${environment.apiUrl}/carpoolings`;
   private priceUrl = `${environment.apiUrl}/price`;
   private reservationUrl = `${environment.apiUrl}/carpoolings/reservations`;
+  private reviewUrl = `${environment.apiUrl}/reviews`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
-  // Get all carpoolings
+  // Carpooling Methods
   getAllCarpoolings(): Observable<Carpooling[]> {
-    return this.http.get<Carpooling[]>(`${this.apiUrl}`);
+    return this.http.get<Carpooling[]>(this.apiUrl);
   }
 
-  // Get upcoming carpoolings
-  getUpcomingCarpoolings(): Observable<Carpooling[]> {
-    return this.http.get<Carpooling[]>(`${this.apiUrl}/upcoming`);
-  }
-
-  // Get user's carpoolings
-  getMyCarpoolings(): Observable<Carpooling[]> {
-    return this.http.get<Carpooling[]>(`${this.apiUrl}/my-carpoolings`);
-  }
-
-  // Get carpooling by ID
   getCarpoolingById(id: number): Observable<Carpooling> {
     return this.http.get<Carpooling>(`${this.apiUrl}/${id}`);
   }
 
-  // Create new carpooling
+  // Remove/Delete carpooling method
+  removeCarpooling(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
+  }
+
+  getUpcomingCarpoolings(): Observable<Carpooling[]> {
+    return this.http.get<Carpooling[]>(`${this.apiUrl}/upcoming`);
+  }
+
+  // Admin Methods for Managing Carpoolings - FIX THE ENDPOINT HERE
   createCarpooling(carpooling: Carpooling): Observable<Carpooling> {
-    return this.http.post<Carpooling>(`${this.apiUrl}/create`, carpooling);
+    // Validate required fields
+    if (!carpooling.departureLocation || !carpooling.destination || !carpooling.startTime) {
+      return throwError(() => new Error('Missing required fields for carpooling'));
+    }
+    
+    // Add auth headers to the request
+    const headers = this.authService.getAuthHeaders();
+    
+    // Log for debugging
+    console.log('Creating carpooling with data:', carpooling);
+    console.log('Authorization headers:', headers);
+    
+    return this.http.post<Carpooling>(`${this.apiUrl}/create`, carpooling, { headers })
+      .pipe(
+        catchError(error => {
+          console.error('Error creating carpooling:', error);
+          // Check for specific error cases
+          if (error.status === 403) {
+            return throwError(() => new Error('You do not have permission to create carpoolings'));
+          } else if (error.status === 400) {
+            return throwError(() => new Error('Invalid carpooling data'));
+          }
+          return throwError(() => new Error('Failed to create carpooling'));
+        })
+      );
   }
 
-  // Update carpooling
-  updateCarpooling(id: number, carpooling: Carpooling): Observable<Carpooling> {
-    return this.http.put<Carpooling>(`${this.apiUrl}/update/${id}`, carpooling);
+  updateCarpooling(carpoolingId: number, carpooling: Carpooling): Observable<Carpooling> {
+    // Change from ${this.apiUrl}/${carpoolingId} to ${this.apiUrl}/update/${carpoolingId}
+    return this.http.put<Carpooling>(`${this.apiUrl}/update/${carpoolingId}`, carpooling);
   }
 
-  // Delete carpooling
-  deleteCarpooling(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`);
-  }
-
-  // Calculate price - updated to handle object response
-  calculatePrice(carpooling: Carpooling): Observable<any> {
+  // Calculate price method that handles different response formats
+  calculatePrice(carpooling: any): Observable<any> {
     // Ensure all required fields have default values to prevent null issues
     const requestData = {
       departureLocation: carpooling.departureLocation || '',
@@ -80,31 +104,170 @@ export class CarpoolingService {
       );
   }
 
-  // Accept carpooling
-  acceptCarpooling(id: number): Observable<Carpooling> {
-    return this.http.post<Carpooling>(`${this.apiUrl}/${id}/accept`, {});
-  }
-
-  // Reserve a carpooling
-  reserveCarpooling(carpoolingId: number, userId: number, seatsReserved: number = 1): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${carpoolingId}/reserve`, {
-      userId: userId,
-      seatsReserved: seatsReserved
+  // Reservation Methods
+  reserveCarpooling(carpoolingId: number, userId: number, seatsToReserve: number): Observable<any> {
+    return this.http.post(`${this.reservationUrl}/reserve`, {
+      carpoolingId,
+      userId,
+      seatsToReserve
     });
   }
 
-  // Get user's reservations
   getMyReservations(): Observable<ReservationCarpoo[]> {
-    return this.http.get<ReservationCarpoo[]>(`${this.reservationUrl}/me`);
+    return this.http.get<ReservationCarpoo[]>(`${this.apiUrl}/reservations/me`, {
+      headers: this.authService.getAuthHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error fetching reservations', error);
+        return throwError(() => new Error('Failed to load reservations'));
+      })
+    );
   }
 
-  // Get user's upcoming reservations
+  // Method for upcoming reservations
   getMyUpcomingReservations(): Observable<ReservationCarpoo[]> {
-    return this.http.get<ReservationCarpoo[]>(`${this.reservationUrl}/me/upcoming`);
+    return this.http.get<ReservationCarpoo[]>(`${this.apiUrl}/reservations/me/upcoming`, {
+      headers: this.authService.getAuthHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error fetching upcoming reservations', error);
+        return throwError(() => new Error('Failed to load upcoming reservations'));
+      })
+    );
   }
 
-  // Delete a reservation
+  // Delete reservation method
   deleteReservation(reservationId: number): Observable<any> {
-    return this.http.delete(`${this.reservationUrl}/${reservationId}`);
+    return this.http.delete(`${this.apiUrl}/reservations/${reservationId}`, {
+      headers: this.authService.getAuthHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error deleting reservation', error);
+        return throwError(() => new Error('Failed to delete reservation'));
+      })
+    );
+  }
+
+  // Enhanced filtering method
+  filterCarpoolings(filters: {
+    departureLocation?: string,
+    destination?: string,
+    startDateFrom?: Date,
+    startDateTo?: Date,
+    minPrice?: number,
+    maxPrice?: number,
+    vehicleType?: string,
+    wifi?: boolean,
+    airConditioning?: boolean
+  }): Observable<Carpooling[]> {
+    let params = new HttpParams();
+
+    if (filters.departureLocation) {
+      params = params.append('departureLocation', filters.departureLocation);
+    }
+    if (filters.destination) {
+      params = params.append('destination', filters.destination);
+    }
+    if (filters.startDateFrom) {
+      params = params.append('startDateFrom', filters.startDateFrom.toISOString());
+    }
+    if (filters.startDateTo) {
+      params = params.append('startDateTo', filters.startDateTo.toISOString());
+    }
+    if (filters.minPrice !== undefined) {
+      params = params.append('minPrice', filters.minPrice.toString());
+    }
+    if (filters.maxPrice !== undefined) {
+      params = params.append('maxPrice', filters.maxPrice.toString());
+    }
+    if (filters.vehicleType) {
+      params = params.append('vehicleType', filters.vehicleType);
+    }
+    if (filters.wifi !== undefined) {
+      params = params.append('wifi', filters.wifi.toString());
+    }
+    if (filters.airConditioning !== undefined) {
+      params = params.append('airConditioning', filters.airConditioning.toString());
+    }
+
+    return this.http.get<Carpooling[]>(`${this.apiUrl}/filter`, { params });
+  }
+
+  // Review & Rating Methods
+  rateCarpooling(reservationId: number, rating: number): Observable<any> {
+    return this.http.post(`${this.reviewUrl}/rate`, {
+      reservationId,
+      rating
+    });
+  }
+
+  addReview(reservationId: number, reviewText: string): Observable<any> {
+    return this.http.post(`${this.reviewUrl}/add`, {
+      reservationId,
+      reviewText
+    });
+  }
+
+  getCarpoolingReviews(carpoolingId: number): Observable<any> {
+    return this.http.get(`${this.reviewUrl}/carpooling/${carpoolingId}`, {
+      headers: this.authService.getAuthHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error fetching carpooling reviews', error);
+        return throwError(() => new Error('Failed to load reviews'));
+      })
+    );
+  }
+
+  getUserReviews(): Observable<any> {
+    return this.http.get(`${this.reviewUrl}/user`, {
+      headers: this.authService.getAuthHeaders()
+    }).pipe(
+      catchError(error => {
+        console.error('Error fetching user reviews', error);
+        return throwError(() => new Error('Failed to load user reviews'));
+      })
+    );
+  }
+
+  getReviewStatistics(): Observable<any> {
+    return this.http.get(`${this.reviewUrl}/statistics`);
+  }
+
+  // Advanced sorting method
+  sortCarpoolings(
+    carpoolings: Carpooling[], 
+    sortBy: 'price_asc' | 'price_desc' | 'date_asc' | 'date_desc' | 'rating_desc'
+  ): Carpooling[] {
+    switch(sortBy) {
+      case 'price_asc':
+        return [...carpoolings].sort((a, b) => a.pricePerSeat - b.pricePerSeat);
+      case 'price_desc':
+        return [...carpoolings].sort((a, b) => b.pricePerSeat - a.pricePerSeat);
+      case 'date_asc':
+        return [...carpoolings].sort((a, b) => 
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+        );
+      case 'date_desc':
+        return [...carpoolings].sort((a, b) => 
+          new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+        );
+      case 'rating_desc':
+        return [...carpoolings].sort((a, b) => 
+          (b.averageRating || 0) - (a.averageRating || 0)
+        );
+      default:
+        return carpoolings;
+    }
+  }
+  
+  cancelReservation(reservationId: number): Observable<any> {
+    return this.http.delete(`${this.reservationUrl}/${reservationId}`, {
+      headers: this.authService.getAuthHeaders()
+    });
+  }
+
+  deleteCarpooling(carpoolingId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${carpoolingId}`);
   }
 }

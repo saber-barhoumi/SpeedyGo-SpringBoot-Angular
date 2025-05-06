@@ -49,7 +49,18 @@
 	</div>
   </div>
   <!-- End Product Section -->
-
+  <div class="delivery-container">
+	<h1 class="delivery-title">Gestion des Livraisons</h1>	
+	<div class="button-group mt-4 text-center">
+	  <button class="btn btn-primary me-2" (click)="goToSmartRoute()" aria-label="Go to Smart Route">
+		Select Smart Route
+	  </button>
+	  <button class="btn btn-primary" (click)="goToAllPaidParcels()" aria-label="Go to All Paid Parcels">
+		Les Colis à livré
+	  </button>
+	</div>
+  </div>
+<br>
 <app-chat *ngIf="isLoggedIn"></app-chat>
 
 <app-footer-front></app-footer-front>

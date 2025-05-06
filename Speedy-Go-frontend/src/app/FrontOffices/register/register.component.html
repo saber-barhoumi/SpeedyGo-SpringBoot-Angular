@@ -1,85 +1,158 @@
-<section>
-    <div class="login-box">
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <h2>Register</h2>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" formControlName="firstName" required>
-                <label>First Name</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="person"></ion-icon></span>
-                <input type="text" formControlName="lastName" required>
-                <label>Last Name</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="mail"></ion-icon></span>
-                <input type="email" formControlName="email" required>
-                <label>Email</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" formControlName="password" required>
-                <label>Password</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-                <input type="password" formControlName="confirmPassword" required>
-                <label>Confirm Password</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="calendar"></ion-icon></span>
-                <input type="date" formControlName="birthDate" required>
-                <label></label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="call"></ion-icon></span>
-                <input type="text" formControlName="phoneNumber">
-                <label>Phone Number</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="home"></ion-icon></span>
-                <input type="text" formControlName="address" required>
-                <label>Address</label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="image"></ion-icon></span>
-                <input type="file" formControlName="profile_picture" (change)="onFileSelected($event)" accept="image/*">
-                <label></label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="male-female"></ion-icon></span>
-                <select formControlName="sexe">
-                    <option value="MEN">MEN</option>
-                    <option value="WOMEN">WOMEN</option>
-                </select>
-                <label></label>
-            </div>
-
-            <div class="input-box">
-                <span class="icon"><ion-icon name="briefcase"></ion-icon></span>
-                <select formControlName="role">
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="CUSTOMER">CUSTOMER</option>
-                    <option value="DELEVERY">DELIVERY</option>
-                </select>
-                <label></label>
-            </div>
-
-            <button type="submit">Register</button>
+<section class="register-section">
+    <div class="register-container">
+      <div class="register-box">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+          <h2 class="register-title">Create Account</h2>
+          
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+  
+          <!-- First Name Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <input 
+              type="text" 
+              formControlName="firstName" 
+              required 
+              placeholder="First Name"
+            >
+            <label>First Name</label>
+          </div>
+  
+          <!-- Last Name Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-user"></i></span>
+            <input 
+              type="text" 
+              formControlName="lastName" 
+              required 
+              placeholder="Last Name"
+            >
+            <label>Last Name</label>
+          </div>
+  
+          <!-- Email Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-envelope"></i></span>
+            <input 
+              type="email" 
+              formControlName="email" 
+              required 
+              placeholder="Email Address"
+            >
+            <label>Email</label>
+          </div>
+  
+          <!-- Password Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-lock"></i></span>
+            <input 
+              type="password" 
+              formControlName="password" 
+              required 
+              placeholder="Password"
+            >
+            <label>Password</label>
+          </div>
+  
+          <!-- Confirm Password Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-lock"></i></span>
+            <input 
+              type="password" 
+              formControlName="confirmPassword" 
+              required 
+              placeholder="Confirm Password"
+            >
+            <label>Confirm Password</label>
+          </div>
+  
+          <!-- Birth Date Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-calendar"></i></span>
+            <input 
+              type="date" 
+              formControlName="birthDate" 
+              required 
+            >
+            <label>Birth Date</label>
+          </div>
+  
+          <!-- Phone Number Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-phone"></i></span>
+            <input 
+              type="text" 
+              formControlName="phoneNumber" 
+              placeholder="Phone Number"
+            >
+            <label>Phone Number</label>
+          </div>
+  
+          <!-- Address Input -->
+          <div class="input-box">
+            <span class="icon"><i class="fas fa-home"></i></span>
+            <input 
+              type="text" 
+              formControlName="address" 
+              required 
+              placeholder="Address"
+            >
+            <label>Address</label>
+          </div>
+  
+          <!-- Profile Picture Input -->
+          <div class="input-box file-input">
+            <span class="icon"><i class="fas fa-image"></i></span>
+            <input 
+              type="file"
+              (change)="onFileSelected($event)" 
+              accept="image/*"
+            >
+            <label>Profile Picture</label>
+          </div>
+  
+          <!-- Gender Select -->
+          <div class="input-box select-box">
+            <span class="icon"><i class="fas fa-venus-mars"></i></span>
+            <select formControlName="sexe">
+              <option value="" disabled selected hidden>Select gender</option>
+              <option value="MEN">Male</option>
+              <option value="WOMEN">Female</option>
+            </select>
+            <label>Gender</label>
+          </div>
+  
+          <!-- Role Select -->
+          <div class="input-box select-box">
+            <span class="icon"><i class="fas fa-user-tag"></i></span>
+            <select formControlName="role">
+              <option value="" disabled selected hidden>Select role</option>
+              <option value="PARTNER">Partner</option>
+              <option value="CUSTOMER">Customer</option>
+              <option value="DELEVERY">Delivery</option>
+            </select>
+            <label>Role</label>
+          </div>
+  
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            [disabled]="registerForm.invalid || isLoading"
+          >
+            {{ isLoading ? 'Creating Account...' : 'Register' }}
+          </button>
+  
+          <!-- Login Link -->
+          <div class="login-link">
+            <p>
+              Already have an account? 
+              <a routerLink="/login">Login</a>
+            </p>
+          </div>
         </form>
+      </div>
     </div>
-</section>
-
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  </section>

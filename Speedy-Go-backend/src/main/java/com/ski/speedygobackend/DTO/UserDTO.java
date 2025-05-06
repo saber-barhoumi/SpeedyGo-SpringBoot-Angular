@@ -8,6 +8,8 @@ public class UserDTO {
     private String address;
     private String phoneNumber;
     private String profilePicture; // Base64-encoded string
+    private String sexe; // Add this
+    private String role; // Add this
 
     // Getters and setters
     public Long getId() {
@@ -65,4 +67,21 @@ public class UserDTO {
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
+

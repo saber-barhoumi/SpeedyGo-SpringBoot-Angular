@@ -1,5 +1,6 @@
 package com.ski.speedygobackend.Entity.ParcelPaymentManagement;
 
+import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Enum.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,21 +14,33 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level= AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Payment implements Serializable  {
+public class Payment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long paymentId;
 
-    private double amount;
-    private Date paymentDate;
+    @Column(nullable = false)
+    double amount;
+
+    @Column(name = "payment_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    Date paymentDate;
+
+    @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
+    User user;
 
-    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
-    private List<Invoice> invoices;
+    @Column(name = "payment_intent_id", nullable = true)
+    private String paymentIntentId;
+
+    @OneToMany(mappedBy = "payment", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    List<Invoice> invoices;
 
 }

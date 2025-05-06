@@ -1,32 +1,72 @@
-<section>
-  <div class="login-box">
-    <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm">
-      <h2>Login</h2>
-      <div class="input-box">
-        <span class="icon"><ion-icon name="mail"></ion-icon> </span>
-        <input type="email" name="email" [(ngModel)]="email" required>
-        <label> Email</label>
-      </div>
-      <div class="input-box">
-        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
-        <input type="password" name="password" [(ngModel)]="password" required>
-        <label> Password</label>
-      </div>
-      <div class="remember-forget">
-        <label>
-          <input type="checkbox">Remember Me
-        </label>
-        <a href="#">Forget Password</a>
-      </div>
-      <button type="submit">Login</button>
-      <div class="register-link">
-        <p>Don't have an account?
-          <a routerLink="/register">Register</a>
-        </p>
-      </div>
-    </form>
+<section class="login-section">
+  <div class="login-container">
+    <div class="login-box">
+      <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm" class="login-form">
+        <h2 class="login-title">Login</h2>
+        
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Email Input -->
+        <div class="input-box">
+          <span class="icon"><i class="fas fa-envelope"></i></span>
+          <input 
+            type="email" 
+            name="email" 
+            [(ngModel)]="email" 
+            required 
+            email
+            placeholder="Email Address"
+          >
+          <label>Email</label>
+        </div>
+
+        <!-- Password Input -->
+        <div class="input-box">
+          <span class="icon"><i class="fas fa-lock"></i></span>
+          <input 
+            type="password" 
+            name="password" 
+            [(ngModel)]="password" 
+            required 
+            placeholder="Password"
+          >
+          <label>Password</label>
+        </div>
+
+        <!-- Remember Me and Forgot Password -->
+        <div class="form-extra">
+          <div class="remember-me">
+            <input type="checkbox" id="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a 
+            href="javascript:void(0)" 
+            (click)="navigateToPasswordReset()"
+            class="forgot-password"
+          >
+            Forgot Password?
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </button>
+
+        <!-- Register Link -->
+        <div class="register-link">
+          <p>
+            Don't have an account? 
+            <a routerLink="/register">Register</a>
+          </p>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
-
-<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

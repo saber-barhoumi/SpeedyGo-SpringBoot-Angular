@@ -266,4 +266,14 @@ public class RecruitmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    @GetMapping("/{id}/recommendation")
+    public ResponseEntity<?> getRecommendation(@PathVariable Long id) {
+        try {
+            Map<String, Object> recommendation = recruitmentService.getAiRecommendation(id);
+            return ResponseEntity.ok(recommendation);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
 }

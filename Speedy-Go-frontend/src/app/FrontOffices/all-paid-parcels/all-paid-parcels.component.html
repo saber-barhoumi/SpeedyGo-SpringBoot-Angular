@@ -1,0 +1,76 @@
+<app-header-front></app-header-front>
+
+<div class="parcels-container" [ngClass]="{'dark-mode': isDarkMode}">
+  <div class="theme-toggle" (click)="toggleDarkMode()" role="button" [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'">
+    <svg *ngIf="!isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+    <svg *ngIf="isDarkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f5f6fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </div>
+
+  <h1 class="parcels-title">Les Colis à livrer</h1>
+
+  <div *ngIf="loading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement des colis...</p>
+  </div>
+
+  <div *ngIf="!loading && error" class="error-message">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <p>Échec du chargement des colis. Veuillez réessayer plus tard.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && parcels.length === 0" class="no-results">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <p>Aucun colis payé trouvé.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && parcels.length > 0" class="parcels-list">
+    <div class="parcel-item" *ngFor="let parcel of parcels" [ngClass]="{'refused': refusedDeliveryDone[parcel.parcel_id]}">
+      <div class="parcel-details">
+        <h2 class="parcel-name">{{parcel.parcel_name}}</h2>
+        <p class="parcel-status">Statut: {{getStatusLabel(parcel.parcelstatus)}}</p>
+        <p class="parcel-weight">Poids: {{parcel.weight}} kg</p>
+        <p class="parcel-user">Utilisateur ID: {{parcel.user_id}}</p>
+      </div>
+      <button class="accept-btn" (click)="acceptParcel(parcel.parcel_id)" 
+              [disabled]="acceptedDeliveryDone[parcel.parcel_id] || deliveredFinalClickDone[parcel.parcel_id] || (parcel.parcelstatus !== 'ORDERED' && parcel.parcelstatus !== 'REFUSED')"
+              [attr.aria-label]="'Accept delivery for parcel ' + parcel.parcel_name">
+        <span *ngIf="!acceptedDeliveryDone[parcel.parcel_id]">Accepter la livraison</span>
+        <span *ngIf="acceptedDeliveryDone[parcel.parcel_id]">Livraison acceptée</span>
+      </button>
+      <button class="status-btn" (click)="nextStatus(parcel.parcel_id)" 
+              [disabled]="!acceptedDeliveryDone[parcel.parcel_id] || deliveredFinalClickDone[parcel.parcel_id] || refusedDeliveryDone[parcel.parcel_id]"
+              [attr.aria-label]="'Update status for parcel ' + parcel.parcel_name">
+        <span *ngIf="!deliveredFinalClickDone[parcel.parcel_id]">Mettre à jour le statut</span>
+        <span *ngIf="deliveredFinalClickDone[parcel.parcel_id]">Livraison complétée</span>
+      </button>
+      <button class="refuse-btn" (click)="refuseDelivery(parcel.parcel_id)" 
+              [disabled]="deliveredFinalClickDone[parcel.parcel_id] || refusedDeliveryDone[parcel.parcel_id] || acceptedDeliveryDone[parcel.parcel_id] || parcel.parcelstatus !== 'ORDERED'"
+              [attr.aria-label]="'Refuse delivery for parcel ' + parcel.parcel_name">
+        <span *ngIf="!refusedDeliveryDone[parcel.parcel_id]">Refuser de livrer</span>
+        <span *ngIf="refusedDeliveryDone[parcel.parcel_id]">Livraison refusée</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer-front></app-footer-front>

@@ -1,0 +1,29 @@
+.image-preview {
+    max-width: 300px;
+    max-height: 300px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .file-upload-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .file-upload-container input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
+  
+  .weight-input-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  .weight-input-group .input-group-text {
+    background-color: #f8f9fa;
+  }

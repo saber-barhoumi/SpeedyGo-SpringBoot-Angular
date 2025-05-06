@@ -1,69 +1,133 @@
 <div class="container-fluid nav-bar">
   <div class="container">
-    <nav class="navbar navbar-light navbar-expand-lg py-4">
-      <a routerLink="/home" class="navbar-brand">
-        <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="text-primary fw-bold">
+    <nav class="navbar navbar-light navbar-expand-lg py-4" aria-label="Main navigation">
+      <!-- Logo -->
+      <a routerLink="/home" class="navbar-brand" aria-label="SpeedyGo Home">
+        <img src="assets/FrontOffice/img/dark-logo.png" alt="SpeedyGo Logo" class="logo">
       </a>
 
+      <!-- Navbar Toggle Button -->
+      <button
+        type="button"
+        class="navbar-toggler py-2 px-3"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="fa fa-bars text-primary"></span>
+      </button>
 
-        <!-- Navbar Toggle Button -->
-        <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" class="navbar-toggler py-2 px-3">
-          <span class="fa fa-bars text-primary"></span>
-        </button>
-  
-        <!-- Navbar Links -->
-        <div id="navbarCollapse" class="collapse navbar-collapse">
-          <div class="navbar-nav mx-auto">
-            <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active">Home</a>
-            <a href="about.html" class="nav-item nav-link">About</a>
-            <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
-            <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a> 
-            <a (click)="ToStore()" class="nav-item nav-link"  routerLinkActive="active" >Store</a>
-            <a (click)="ToTrips()" class="nav-item nav-link">Trips</a>
-            <a href="pricing.html" class="nav-item nav-link">Pricing</a>
-            <div class="nav-item dropdown">
-              <a href="#" data-bs-toggle="dropdown" class="nav-link dropdown-toggle">Pages</a>
-              <div class="dropdown-menu bg-light">
-                <a href="order.html" class="dropdown-item">Place Order</a>
-                <a href="blog.html" class="dropdown-item">Our Blog</a>
-                <a href="team.html" class="dropdown-item">Our Team</a>
-                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                <a href="404.html" class="dropdown-item">404 Page</a>
-              </div>
-            </div>
-            <a href="contact.html" class="nav-item nav-link">Contact</a>
-          </div>
-  
-          <!-- Display Login/Register buttons if not logged in -->
+      <!-- Navbar Links -->
+      <div id="navbarCollapse" class="collapse navbar-collapse">
+        <div class="navbar-nav mx-auto">
+          <a routerLink="/home" class="nav-item nav-link" routerLinkActive="active" aria-current="page">Home</a>
+          <a routerLink="/recruitment/apply" class="nav-item nav-link">Apply as Driver</a>
+          <a routerLink="/recruitment/my-applications" class="nav-item nav-link">My Applications</a>
+          <a routerLink="/vehicles/vehicles" class="nav-item nav-link">Vehicle Fleet</a>
+          <a routerLink="/livraison-management" class="nav-item nav-link">Livraison List</a>
+          <a routerLink="/storlist" class="nav-item nav-link" routerLinkActive="active">Store</a>
+          <a routerLink="/trips" class="nav-item nav-link" routerLinkActive="active">Trips</a>
+          <a routerLink="/customer/international-shipping" class="nav-item nav-link">
+            <i class="fas fa-shipping-fast me-2"></i>Shipping
+          </a>
+          <a routerLink="/customer/report" class="nav-item nav-link">Report</a>
+          <a routerLink="/customer/returnform" class="nav-item nav-link">Exchange</a>
+          <a routerLink="/customer/affichmap" class="nav-item nav-link">Relay points</a>
+        </div>
+
+        <!-- Login/Profile Section -->
+        <div class="navbar-nav ms-auto align-items-center">
+          <!-- Not Logged In -->
           <ng-container *ngIf="!isLoggedIn">
-            <a routerLink="/login" class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex" title="Login">
+            <a
+              routerLink="/login"
+              class="btn btn-outline-primary btn-md-square me-2 rounded-circle d-none d-lg-inline-flex"
+              title="Login"
+              aria-label="Login"
+            >
               <i class="fas fa-user"></i>
             </a>
+            <a routerLink="/login" class="btn btn-primary d-lg-none">Login</a>
+            <a routerLink="/register" class="btn btn-outline-primary d-lg-none">Register</a>
           </ng-container>
 
-          <ng-container *ngIf="isLoggedIn">
-            <div class="profile-picture-container position-relative">
-              <img [src]="user?.profilePicture || 'assets/default-profile.png'"
-                   alt="Profile Picture"
-                   class="profile-picture rounded-circle"
-                   (click)="toggleProfile()">
-              <div *ngIf="showProfile" class="profile-dropdown">
-                <span class="me-3">Welcome, {{ user?.firstName }}</span>
-                <button class="btn btn-danger py-2 px-4 rounded-pill" (click)="logout()">Logout</button>
+          <!-- Logged In -->
+          <ng-container *ngIf="isLoggedIn && user">
+            <div class="profile-container position-relative" (click)="toggleProfile($event)">
+              <div class="profile-picture-wrapper">
+                <img
+                  [src]="getProfileImage()"
+                  alt="Profile Picture"
+                  class="rounded-circle profile-picture"
+                  role="button"
+                  aria-label="Toggle profile menu"
+                >
+              </div>
+
+              <!-- Profile Dropdown -->
+              <div
+                *ngIf="showProfile"
+                class="profile-dropdown dropdown-menu show"
+                [@dropdownAnimation]
+                role="menu"
+              >
+                <div class="card border-0">
+                  <div class="card-header text-center bg-transparent">
+                    <img
+                      [src]="getProfileImage()"
+                      alt="Profile Picture"
+                      class="rounded-circle mb-2"
+                    >
+                    <h5 class="card-title mb-0">{{ user.firstName }} {{ user.lastName }}</h5>
+                    <p class="card-text text-muted">{{ user.role || 'User' }}</p>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-2">
+                      <small class="text-muted">
+                        <i class="fas fa-envelope me-2"></i>{{ user.email || 'N/A' }}
+                      </small>
+                    </div>
+                    <div class="mb-2">
+                      <small class="text-muted">
+                        <i class="fas fa-phone me-2"></i>{{ user.phoneNumber || 'N/A' }}
+                      </small>
+                    </div>
+                    <div class="d-grid gap-2">
+                      <button
+                        (click)="navigateToProfile()"
+                        class="btn btn-primary btn-sm"
+                        role="menuitem"
+                      >
+                        <i class="fas fa-user me-2"></i>View Profile
+                      </button>
+                      <button
+                        (click)="logout()"
+                        class="btn btn-outline-danger btn-sm"
+                        role="menuitem"
+                      >
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </ng-container>
 
-          <a routerLink="/cart" class="btn btn-md btn-primary ms-2">
+          <!-- Cart Button -->
+          <a
+            routerLink="/cart"
+            class="btn btn-md btn-primary ms-2"
+            title="View Cart"
+            aria-label="View Cart"
+          >
             <i class="fa fa-shopping-cart"></i>
-         
-         
-         
           </a>
-       
-       
         </div>
-  
+      </div>
     </nav>
   </div>
 </div>
+<app-chat-button></app-chat-button>

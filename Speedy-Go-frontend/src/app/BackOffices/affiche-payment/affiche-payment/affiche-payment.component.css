@@ -1,0 +1,31 @@
+.container {
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+th.mat-header-cell, td.mat-cell {
+  padding: 10px;
+  text-align: left;
+}
+
+td.mat-cell button {
+  margin-right: 5px;
+}

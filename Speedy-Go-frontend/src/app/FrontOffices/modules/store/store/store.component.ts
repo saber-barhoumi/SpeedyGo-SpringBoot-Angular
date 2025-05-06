@@ -9,6 +9,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { addstoreComponent } from '../Component/add-store/add-store.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
+import { RecommendationService } from 'src/app/FrontOffices/services/recommendation/recommendation.service';
+import { OffersService, Offer } from 'src/app/FrontOffices/services/offres/offre.service';
+import { AuthService } from 'src/app/FrontOffices/services/user/auth.service';
 
 @Component({
   selector: 'app-store-list',
@@ -19,7 +22,14 @@ export class StoreListComponent implements OnInit {
   userRole: string = '';
   isDarkMode: boolean = false;
 
-  constructor(private storeService: StoreService, private router: Router, private dialog: MatDialog) {
+  constructor(
+    private storeService: StoreService, 
+    private router: Router, 
+    private dialog: MatDialog,
+    private recommendationService: RecommendationService,
+    private offersService: OffersService,
+    private authService: AuthService
+  ) {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     this.userRole = user.role || '';
     
@@ -38,8 +48,13 @@ export class StoreListComponent implements OnInit {
 
   stores: Store[] = [];
   filteredStores: Store[] = [];
+  recommendedStores: Store[] = [];
   loading = true;
   error = false;
+  
+  // API Key
+  private groqApiKey: string = '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';
+  recommendationsEnabled: boolean = false;
 
   // Pagination
   pageSize = 10;
@@ -53,7 +68,21 @@ export class StoreListComponent implements OnInit {
   selectedType: string = '';
   selectedStatus: string = '';
 
+  // Add these properties to the component class
+  showDebugPanel: boolean = false;
+  userDebugInfo: any = {};
+  recommendationExplanations: {id: string, text: string}[] = [];
+  maskedApiKey: string = '';
+
   ngOnInit(): void {
+    // Check authentication status
+    if (!this.authService.isLoggedIn()) {
+      console.log('User not logged in, redirecting to login page');
+      this.router.navigate(['/login']);
+      return;
+    }
+    
+    console.log('User is logged in, loading stores');
     this.loadStores();
   }
 
@@ -96,6 +125,10 @@ export class StoreListComponent implements OnInit {
         this.totalPages = Math.ceil(this.filteredStores.length / this.pageSize);
         this.loading = false;
         console.log('Stores loaded', this.stores);
+        
+        // Automatically enable recommendations with the provided API key
+        this.recommendationsEnabled = true;
+        this.loadRecommendedStores();
       },
       error: (err: any) => {
         console.error('Error loading stores', err);
@@ -103,6 +136,42 @@ export class StoreListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  loadRecommendedStores(): void {
+    if (!this.authService.isLoggedIn() || !this.groqApiKey) {
+      return;
+    }
+    
+    // Use a fallback in case of errors
+    const getFallbackRecommendations = () => {
+      // Simple fallback sorting by name
+      return [...this.stores]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .slice(0, 3);
+    };
+    
+    this.recommendationService.recommendStores(this.stores, this.groqApiKey).subscribe({
+      next: (recommendedStores) => {
+        this.recommendedStores = recommendedStores.slice(0, 3); // Get top 3
+        console.log('Recommended stores loaded', this.recommendedStores);
+      },
+      error: (err) => {
+        console.error('Error loading recommended stores', err);
+        // Fall back to a simple sorting algorithm
+        this.recommendedStores = getFallbackRecommendations();
+        console.log('Using fallback recommendations', this.recommendedStores);
+      }
+    });
+  }
+
+  setApiKey(apiKey: string): void {
+    this.groqApiKey = apiKey;
+    this.recommendationsEnabled = true;
+    
+    if (this.stores.length > 0) {
+      this.loadRecommendedStores();
+    }
   }
 
   deleteStore(id: number): void {
@@ -275,5 +344,121 @@ export class StoreListComponent implements OnInit {
       this.pageIndex = page;
     }
   }
-}
 
+  /**
+   * Navigate to the store details page
+   */
+  viewStore(storeId: number): void {
+    if (storeId !== undefined) {
+      this.router.navigate(['/offres', storeId]);
+    }
+  }
+  
+  /**
+   * Toggles the debug panel visibility
+   */
+  toggleDebugPanel(): void {
+    this.showDebugPanel = !this.showDebugPanel;
+    
+    if (this.showDebugPanel) {
+      // Prepare user debug info
+      const user = this.authService.getUser();
+      
+      // Extract demographic data with multiple fallbacks
+      const birthDateValue = user.birthDate || user.birth_date || user.dateOfBirth || user.date_of_birth || null;
+      const sexValue = user.sexe || user.sex || user.gender || null;
+      
+      console.log('Debug panel - user data:', user);
+      console.log('Debug panel - extracted birthDate:', birthDateValue);
+      console.log('Debug panel - extracted sex:', sexValue);
+      
+      this.userDebugInfo = {
+        age: this.calculateAge(birthDateValue),
+        sex: sexValue || 'Not specified',
+        location: user.address || 'Not specified',
+        preferences: 'Extracted from browsing behavior',
+        rawUserData: JSON.stringify(user, null, 2)
+      };
+      
+      // Create masked API key for display
+      const key = this.groqApiKey;
+      this.maskedApiKey = key.substring(0, 5) + '...' + key.substring(key.length - 5);
+      
+      // Set up subscription to get explanations
+      this.setupExplanationListener();
+    }
+  }
+
+  /**
+   * Calculates age from birthdate string
+   */
+  private calculateAge(birthDate: string): number | string {
+    if (!birthDate) return 'Not specified';
+    
+    try {
+      const dob = new Date(birthDate);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      
+      return age;
+    } catch {
+      return 'Invalid date';
+    }
+  }
+
+  /**
+   * Sets up a listener for recommendation explanations
+   */
+  private setupExplanationListener(): void {
+    // Clear previous explanations
+    this.recommendationExplanations = [];
+    
+    // Use a CustomEvent listener to get explanations from the recommendation service
+    window.addEventListener('recommendation-explanation', ((event: CustomEvent) => {
+      if (event.detail && event.detail.explanations) {
+        // Convert explanations object to array for display
+        this.recommendationExplanations = Object.entries(event.detail.explanations)
+          .map(([id, text]) => ({ id, text: text as string }));
+      }
+    }) as EventListener);
+    
+    // Trigger new recommendations if already loaded
+    if (this.stores.length > 0) {
+      this.loadRecommendedStores();
+    }
+  }
+
+  /**
+   * Sets test demographic data for demonstration purposes
+   */
+  setTestDemographicData(): void {
+    const user = this.authService.getUser();
+    if (user && user.userId) {
+      this.recommendationService.setTestDemographicData(user.userId);
+      
+      // Show loading indicator
+      this.loading = true;
+      
+      // Wait a bit for localStorage to update, then reload
+      setTimeout(() => {
+        // Reload the recommendations
+        this.loadRecommendedStores();
+        
+        // Refresh the debug panel
+        this.toggleDebugPanel();
+        this.toggleDebugPanel();
+        
+        this.loading = false;
+        
+        alert('User demographic data updated for recommendations. Check the debug panel for details.');
+      }, 1000);
+    } else {
+      alert('Error: No user logged in. Please log in first.');
+    }
+  }
+}

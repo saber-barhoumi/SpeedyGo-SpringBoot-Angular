@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,6 @@ public class Offres {
 
     @ManyToOne
     private Store store;
-    @OneToMany(mappedBy = "offre", cascade = CascadeType.ALL)
-    private List<Parcel> parcels;
+    @ManyToMany(mappedBy = "offres")
+    private Set<Parcel> parcels = new HashSet<>();
 }

@@ -56,7 +56,7 @@ export class TripFormComponent implements OnInit {
         next: (response) => {
           console.log('Trip created successfully', response);
           this.isSubmitting = false;
-          this.router.navigate(['/home']);
+          this.router.navigate(['/customer']);
         },
         error: (error) => {
           console.error('Error creating trip', error);

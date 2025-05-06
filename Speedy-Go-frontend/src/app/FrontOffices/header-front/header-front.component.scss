@@ -1,0 +1,177 @@
+// Theme Variables
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$background-color: #ffffff;
+$shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+$border-radius: 8px;
+$transition: all 0.3s ease;
+
+// Navbar
+.nav-bar {
+  background: $background-color;
+  box-shadow: $shadow;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .navbar {
+    padding: 1rem 0;
+
+    .navbar-brand {
+      .logo {
+        max-height: 50px;
+        transition: $transition;
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+
+    .navbar-nav {
+      .nav-link {
+        font-weight: 500;
+        color: $secondary-color;
+        padding: 0.5rem 1rem;
+        border-radius: $border-radius;
+        transition: $transition;
+
+        &:hover,
+        &.active {
+          color: $primary-color;
+          background: rgba($primary-color, 0.1);
+        }
+      }
+    }
+
+    .navbar-toggler {
+      border: none;
+      .fa-bars {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
+
+// Profile Container
+.profile-container {
+  position: relative;
+
+  .profile-picture-wrapper {
+    cursor: pointer;
+
+    .profile-picture {
+      width: 40px;
+      height: 40px;
+      border: 2px solid $primary-color;
+      transition: $transition;
+
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: $shadow;
+      }
+    }
+  }
+
+  .profile-dropdown {
+    top: 50px;
+    right: 0;
+    width: 280px;
+    background: $background-color;
+    border-radius: $border-radius;
+    box-shadow: $shadow;
+    padding: 1rem;
+    transform-origin: top right;
+    transition: $transition;
+
+    .card {
+      border: none;
+
+      .card-header {
+        background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+        color: white;
+        border-radius: $border-radius $border-radius 0 0;
+        padding: 1rem;
+
+        img {
+          width: 80px;
+          height: 80px;
+          border: 3px solid $background-color;
+          box-shadow: $shadow;
+        }
+
+        .card-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+
+        .card-text {
+          font-size: 0.9rem;
+          opacity: 0.8;
+        }
+      }
+
+      .card-body {
+        padding: 1rem;
+
+        .text-muted {
+          font-size: 0.85rem;
+          i {
+            color: $primary-color;
+          }
+        }
+
+        .btn {
+          font-size: 0.9rem;
+          border-radius: $border-radius;
+          transition: $transition;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: $shadow;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Cart Button
+.btn-primary {
+  background: $primary-color;
+  border: none;
+  border-radius: $border-radius;
+  padding: 0.5rem 1rem;
+  transition: $transition;
+
+  &:hover {
+    background: darken($primary-color, 10%);
+    transform: translateY(-2px);
+    box-shadow: $shadow;
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+
+    .nav-link {
+      padding: 0.75rem;
+      font-size: 1.1rem;
+    }
+  }
+
+  .profile-container {
+    .profile-dropdown {
+      width: 100%;
+      left: 0;
+      right: auto;
+    }
+  }
+
+  .btn-primary,
+  .btn-outline-primary {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+}

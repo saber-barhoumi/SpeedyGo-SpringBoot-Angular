@@ -1,5 +1,6 @@
 package com.ski.speedygobackend.Repository;
 
+import com.ski.speedygobackend.Entity.TripManagement.Trip;
 import com.ski.speedygobackend.Entity.TripManagement.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 

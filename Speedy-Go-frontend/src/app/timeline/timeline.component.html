@@ -1,0 +1,25 @@
+  
+<app-header-front></app-header-front>
+<div class="speedygo-container">
+  <!-- TIMELINE -->
+  <div class="timeline-wrapper">
+    <h2 class="timeline-title">Suivi de Livraison</h2>
+
+    <div class="timeline-container">
+      <div class="step" *ngFor="let status of orderStatus; let i = index">
+        <div class="dot" [ngClass]="dotCss[i]"></div>
+        <div class="line" *ngIf="i < orderStatus.length - 1"></div>
+        <div class="label" [ngClass]="cssClass[i]">{{ getStatusLabel(status) }}</div>
+      </div>
+    </div>
+
+    <div *ngIf="showDeliveredMessage" class="delivered-message">
+      <i class="fas fa-check-circle"></i> Livraison terminée avec succès !
+    </div>
+
+   
+  </div>
+
+ 
+</div>
+<app-footer-front></app-footer-front>

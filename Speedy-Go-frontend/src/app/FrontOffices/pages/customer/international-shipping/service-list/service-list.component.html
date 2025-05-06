@@ -1,0 +1,170 @@
+<div class="container my-5">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-primary">International Shipping Services</h2>
+      <p class="text-muted">Browse available international shipping services from our trusted delivery partners</p>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" (click)="error = ''"></button>
+  </div>
+
+  <!-- Success message for rating -->
+  <div *ngIf="ratingSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ ratingSuccess }}
+    <button type="button" class="btn-close" (click)="ratingSuccess = ''"></button>
+  </div>
+
+  <!-- Filters -->
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Search services..." 
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()">
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <select class="form-select" (change)="onCountryChange($event)">
+        <option value="">All Countries</option>
+        <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+      </select>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="input-group">
+        <span class="input-group-text">Max Base Price</span>
+        <input 
+          type="number" 
+          class="form-control" 
+          placeholder="Any price" 
+          min="0" 
+          step="1"
+          (input)="onMaxPriceChange($event)">
+      </div>
+    </div>
+    <!-- Rating Filter -->
+    <div class="col-md-3 mb-3">
+      <select class="form-select" (change)="onMinRatingChange($event)">
+        <option value="">All Ratings</option>
+        <option value="4.5">4.5+ ⭐</option>
+        <option value="4">4+ ⭐</option>
+        <option value="3.5">3.5+ ⭐</option>
+        <option value="3">3+ ⭐</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- No results message -->
+  <div *ngIf="!loading && filteredServices.length === 0" class="text-center my-5">
+    <div class="p-5 bg-light rounded">
+      <h4 class="text-secondary">No Services Found</h4>
+      <p class="mb-0">Try adjusting your filters or check back later for more options</p>
+    </div>
+  </div>
+
+  <!-- Services list -->
+  <div *ngIf="!loading && filteredServices.length > 0" class="row">
+    <div *ngFor="let service of filteredServices" class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ service.deliveryPersonName }}</h5>
+            <!-- Rating Badge - Enhanced with stars -->
+            <div class="rating-display">
+              <span class="badge bg-light text-primary d-flex align-items-center">
+                <span class="me-1">{{ service.rating ? (service.rating | number:'1.1-1') : 'New' }}</span>
+                <div class="stars d-flex">
+                  <i *ngFor="let star of getRatingStars(service.rating)" [class]="getStarIcon(star)" 
+                     style="color: gold; font-size: 0.8rem; margin-left: 1px;"></i>
+                </div>
+                <span *ngIf="service.ratingCount && service.ratingCount > 0" class="ms-1 small">({{ service.ratingCount }})</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted">Countries Served</h6>
+            <p class="mb-0">{{ formatCountries(service.countriesServed) }}</p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted">Accepted Items</h6>
+            <p class="mb-0">{{ formatAcceptedGoods(service.acceptedGoodTypes) }}</p>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <h6 class="text-muted">Base Price</h6>
+              <p class="mb-0 fw-bold">{{ service.basePrice | currency }}</p>
+            </div>
+            <div class="col-6">
+              <h6 class="text-muted">Per Kg</h6>
+              <p class="mb-0 fw-bold">{{ service.pricePerKg | currency }}/kg</p>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-6">
+              <h6 class="text-muted">Max Weight</h6>
+              <p class="mb-0">{{ service.maxWeightPerOrder }} kg</p>
+            </div>
+            <div class="col-6">
+              <h6 class="text-muted">Max Orders</h6>
+              <p class="mb-0">{{ service.maxOrdersPerDay }}/day</p>
+            </div>
+          </div>
+          
+          <!-- Delivery Time Estimation -->
+          <div class="delivery-estimate mt-3">
+            <div class="alert alert-light border">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-clock text-primary me-2"></i>
+                <span>Estimated Delivery: <strong>{{ service.estimatedDeliveryDays }} days</strong></span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Interactive Rating Component -->
+          <div class="mt-3">
+            <h6 class="text-muted">Rate this service:</h6>
+            <div class="interactive-rating">
+              <div class="stars-rating d-inline-flex">
+                <i *ngFor="let star of [1, 2, 3, 4, 5]" 
+                   class="rating-star" 
+                   [class.fas]="star <= ((service.userRating || 0) || hoverRating[service.serviceId || 0] || 0)"
+                   [class.far]="star > ((service.userRating || 0) || hoverRating[service.serviceId || 0] || 0)"
+                   [class.fa-star]="true"
+                   (mouseover)="setHoverRating(service.serviceId || 0, star)"
+                   (mouseout)="setHoverRating(service.serviceId || 0, 0)"
+                   (click)="rateService(service.serviceId || 0, star)"></i>
+              </div>
+              <span *ngIf="service.userRating" class="ms-2 text-success small">
+                Your rating: {{ service.userRating }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 d-flex justify-content-between">
+          <button class="btn btn-outline-primary" (click)="viewServiceDetails(service.serviceId)">
+            <i class="fas fa-info-circle"></i> Details
+          </button>
+          <button class="btn btn-primary" (click)="placeOrder(service.serviceId)">
+            <i class="fas fa-shipping-fast"></i> Place Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,153 @@
+/* Service Card Styles */
+.card {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.card-header {
+  padding: 1rem;
+  border-bottom: none;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-footer {
+  padding: 1rem;
+  background-color: #fff;
+}
+
+/* Rating Display Styles */
+.rating-display {
+  display: flex;
+  align-items: center;
+}
+
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-radius: 20px;
+}
+
+.stars {
+  display: flex;
+  margin-left: 5px;
+}
+
+/* Interactive Rating Stars */
+.interactive-rating {
+  display: flex;
+  align-items: center;
+}
+
+.stars-rating {
+  display: flex;
+  cursor: pointer;
+}
+
+.rating-star {
+  color: #ddd;
+  font-size: 1.25rem;
+  margin-right: 3px;
+  transition: all 0.2s ease;
+}
+
+.rating-star.fas {
+  color: #ffc107; /* Gold color for selected stars */
+}
+
+.rating-star:hover {
+  transform: scale(1.2);
+}
+
+/* To create a nice hover effect, color all previous stars */
+.stars-rating:hover .rating-star {
+  color: #ffc107;
+}
+
+.stars-rating .rating-star:hover ~ .rating-star {
+  color: #ddd;
+}
+
+.stars-rating:hover .rating-star.fas {
+  color: #ffc107;
+}
+
+/* Delivery Estimate */
+.delivery-estimate {
+  font-size: 0.9rem;
+}
+
+.alert-light {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+/* Filter section styles */
+.form-select, .form-control {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #dee2e6;
+}
+
+.form-select:focus, .form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+/* Rating filter specific styles */
+.rating-filter-option {
+  display: flex;
+  align-items: center;
+}
+
+.rating-stars-inline {
+  color: gold;
+  margin-left: 4px;
+}
+
+/* No results message */
+.no-results {
+  padding: 3rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+/* Success message */
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .col-lg-4 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-md-3 {
+    margin-bottom: 1rem;
+  }
+  
+  .rating-star {
+    font-size: 1rem;
+  }
+}

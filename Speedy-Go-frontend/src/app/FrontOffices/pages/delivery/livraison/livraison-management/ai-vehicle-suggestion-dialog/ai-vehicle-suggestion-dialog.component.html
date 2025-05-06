@@ -1,0 +1,84 @@
+<div class="modal-backdrop" [ngClass]="{'show': visible}" (click)="closeDialog()"></div>
+<div class="ai-suggestion-dialog modal" [ngClass]="{'show': visible}" *ngIf="suggestion">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <i class="fas fa-magic"></i>
+        AI Vehicle Suggestion
+      </h2>
+      <button type="button" class="close-button" (click)="closeDialog()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Updated to match the new structure -->
+      <div *ngIf="suggestion && suggestion.suggestedVehicle; else noSuggestion" class="suggestion-content">
+        <div class="success-message">
+          <i class="fas fa-check-circle"></i>
+          <p>The AI has successfully selected the most appropriate vehicle for this delivery!</p>
+        </div>
+        
+        <div class="vehicle-card">
+          <h3>Selected Vehicle</h3>
+          <div class="vehicle-details">
+            <div class="vehicle-info">
+              <p class="vehicle-name">
+                {{ suggestion.suggestedVehicle.brand }} 
+                {{ suggestion.suggestedVehicle.model }}
+              </p>
+              <p class="vehicle-license">
+                License Plate: {{ suggestion.suggestedVehicle.licensePlate }}
+              </p>
+              <div class="vehicle-specs">
+                <p>
+                  <strong>Type:</strong> 
+                  {{ suggestion.suggestedVehicle.vehicleType }}
+                </p>
+                <p>
+                  <strong>Max Load Capacity:</strong> 
+                  {{ suggestion.suggestedVehicle.maxLoadCapacity }} kg
+                </p>
+                <p>
+                  <strong>Refrigeration:</strong> 
+                  {{ suggestion.suggestedVehicle.hasRefrigeration ? 'Yes' : 'No' }}
+                </p>
+              </div>
+            </div>
+            
+            <div class="vehicle-image" *ngIf="suggestion.suggestedVehicle.vehiclePhotoPath">
+              <img 
+                [src]="suggestion.suggestedVehicle.vehiclePhotoPath" 
+                [alt]="suggestion.suggestedVehicle.brand + ' ' + 
+                      suggestion.suggestedVehicle.model"
+              >
+            </div>
+          </div>
+        </div>
+        
+        <div class="delivery-card">
+          <h3>Delivery Details</h3>
+          <div class="delivery-details" *ngIf="suggestion.livraison">
+            <p><strong>Title:</strong> {{ suggestion.livraison.title }}</p>
+            <p><strong>Weight:</strong> {{ suggestion.livraison.packageWeightKg }} kg</p>
+            <p><strong>Distance:</strong> {{ suggestion.livraison.distanceInKm }} km</p>
+            <p><strong>Requires Refrigeration:</strong> {{ suggestion.livraison.requiresRefrigeration ? 'Yes' : 'No' }}</p>
+            <p><strong>Origin:</strong> {{ suggestion.livraison.originAddress }}</p>
+            <p><strong>Destination:</strong> {{ suggestion.livraison.destinationAddress }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #noSuggestion>
+        <div class="no-suggestion">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>{{ suggestion && suggestion.message ? suggestion.message : 'Could not find a suitable vehicle for this delivery.' }}</p>
+        </div>
+      </ng-template>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeDialog()">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<div class="container">
+  <h2>Gestion des Paiements</h2>
+  <div *ngIf="loading" class="loading">Chargement...</div>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="!loading && dataSource.data.length > 0">
+    <!-- Payment ID Column -->
+    <ng-container matColumnDef="payment_id">
+      <th mat-header-cell *matHeaderCellDef>ID Paiement</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.payment_id }}</td>
+    </ng-container>
+
+    <!-- Amount Column -->
+    <ng-container matColumnDef="amount">
+      <th mat-header-cell *matHeaderCellDef>Montant</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.amount | currency:'USD' }}</td>
+    </ng-container>
+
+    <!-- Payment Date Column -->
+    <ng-container matColumnDef="payment_date">
+      <th mat-header-cell *matHeaderCellDef>Date de Paiement</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.payment_date | date:'medium' }}</td>
+    </ng-container>
+
+    <!-- Payment Method Column -->
+    <ng-container matColumnDef="payment_method">
+      <th mat-header-cell *matHeaderCellDef>Méthode de Paiement</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.payment_method }}</td>
+    </ng-container>
+
+    <!-- User ID Column -->
+    <ng-container matColumnDef="user_id">
+      <th mat-header-cell *matHeaderCellDef>ID Utilisateur</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.user_id || 'N/A' }}</td>
+    </ng-container>
+
+    <!-- User Email Column -->
+    <ng-container matColumnDef="user_email">
+      <th mat-header-cell *matHeaderCellDef>Email Utilisateur</th>
+      <td mat-cell *matCellDef="let payment">{{ payment.user_email || 'N/A' }}</td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let payment">
+        <button mat-icon-button color="primary" (click)="editPayment(payment.payment_id)" title="Modifier">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deletePayment(payment.payment_id)" title="Supprimer">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <div *ngIf="!loading && dataSource.data.length === 0" class="no-data">
+    Aucun paiement trouvé.
+  </div>
+</div>

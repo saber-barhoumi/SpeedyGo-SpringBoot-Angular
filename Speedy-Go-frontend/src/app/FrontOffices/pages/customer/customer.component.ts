@@ -4,6 +4,7 @@ import { CarpoolingService } from 'src/app/services/delivery/carpooling/carpooli
 import { AuthService } from 'src/app/FrontOffices/services/user/auth.service';
 import { ReservationCarpoo } from 'src/app/models/reservation-carpoo.model';
 import { Carpooling } from 'src/app/models/carpooling.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customer',
@@ -28,7 +29,8 @@ export class CustomerComponent implements OnInit {
 
   constructor(
     private carpoolingService: CarpoolingService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -219,4 +221,8 @@ export class CustomerComponent implements OnInit {
     this.totalPrices[carpooling.carpoolingId || 0] = seats * (carpooling.pricePerSeat || 0);
   }
 
+   // Navigate to Paid Parcels page
+   navigateToPaidParcels(): void {
+    this.router.navigate(['customer/paid-parcels']);
+  }
 }

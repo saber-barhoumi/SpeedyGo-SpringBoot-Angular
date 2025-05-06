@@ -6,6 +6,7 @@ import com.ski.speedygobackend.Entity.UserManagement.User;
 import com.ski.speedygobackend.Repository.IUserRepository;
 import com.ski.speedygobackend.Service.CarpoolingManagement.ICarpoolingServices;
 import com.ski.speedygobackend.Service.CarpoolingManagement.IReservationCarpooServices;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,8 +49,23 @@ public class CarpoolingRestController {
     }
 
     @PostMapping("/create")
-    public Carpooling createCarpooling(@RequestBody Carpooling carpooling, Principal principal) {
-        return carpoolingService.createCarpooling(carpooling, principal.getName());
+    @PreAuthorize("hasAnyRole('ADMIN', 'DELEVERY')") // Add proper role authorization
+    public ResponseEntity<Carpooling> createCarpooling(
+            @RequestBody Carpooling carpooling,
+            Principal principal,
+            HttpServletRequest request) {
+
+        // Debug logging
+        String authHeader = request.getHeader("Authorization");
+        System.out.println("Authorization Header: " + authHeader);
+        System.out.println("Principal: " + (principal != null ? principal.getName() : "null"));
+
+        try {
+            Carpooling created = carpoolingService.createCarpooling(carpooling, principal.getName());
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/update/{id}")
@@ -74,7 +90,7 @@ public class CarpoolingRestController {
     }
 
     @PostMapping("/{id}/reserve")
-    @PreAuthorize("hasAnyRole('DELEVERY', 'USER')") // Add role-based access
+    @PreAuthorize("hasAnyRole('DELEVERY', 'USER', 'CUSTOMER')")
     public ResponseEntity<?> reserveCarpooling(@PathVariable Long id, Principal principal) {
         try {
             // Get the current user
@@ -104,9 +120,9 @@ public class CarpoolingRestController {
         }
     }
 
+
     @GetMapping("/reservations/me")
-    @PreAuthorize("hasAnyRole('DELEVERY', 'USER')") // Add role-based access
-    public ResponseEntity<?> getMyReservations(Principal principal) {
+    @PreAuthorize("hasAnyRole('DELEVERY', 'USER', 'CUSTOMER' , 'ROLE_CUSTOMER')")    public ResponseEntity<?> getMyReservations(Principal principal) {
         try {
             String username = principal.getName();
             User user = userRepository.findByEmail(username)
@@ -118,7 +134,6 @@ public class CarpoolingRestController {
             return ResponseEntity.badRequest().body("Error retrieving reservations: " + e.getMessage());
         }
     }
-
 
 
     @GetMapping("/reservations/me/upcoming")
@@ -138,7 +153,7 @@ public class CarpoolingRestController {
 
 
 
-@DeleteMapping("/reservations/{id}")
+    @DeleteMapping("/reservations/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable Long id, Principal principal) {
         try {
             // Get user for validation

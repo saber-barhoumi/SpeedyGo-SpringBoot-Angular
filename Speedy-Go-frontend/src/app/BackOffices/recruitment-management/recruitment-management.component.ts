@@ -75,6 +75,27 @@ showDetailsModal = false;
     
     this.loadAllApplications();
   }
+
+  handleAIRecommendation(application: any): void {
+    application.loadingAI = true; // Affiche un spinner ou désactive un bouton
+  
+    this.recruitmentService.getAIRecommendation(application.recruitmentId).subscribe({
+      next: (res) => {
+        // On stocke le résultat dans une variable claire
+        application.recommendedDeliveryPerson = res;
+        this.toastr.success('Recommandation IA chargée avec succès');
+      },
+      error: (err) => {
+        this.toastr.error('Échec de la recommandation IA');
+        console.error('Erreur recommandation IA:', err);
+      },
+      complete: () => {
+        application.loadingAI = false;
+      }
+    });
+  }
+  
+  
   
   loadAllApplications(): void {
     this.isLoading = true;
@@ -276,4 +297,9 @@ processStatusChange(application: any, newStatus: ApplicationStatus, reason?: str
     }
     this.page = page;
   }
+ 
+
+  
+  
+  
 }
